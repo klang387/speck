@@ -10,15 +10,20 @@ import UIKit
 
 class UserCell: UITableViewCell {
 
+    @IBOutlet weak var firstNameLbl: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        setCheckmark(selected: false)
     }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    
+    func setCheckmark(selected: Bool) {
+        let imageStr = selected ? "messageChecked" : "messageUnchecked"
+        self.accessoryView = UIImageView(image: UIImage(named: imageStr))
+    }
+    
+    func updateUI(user: User) {
+        firstNameLbl.text = user.firstName
     }
 
 }

@@ -7,29 +7,67 @@
 //
 
 import UIKit
+import Firebase
+import FacebookCore
+import FacebookLogin
 
-class LoginVC: UIViewController {
+class LoginVC: UIViewController, UITextFieldDelegate {
 
+    @IBOutlet weak var emailField: RoundTextField!
+    @IBOutlet weak var passwordField: RoundTextField!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        emailField.delegate = self
+        passwordField.delegate = self
+        
+        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing(_:))))
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.animateViewMoving(up: true, moveValue: 150, view: self.view)
     }
-    */
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        textField.animateViewMoving(up: false, moveValue: 150, view: self.view)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return true
+    }
 
+    @IBAction func facebookLoginPressed(_ sender: Any) {
+        AuthService.instance.facebookLogin(completion: { completion in
+            self.dismiss(animated: true, completion: nil)
+        })
+    }
+    
+    @IBAction func loginPressed(_ sender: Any) {
+        if let email = emailField.text, let pass = passwordField.text, (email.characters.count > 0 && pass.characters.count > 0) {
+            
+            AuthService.instance.login(email: email, password: pass, onComplete: { (errMsg, data) in
+                guard errMsg == nil else {
+                    let alert = UIAlertController(title: "Error Authenticating", message: errMsg, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+                    self.present(alert, animated: true, completion: nil)
+                    return
+                }
+                self.dismiss(animated: true, completion: nil)
+            })
+            
+        } else {
+            let alert = UIAlertController(title: "Username and Password Required", message: "You must enter both a username and a password", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+            present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    @IBAction func createAccountPressed(_ sender: Any) {
+        performSegue(withIdentifier: "toSignUpVC", sender: nil)
+    }
 }
