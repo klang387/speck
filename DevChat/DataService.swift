@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import AVKit
 import FirebaseDatabase
 import FirebaseStorage
 import FirebaseAuth
@@ -58,14 +59,15 @@ class DataService {
     }
     
     func loadUsers(completion: @escaping () -> Void) {
+        self._users = []
         usersRef.observeSingleEvent(of: .value) { (snapshot: DataSnapshot) in
             if let users = snapshot.value as? Dictionary<String,Any> {
                 for (key, value) in users {
                     if let dict = value as? Dictionary<String,Any> {
                         if let profile = dict["profile"] as? Dictionary<String,Any> {
-                            if let firstName = profile["firstName"] as? String {
+                            if let firstName = profile["firstName"] as? String, let lastName = profile["lastName"] as? String, let profPicUrl = profile["profPicUrl"] as? String {
                                 let uid = key
-                                let user = User(uid: uid, firstName: firstName)
+                                let user = User(uid: uid, firstName: firstName, lastName: lastName, profPicUrl: profPicUrl)
                                 self._users.append(user)
                             }
                         }

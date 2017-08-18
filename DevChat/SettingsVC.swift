@@ -24,7 +24,10 @@ class SettingsVC: UIViewController {
     @IBAction func signOutPressed(_ sender: Any) {
         do {
             try Auth.auth().signOut()
-            performSegue(withIdentifier: "toLoginVC", sender: nil)
+            weak var cameraVC = self.presentingViewController
+            self.dismiss(animated: true) {
+                cameraVC?.performSegue(withIdentifier: "toLoginVC", sender: nil)
+            }
         } catch {
             print("Sign out failed")
         }

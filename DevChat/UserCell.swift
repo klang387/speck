@@ -10,11 +10,13 @@ import UIKit
 
 class UserCell: UITableViewCell {
 
-    @IBOutlet weak var firstNameLbl: UILabel!
+    @IBOutlet weak var nameLbl: UILabel!
+    @IBOutlet weak var profPic: UIImageView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
         setCheckmark(selected: false)
+        self.selectionStyle = .none
     }
     
     func setCheckmark(selected: Bool) {
@@ -23,7 +25,8 @@ class UserCell: UITableViewCell {
     }
     
     func updateUI(user: User) {
-        firstNameLbl.text = user.firstName
+        nameLbl.text = user.firstName.capitalized + " " + user.lastName.capitalized
+        profPic.imageFromServerURL(urlString: user.profPicUrl)
     }
 
 }

@@ -72,7 +72,6 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         cell.setCheckmark(selected: true)
         let user = _users[indexPath.row]
         _selectedUsers[user.uid] = true
-        print("Selected: \(_selectedUsers)")
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
@@ -80,7 +79,6 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         cell.setCheckmark(selected: false)
         let user = _users[indexPath.row]
         _selectedUsers[user.uid] = nil
-        print("Selected: \(_selectedUsers)")
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

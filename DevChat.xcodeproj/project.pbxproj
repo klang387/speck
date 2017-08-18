@@ -26,6 +26,7 @@
 		0A88204F1F3FA49800257B23 /* InboxVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A88204E1F3FA49800257B23 /* InboxVC.swift */; };
 		0A8820511F3FA82400257B23 /* ViewSnapsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8820501F3FA82400257B23 /* ViewSnapsVC.swift */; };
 		0ADC3E1A1F323B6F009E2585 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0ADC3E191F323B6F009E2585 /* GoogleService-Info.plist */; };
+		0AF05BC01F47411000507371 /* UIImageViewExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF05BBF1F47411000507371 /* UIImageViewExt.swift */; };
 		0AFA17991F325A3400C54076 /* RoundTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFA17981F325A3400C54076 /* RoundTextField.swift */; };
 		2FFFD730D11A6C12B1494DC2 /* Pods_DevChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B53457DF130A64E0329B207 /* Pods_DevChat.framework */; };
 /* End PBXBuildFile section */
@@ -52,6 +53,7 @@
 		0A88204E1F3FA49800257B23 /* InboxVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxVC.swift; sourceTree = "<group>"; };
 		0A8820501F3FA82400257B23 /* ViewSnapsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewSnapsVC.swift; sourceTree = "<group>"; };
 		0ADC3E191F323B6F009E2585 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		0AF05BBF1F47411000507371 /* UIImageViewExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageViewExt.swift; sourceTree = "<group>"; };
 		0AFA17981F325A3400C54076 /* RoundTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundTextField.swift; sourceTree = "<group>"; };
 		7B53457DF130A64E0329B207 /* Pods_DevChat.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DevChat.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8DB5A84C3A76FBE261DFEB87 /* Pods-DevChat.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DevChat.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DevChat/Pods-DevChat.debug.xcconfig"; sourceTree = "<group>"; };
@@ -83,6 +85,7 @@
 			isa = PBXGroup;
 			children = (
 				0A27CBB41F33BABD00F8AA60 /* TextFieldExt.swift */,
+				0AF05BBF1F47411000507371 /* UIImageViewExt.swift */,
 			);
 			name = Protocols;
 			sourceTree = "<group>";
@@ -310,6 +313,7 @@
 				0A27CBA91F32B5B100F8AA60 /* AuthService.swift in Sources */,
 				0A4E4A411F20E6E10039EF05 /* AppDelegate.swift in Sources */,
 				0A5CEE591F46385500C7ECC3 /* ReviewSnapVC.swift in Sources */,
+				0AF05BC01F47411000507371 /* UIImageViewExt.swift in Sources */,
 				0A8820511F3FA82400257B23 /* ViewSnapsVC.swift in Sources */,
 				0A88204F1F3FA49800257B23 /* InboxVC.swift in Sources */,
 				0A27CBB21F33B22000F8AA60 /* User.swift in Sources */,
