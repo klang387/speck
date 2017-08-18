@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		0A27CBA91F32B5B100F8AA60 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A27CBA81F32B5B100F8AA60 /* AuthService.swift */; };
 		0A27CBAC1F337E5B00F8AA60 /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A27CBAB1F337E5B00F8AA60 /* DataService.swift */; };
-		0A27CBAE1F3390FB00F8AA60 /* UsersVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A27CBAD1F3390FB00F8AA60 /* UsersVC.swift */; };
+		0A27CBAE1F3390FB00F8AA60 /* SendSnapVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A27CBAD1F3390FB00F8AA60 /* SendSnapVC.swift */; };
 		0A27CBB01F3392A800F8AA60 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A27CBAF1F3392A800F8AA60 /* UserCell.swift */; };
 		0A27CBB21F33B22000F8AA60 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A27CBB11F33B22000F8AA60 /* User.swift */; };
 		0A27CBB51F33BABD00F8AA60 /* TextFieldExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A27CBB41F33BABD00F8AA60 /* TextFieldExt.swift */; };
@@ -20,6 +20,7 @@
 		0A4E4A461F20E6E10039EF05 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A4E4A441F20E6E10039EF05 /* Main.storyboard */; };
 		0A4E4A4B1F20E6E10039EF05 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A4E4A491F20E6E10039EF05 /* LaunchScreen.storyboard */; };
 		0A5CEE571F4633E600C7ECC3 /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5CEE561F4633E600C7ECC3 /* SettingsVC.swift */; };
+		0A5CEE591F46385500C7ECC3 /* ReviewSnapVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5CEE581F46385500C7ECC3 /* ReviewSnapVC.swift */; };
 		0A625F651F32573B00C4C34A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A625F641F32573B00C4C34A /* Assets.xcassets */; };
 		0A7E34691F3253C5007F84D4 /* LoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7E34681F3253C5007F84D4 /* LoginVC.swift */; };
 		0A88204F1F3FA49800257B23 /* InboxVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A88204E1F3FA49800257B23 /* InboxVC.swift */; };
@@ -32,7 +33,7 @@
 /* Begin PBXFileReference section */
 		0A27CBA81F32B5B100F8AA60 /* AuthService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		0A27CBAB1F337E5B00F8AA60 /* DataService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
-		0A27CBAD1F3390FB00F8AA60 /* UsersVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsersVC.swift; sourceTree = "<group>"; };
+		0A27CBAD1F3390FB00F8AA60 /* SendSnapVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SendSnapVC.swift; sourceTree = "<group>"; };
 		0A27CBAF1F3392A800F8AA60 /* UserCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
 		0A27CBB11F33B22000F8AA60 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		0A27CBB41F33BABD00F8AA60 /* TextFieldExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFieldExt.swift; sourceTree = "<group>"; };
@@ -45,6 +46,7 @@
 		0A4E4A4A1F20E6E10039EF05 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0A4E4A4C1F20E6E10039EF05 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0A5CEE561F4633E600C7ECC3 /* SettingsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
+		0A5CEE581F46385500C7ECC3 /* ReviewSnapVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReviewSnapVC.swift; sourceTree = "<group>"; };
 		0A625F641F32573B00C4C34A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0A7E34681F3253C5007F84D4 /* LoginVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginVC.swift; sourceTree = "<group>"; };
 		0A88204E1F3FA49800257B23 /* InboxVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxVC.swift; sourceTree = "<group>"; };
@@ -126,11 +128,12 @@
 			children = (
 				0A4E4A421F20E6E10039EF05 /* CameraVC.swift */,
 				0A7E34681F3253C5007F84D4 /* LoginVC.swift */,
-				0A27CBAD1F3390FB00F8AA60 /* UsersVC.swift */,
+				0A27CBAD1F3390FB00F8AA60 /* SendSnapVC.swift */,
 				0A88204E1F3FA49800257B23 /* InboxVC.swift */,
 				0A8820501F3FA82400257B23 /* ViewSnapsVC.swift */,
 				0A4CF7681F45F6DE001A1B65 /* SignUpVC.swift */,
 				0A5CEE561F4633E600C7ECC3 /* SettingsVC.swift */,
+				0A5CEE581F46385500C7ECC3 /* ReviewSnapVC.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -301,11 +304,12 @@
 				0A27CBAC1F337E5B00F8AA60 /* DataService.swift in Sources */,
 				0A27CBB51F33BABD00F8AA60 /* TextFieldExt.swift in Sources */,
 				0A4268F11F326101000E9694 /* RoundButton.swift in Sources */,
-				0A27CBAE1F3390FB00F8AA60 /* UsersVC.swift in Sources */,
+				0A27CBAE1F3390FB00F8AA60 /* SendSnapVC.swift in Sources */,
 				0A4E4A431F20E6E10039EF05 /* CameraVC.swift in Sources */,
 				0A27CBB01F3392A800F8AA60 /* UserCell.swift in Sources */,
 				0A27CBA91F32B5B100F8AA60 /* AuthService.swift in Sources */,
 				0A4E4A411F20E6E10039EF05 /* AppDelegate.swift in Sources */,
+				0A5CEE591F46385500C7ECC3 /* ReviewSnapVC.swift in Sources */,
 				0A8820511F3FA82400257B23 /* ViewSnapsVC.swift in Sources */,
 				0A88204F1F3FA49800257B23 /* InboxVC.swift in Sources */,
 				0A27CBB21F33B22000F8AA60 /* User.swift in Sources */,

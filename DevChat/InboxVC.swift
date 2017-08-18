@@ -28,6 +28,7 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         DataService.instance.receivedSnapsRef.observe(.value, with: { (snapshot) in
             if let snapshot = snapshot.children.allObjects as? [DataSnapshot] {
                 for snap in snapshot {
+                    print(snap)
                     DataService.instance.snapsRef.child(snap.key).observeSingleEvent(of: .value, with: { (snapshot2) in
                         self.snapsReceived[snap.key] = snapshot2.value
                     })

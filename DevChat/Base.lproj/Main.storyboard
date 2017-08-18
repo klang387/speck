@@ -30,28 +30,6 @@
                                     <constraint firstAttribute="height" constant="100" id="e7l-8o-sJl"/>
                                 </constraints>
                             </button>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gwB-ea-ikZ">
-                                <rect key="frame" x="16" y="28" width="55" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.86535906789999995" green="0.17267754669999999" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <state key="normal" title="Close">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="closePreviewBtnPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="mvd-K8-8Iu"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" alpha="0.29999999999999999" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UN5-ko-esq">
-                                <rect key="frame" x="245" y="518" width="59" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.27632034449999998" green="0.65319638319999995" blue="0.12757182559999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <state key="normal" title="Send">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="sendToUsersBtnPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="O1c-fZ-WdW"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="I3b-5i-Bpj">
                                 <rect key="frame" x="21" y="518" width="38" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -61,11 +39,11 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oAX-j3-OdA">
-                                <rect key="frame" x="21" y="464" width="60" height="30"/>
+                                <rect key="frame" x="23" y="464" width="57" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Sign Out"/>
+                                <state key="normal" title="Settings"/>
                                 <connections>
-                                    <action selector="signOutPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Mua-bP-wiL"/>
+                                    <action selector="settingsPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ytP-z2-uAk"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4eK-xB-UgP">
@@ -91,13 +69,11 @@
                     </view>
                     <connections>
                         <outlet property="captureBtn" destination="8xy-IG-f4O" id="6ss-jg-Lty"/>
-                        <outlet property="closePreviewBtn" destination="gwB-ea-ikZ" id="H2s-la-BMW"/>
-                        <outlet property="sendToUsersBtn" destination="UN5-ko-esq" id="i3K-e2-seE"/>
                         <outlet property="switchCameraBtn" destination="4eK-xB-UgP" id="zuj-aA-0fJ"/>
                         <segue destination="AYo-Rp-cQ0" kind="presentation" identifier="toLoginVC" id="IE5-Gn-rFy"/>
-                        <segue destination="jev-eN-UJH" kind="presentation" identifier="toUsersVC" id="2vS-iA-uSY"/>
                         <segue destination="ctK-C7-7lg" kind="presentation" identifier="toInboxVC" id="XUI-hJ-Hrl"/>
                         <segue destination="Cbu-dt-dES" kind="presentation" identifier="toSettingsVC" id="0kJ-61-0Ou"/>
+                        <segue destination="ju6-W3-mZ3" kind="presentation" identifier="toReviewSnapVC" modalPresentationStyle="overFullScreen" modalTransitionStyle="crossDissolve" id="Eyz-YP-rDZ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -373,6 +349,24 @@
                     <view key="view" contentMode="scaleToFill" id="RNa-1g-x7h">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nP2-Wz-a9s">
+                                <rect key="frame" x="130" y="301" width="60" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Sign Out"/>
+                                <connections>
+                                    <action selector="signOutPressed:" destination="Cbu-dt-dES" eventType="touchUpInside" id="JoN-az-Gka"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Iar-7f-woT">
+                                <rect key="frame" x="30" y="28" width="34" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Back"/>
+                                <connections>
+                                    <action selector="backPressed:" destination="Cbu-dt-dES" eventType="touchUpInside" id="FhO-aA-GkS"/>
+                                </connections>
+                            </button>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                 </viewController>
@@ -380,10 +374,56 @@
             </objects>
             <point key="canvasLocation" x="-756" y="774"/>
         </scene>
-        <!--UsersVC-->
+        <!--Review SnapVC-->
+        <scene sceneID="9uG-qG-bEL">
+            <objects>
+                <viewController id="ju6-W3-mZ3" customClass="ReviewSnapVC" customModule="DevChat" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="cvs-eM-im1"/>
+                        <viewControllerLayoutGuide type="bottom" id="LFR-5e-aej"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="rLY-V7-Abd">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="INH-4L-EPz">
+                                <rect key="frame" x="16" y="28" width="55" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.86535906789999995" green="0.17267754669999999" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal" title="Close">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="closePreviewBtnPressed:" destination="ju6-W3-mZ3" eventType="touchUpInside" id="Sp9-GS-za4"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Os-1c-D3C">
+                                <rect key="frame" x="248" y="515" width="59" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.27632034449999998" green="0.65319638319999995" blue="0.12757182559999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal" title="Send">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="sendToUsersBtnPressed:" destination="ju6-W3-mZ3" eventType="touchUpInside" id="lEp-oa-OOd"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <outlet property="closeBtn" destination="INH-4L-EPz" id="s29-kz-lFV"/>
+                        <segue destination="jev-eN-UJH" kind="presentation" identifier="toSendSnapVC" id="T4l-FA-3lf"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dpG-8f-int" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="37.5" y="773.23943661971828"/>
+        </scene>
+        <!--Send SnapVC-->
         <scene sceneID="SIX-xy-bvk">
             <objects>
-                <viewController id="jev-eN-UJH" customClass="UsersVC" customModule="DevChat" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="jev-eN-UJH" customClass="SendSnapVC" customModule="DevChat" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="f3t-SJ-j8r"/>
                         <viewControllerLayoutGuide type="bottom" id="LHm-Eg-dmT"/>
@@ -472,7 +512,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NVy-ur-d4z" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="37.5" y="775.35211267605632"/>
+            <point key="canvasLocation" x="38" y="1497"/>
         </scene>
         <!--InboxVC-->
         <scene sceneID="Qlb-ha-yNc">

@@ -14,11 +14,6 @@ import AVKit
 
 class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
-    let avPlayer = AVPlayer()
-    var avPlayerLayer: AVPlayerLayer!
-    
-    var imageView = UIImageView()
-    
     var tempVidUrl: URL?
     var tempPhoto: UIImage?
     
@@ -26,21 +21,9 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
     @IBOutlet weak var captureBtn: SwiftyCamButton!
     @IBOutlet weak var switchCameraBtn: UIButton!
-    @IBOutlet weak var sendToUsersBtn: UIButton!
-    @IBOutlet weak var closePreviewBtn: UIButton!
     
     @IBAction func switchCameraBtnPressed(_ sender: Any) {
         switchCamera()
-    }
-    
-    @IBAction func sendToUsersBtnPressed(_ sender: Any) {
-        if dataType == "video" {
-            performSegue(withIdentifier: "toUsersVC", sender: tempVidUrl)
-        } else if dataType == "photo" {
-            if let tempPhotoData = UIImageJPEGRepresentation(tempPhoto!, 0.8) {
-                performSegue(withIdentifier: "toUsersVC", sender: tempPhotoData)
-            }
-        }
     }
     
     @IBAction func inboxBtnPressed(_ sender: Any) {
@@ -48,45 +31,19 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let usersVC = segue.destination as? UsersVC {
+        if let reviewSnapVC = segue.destination as? ReviewSnapVC {
             if dataType == "video" {
-                usersVC.tempVidUrl = sender as? URL
+                reviewSnapVC.tempVidUrl = sender as? URL
+                reviewSnapVC.dataType = "video"
             } else if dataType == "photo" {
-                usersVC.tempPhotoData = sender as? Data
+                reviewSnapVC.tempPhoto = sender as? UIImage
+                reviewSnapVC.dataType = "photo"
             }
         }
     }
     
-    @IBAction func signOutPressed(_ sender: Any) {
-        do {
-            try Auth.auth().signOut()
-            performSegue(withIdentifier: "toLoginVC", sender: nil)
-        } catch {
-            print("Sign out failed")
-        }
-    }
-    
-    @IBAction func closePreviewBtnPressed(_ sender: Any) {
-        if dataType == "video" {
-            let fileManager = FileManager.default
-            do {
-                try fileManager.removeItem(at: tempVidUrl!)
-                print("Successfully deleted temp video")
-            } catch {
-                print("Could not delete temp video: \(error)")
-            }
-        }
-        
-        avPlayerLayer.isHidden = true
-        sendToUsersBtn.isEnabled = false
-        sendToUsersBtn.alpha = 0.3
-        closePreviewBtn.isHidden = true
-        closePreviewBtn.isEnabled = false
-        imageView.isHidden = true
-        imageView.image = nil
-        tempVidUrl = nil
-        tempPhoto = nil
-        dataType = ""
+    @IBAction func settingsPressed(_ sender: Any) {
+        performSegue(withIdentifier: "toSettingsVC", sender: nil)
     }
     
     override func viewDidLoad() {
@@ -94,16 +51,6 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         cameraDelegate = self
         captureBtn.delegate = self
         maximumVideoDuration = 10.0
-        
-        avPlayerLayer = AVPlayerLayer(player: avPlayer)
-        avPlayerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
-        avPlayerLayer.frame = view.frame
-        view.layer.insertSublayer(avPlayerLayer, below: captureBtn.layer)
-        
-        imageView.frame = view.frame
-        view.insertSubview(imageView, belowSubview: captureBtn)
-        
-        print("Current User: \(Auth.auth().currentUser)")
         
     }
     
@@ -120,16 +67,8 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         print("Took a photo")
         
         tempPhoto = photo
-        imageView.image = photo
-        imageView.isHidden = false
-        
-        sendToUsersBtn.isEnabled = true
-        sendToUsersBtn.alpha = 1
-        
-        closePreviewBtn.isEnabled = true
-        closePreviewBtn.isHidden = false
-        
         dataType = "photo"
+        performSegue(withIdentifier: "toReviewSnapVC", sender: tempPhoto)
     }
     
     func swiftyCam(_ swiftyCam: SwiftyCamViewController, didBeginRecordingVideo camera: SwiftyCamViewController.CameraSelection) {
@@ -143,20 +82,9 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     func swiftyCam(_ swiftyCam: SwiftyCamViewController, didFinishProcessVideoAt url: URL) {
         print("Finished processing video")
         
-        tempVidUrl = url
-        
-        let playerItem = AVPlayerItem(url: url)
-        avPlayer.replaceCurrentItem(with: playerItem)
-        avPlayerLayer.isHidden = false
-        avPlayer.play()
-        
-        sendToUsersBtn.isEnabled = true
-        sendToUsersBtn.alpha = 1
-        
-        closePreviewBtn.isEnabled = true
-        closePreviewBtn.isHidden = false
-        
+        tempVidUrl = url        
         dataType = "video"
+        performSegue(withIdentifier: "toReviewSnapVC", sender: tempVidUrl)
         
     }
     

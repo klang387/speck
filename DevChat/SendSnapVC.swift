@@ -1,5 +1,5 @@
 //
-//  UsersVC.swift
+//  SendSnapVC.swift
 //  DevChat
 //
 //  Created by Kevin Langelier on 8/3/17.
@@ -10,7 +10,7 @@ import UIKit
 import FirebaseDatabase
 import FirebaseStorage
 
-class UsersVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     @IBOutlet weak var tableView: UITableView!
     

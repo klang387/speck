@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class SettingsVC: UIViewController {
 
@@ -16,4 +17,17 @@ class SettingsVC: UIViewController {
         
     }
 
+    @IBAction func backPressed(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    @IBAction func signOutPressed(_ sender: Any) {
+        do {
+            try Auth.auth().signOut()
+            performSegue(withIdentifier: "toLoginVC", sender: nil)
+        } catch {
+            print("Sign out failed")
+        }
+    }
+    
 }
