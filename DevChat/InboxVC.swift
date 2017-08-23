@@ -26,29 +26,23 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         tableView.delegate = self
         tableView.dataSource = self
         
-        DataService.instance.receivedSnapsRef.observe(.value, with: { (snapshot) in
-            print("SNAP RECEIVED!")
+        DataService.instance.receivedSnapsRef.queryOrdered(byChild: "mostRecent").observe(.value, with: { (snapshot) in
             self.snapsReceived.removeAll()
-            if let snapUids = snapshot.value as? [String:Any] {
-                for (key,_) in snapUids {
-                    DataService.instance.snapsRef.child(key).observeSingleEvent(of: .value, with: { (snapshotDatabase) in
-                        if var snapDetails = snapshotDatabase.value as? [String:Any] {
-                            if let sender = snapDetails["sender"] as? String {
-                                DataService.instance.usersRef.child(sender).child("profile").observeSingleEvent(of: .value, with: { (snapshotSender) in
-                                    if let senderProfile = snapshotSender.value as? [String:Any] {
-                                        snapDetails["senderProfile"] = senderProfile
-                                        snapDetails["snapUid"] = key
-                                        self.snapsReceived.append(snapDetails)
-                                        self.tableView.reloadData()
-                                    }
-                                })
-                            }
+            for snap in snapshot.children.allObjects as! [DataSnapshot] {
+                if var snapDict = snap.value as? [String:Any] {
+                    DataService.instance.profilesRef.child(snap.key).observeSingleEvent(of: .value, with: { (snapshot) in
+                        if let profile = snapshot.value as? [String:String] {
+                            snapDict["name"] = profile["name"]
+                            snapDict["profPicUrl"] = profile["profPicUrl"]
+                            self.snapsReceived.append(snapDict)
+                            self.tableView.reloadData()
                         }
                     })
                 }
             }
+            
         })
-    
+        
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -57,23 +51,26 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell") as! UserCell
-        let snap = snapsReceived[indexPath.row]
-        let user = User(snap: snap)
-        cell.updateUI(user: user)
+        let fromUser = snapsReceived[indexPath.row]
+        let user = User(snap: fromUser)
+        let snaps = fromUser["snaps"] as? [String:Any]
+        let snapCount = snaps?.count
+        print("SNAP: \(fromUser)")
+        cell.updateUI(user: user, snapCount: snapCount)
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let snap = snapsReceived[indexPath.row]
-        if let url = snap["databaseUrl"] {
-            performSegue(withIdentifier: "toViewSnapsVC", sender: url)
+        let fromUser = snapsReceived[indexPath.row]
+        if let snaps = fromUser["snaps"] as? [String:Any] {
+            performSegue(withIdentifier: "toViewSnapsVC", sender: snaps)
         }
         
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let viewSnapsVC = segue.destination as? ViewSnapsVC {
-            viewSnapsVC.videoUrl = sender as? String
+            viewSnapsVC.snaps = sender as! [String:Any]
         }
     }
 

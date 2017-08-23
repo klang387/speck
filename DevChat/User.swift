@@ -9,52 +9,32 @@
 import Foundation
 
 struct User {
-    private var _firstName: String
-    private var _lastName: String
+    private var _name: String
     private var _profPicUrl: String
-    private var _uid: String
-    private var _snapUrl: String?
+    private var _uid: String?
     
-    var uid: String {
+    var uid: String? {
         return _uid
     }
     
-    var firstName: String {
-        return _firstName
-    }
-    
-    var lastName: String {
-        return _lastName
+    var name: String {
+        return _name
     }
     
     var profPicUrl: String {
         return _profPicUrl
     }
     
-    var snapUrl: String? {
-        return _snapUrl
-    }
     
-    init (uid: String, firstName: String, lastName: String, profPicUrl: String) {
+    init (uid: String, name: String, profPicUrl: String) {
         _uid = uid
-        _firstName = firstName
-        _lastName = lastName
+        _name = name
         _profPicUrl = profPicUrl
     }
     
-    init (snap: [String:Any]) {      
-        _uid = snap["sender"] as? String ?? ""
-        _snapUrl = snap["databaseUrl"] as? String ?? ""
-        
-        if let profile = snap["senderProfile"] as? [String:String] {
-            _firstName = profile["firstName"] ?? ""
-            _lastName = profile["lastName"] ?? ""
-            _profPicUrl = profile["profPicUrl"] ?? ""
-        } else {
-            _firstName = ""
-            _lastName = ""
-            _profPicUrl = ""
-        }
+    init (snap: [String:Any]) {
+        _name = snap["name"] as? String ?? ""
+        _profPicUrl = snap["profPicUrl"] as? String ?? ""
     }
     
 }

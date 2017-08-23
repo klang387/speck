@@ -37,8 +37,8 @@ class DataService {
         return mainRef.child("users")
     }
     
-    var snapsRef: DatabaseReference {
-        return mainRef.child("snaps")
+    var profilesRef: DatabaseReference {
+        return mainRef.child("profiles")
     }
     
     var mainStorageRef: StorageReference {
@@ -54,22 +54,20 @@ class DataService {
     }
     
     func saveUserToDatabase(uid: String, firstName: String, lastName: String, profPicUrl: String) {
-        let profile = ["firstName": firstName, "lastName": lastName, "profPicUrl": profPicUrl]
-        mainRef.child("users").child(uid).child("profile").updateChildValues(profile)
+        let profile = ["name": "\(firstName) \(lastName)", "profPicUrl": profPicUrl]
+        mainRef.child("profiles").child(uid).updateChildValues(profile)
     }
     
     func loadUsers(completion: @escaping () -> Void) {
         self._users = []
-        usersRef.observeSingleEvent(of: .value) { (snapshot: DataSnapshot) in
+        profilesRef.observeSingleEvent(of: .value) { (snapshot: DataSnapshot) in
             if let users = snapshot.value as? Dictionary<String,Any> {
                 for (key, value) in users {
                     if let dict = value as? Dictionary<String,Any> {
-                        if let profile = dict["profile"] as? Dictionary<String,Any> {
-                            if let firstName = profile["firstName"] as? String, let lastName = profile["lastName"] as? String, let profPicUrl = profile["profPicUrl"] as? String {
-                                let uid = key
-                                let user = User(uid: uid, firstName: firstName, lastName: lastName, profPicUrl: profPicUrl)
-                                self._users.append(user)
-                            }
+                        if let name = dict["name"] as? String, let profPicUrl = dict["profPicUrl"] as? String {
+                            let uid = key
+                            let user = User(uid: uid, name: name, profPicUrl: profPicUrl)
+                            self._users.append(user)
                         }
                     }
                 }
@@ -81,14 +79,14 @@ class DataService {
     func uploadMedia(tempVidUrl: URL?, tempPhotoData: Data?, caption: String?, recipients: [String:Bool], completion: () -> Void){
         let ref = mediaStorageRef.child("\(NSUUID().uuidString)")
         if let url = tempVidUrl {
-            
+    
             ref.putFile(from: url, metadata: nil, completion: { (meta: StorageMetadata?, err: Error?) in
                 
                 if err != nil {
                     print("Error uploading video: \(err!.localizedDescription)")
                 } else {
                     if let downloadURL = meta?.downloadURL()?.absoluteString {
-                        self.sendSnap(databaseUrl: downloadURL, caption: caption, recipients: recipients)
+                        self.sendSnap(databaseUrl: downloadURL, mediaType: "video", caption: caption, recipients: recipients)
                     }
                 }
             })
@@ -101,7 +99,7 @@ class DataService {
                     print("Error uploading photo: \(err!.localizedDescription)")
                 } else {
                     if let downloadURL = meta?.downloadURL()?.absoluteString {
-                        self.sendSnap(databaseUrl: downloadURL, caption: caption, recipients: recipients)
+                        self.sendSnap(databaseUrl: downloadURL, mediaType: "photo", caption: caption, recipients: recipients)
                     }
                 }
             })
@@ -110,19 +108,34 @@ class DataService {
         completion()
     }
     
-    func sendSnap(databaseUrl: String, caption: String?, recipients: [String:Bool]) {
-        var snapDict = Dictionary<String,String>()
+    func sendSnap(databaseUrl: String, mediaType: String, caption: String?, recipients: [String:Bool]) {
+        
+        var snapDict = [String:Any]()
+        
+        var currentUser = String()
+        if let user = Auth.auth().currentUser?.uid {
+            currentUser = user
+        } else {
+            print("Error getting current user")
+            return
+        }
+        
         snapDict["caption"] = caption
         snapDict["databaseUrl"] = databaseUrl
-        snapDict["sender"] = Auth.auth().currentUser?.uid
+        snapDict["mediaType"] = mediaType
+        snapDict["timestamp"] = ServerValue.timestamp()
         
-        snapsRef.childByAutoId().setValue(snapDict) { (err, ref) in
-            if err != nil {
-                print("Error posting to database: \(err!.localizedDescription)")
-            } else {
-                print("Database post: \(ref.key)")
-                for (key,_) in recipients {
-                    self.usersRef.child(key).child("snapsReceived").child(ref.key).child("numOfViews").setValue(0)
+        for (key,_) in recipients {
+            self.usersRef.child(key).child("snapsReceived").child(currentUser).child("snaps").childByAutoId().setValue(snapDict) { (err, ref) in
+                if err != nil {
+                    print("Error posting to database: \(err!.localizedDescription)")
+                    return
+                }
+            }
+            self.usersRef.child(key).child("snapsReceived").child(currentUser).child("mostRecent").setValue(ServerValue.timestamp()) { (err,ref) in
+                if err != nil {
+                    print("Error posting to database: \(err!.localizedDescription)")
+                    return
                 }
             }
         }

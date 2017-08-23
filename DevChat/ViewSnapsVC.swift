@@ -9,40 +9,88 @@
 import UIKit
 import AVFoundation
 
-class ViewSnapsVC: UIViewController {
+class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
 
     @IBOutlet weak var closeBtn: UIButton!
     
-    let avPlayer = AVPlayer()
-    var avPlayerLayer: AVPlayerLayer!
-    
-    var imageView = UIImageView()
+    let pageVC = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+    var snapViewControllers = [SnapViewer]()
     
     @IBAction func closePressed(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
     
-    var photoUrl: String?
-    var videoUrl: String?
+    var snaps = [String:Any]()
+    var snapsArray = [[String:Any]]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        avPlayerLayer = AVPlayerLayer(player: avPlayer)
-        avPlayerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
-        avPlayerLayer.frame = view.frame
-        view.layer.insertSublayer(avPlayerLayer, below: closeBtn.layer)
+        addChildViewController(pageVC)
+        view.insertSubview(pageVC.view, belowSubview: closeBtn)
+        pageVC.dataSource = self
+        pageVC.delegate = self
         
-        imageView.frame = view.frame
-        view.insertSubview(imageView, belowSubview: closeBtn)
+        for (key,value) in snaps {
+            if var snapDict = value as? [String:Any]{
+                snapDict["snapUid"] = key
+                snapsArray.append(snapDict)
+            }
+        }
         
-        if photoUrl != nil {
-            imageView.imageFromServerURL(urlString: photoUrl!)
-        } else if videoUrl != nil {
-            let url = URL(string: videoUrl!)
-            let playerItem = AVPlayerItem(url: url!)
-            avPlayerLayer.player?.replaceCurrentItem(with: playerItem)
-            avPlayerLayer.player?.play()
+        for snap in snapsArray {
+            let snapView = SnapViewer()
+            if let mediaType = snap["mediaType"] as? String, let databaseUrl = snap["databaseUrl"] as? String {
+                if mediaType == "photo" {
+                    snapView.imageView.imageFromServerURL(urlString: databaseUrl)
+                } else if mediaType == "video" {
+                    if let url = URL(string: databaseUrl) {
+                        snapView.playerItem = AVPlayerItem(url: url)
+                    } else {
+                        print("Invalid url")
+                    }
+                }
+                snapViewControllers.append(snapView)
+            } else {
+                print("Error adding snapView to PVC array")
+            }
+        }
+        
+        if let firstVC = snapViewControllers.first {
+            pageVC.setViewControllers([firstVC], direction: .forward, animated: true, completion: { (true) in
+//                firstVC.avPlayerLayer?.player?.replaceCurrentItem(with: firstVC.playerItem)
+//                firstVC.avQueuePlayer?.play()
+                print("Completion handled")
+            })
+        }
+        
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+        guard let vcIndex = snapViewControllers.index(of: viewController as! SnapViewer) else {
+            return nil
+        }
+        
+        let previousIndex = vcIndex - 1
+        
+        if previousIndex < 0 {
+            return nil
+        } else {
+            return snapViewControllers[previousIndex]
+        }
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+        guard let vcIndex = snapViewControllers.index(of: viewController as! SnapViewer) else {
+            return nil
+        }
+        
+        let nextIndex = vcIndex + 1
+        
+        if nextIndex > snapViewControllers.count - 1 {
+            return nil
+        } else {
+            return snapViewControllers[nextIndex]
         }
     }
 

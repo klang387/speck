@@ -14,10 +14,7 @@ class ReviewSnapVC: UIViewController {
 
     @IBOutlet weak var closeBtn: UIButton!
     
-    let avPlayer = AVPlayer()
-    var avPlayerLayer: AVPlayerLayer!
-
-    var imageView = UIImageView()
+    let snapViewer = SnapViewer()
     
     var tempVidUrl: URL?
     var tempPhoto: UIImage?
@@ -28,20 +25,15 @@ class ReviewSnapVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        avPlayerLayer = AVPlayerLayer(player: avPlayer)
-        avPlayerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
-        avPlayerLayer.frame = view.frame
-        view.layer.insertSublayer(avPlayerLayer, below: closeBtn.layer)
-        
-        imageView.frame = view.frame
-        view.insertSubview(imageView, belowSubview: closeBtn)
+        addChildViewController(snapViewer)
+        view.insertSubview(snapViewer.view, belowSubview: closeBtn)
         
         if dataType == "video" {
             let playerItem = AVPlayerItem(url: tempVidUrl!)
-            avPlayerLayer.player?.replaceCurrentItem(with: playerItem)
-            avPlayerLayer.player?.play()
+            snapViewer.avPlayerLayer?.player?.replaceCurrentItem(with: playerItem)
+            snapViewer.avPlayerLayer?.player?.play()
         } else if dataType == "photo" {
-            imageView.image = tempPhoto
+            snapViewer.imageView.image = tempPhoto
             tempPhotoData = UIImageJPEGRepresentation(tempPhoto!, 0.2)
         }
         

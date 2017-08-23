@@ -63,7 +63,7 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell") as! UserCell
         let user = _users[indexPath.row]
-        cell.updateUI(user: user)
+        cell.updateUI(user: user, snapCount: nil)
         return cell
     }
     
@@ -71,14 +71,14 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.cellForRow(at: indexPath) as! UserCell
         cell.setCheckmark(selected: true)
         let user = _users[indexPath.row]
-        _selectedUsers[user.uid] = true
+        _selectedUsers[user.uid!] = true
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! UserCell
         cell.setCheckmark(selected: false)
         let user = _users[indexPath.row]
-        _selectedUsers[user.uid] = nil
+        _selectedUsers[user.uid!] = nil
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

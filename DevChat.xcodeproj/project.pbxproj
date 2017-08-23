@@ -14,6 +14,7 @@
 		0A27CBB21F33B22000F8AA60 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A27CBB11F33B22000F8AA60 /* User.swift */; };
 		0A27CBB51F33BABD00F8AA60 /* TextFieldExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A27CBB41F33BABD00F8AA60 /* TextFieldExt.swift */; };
 		0A4268F11F326101000E9694 /* RoundButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4268F01F326101000E9694 /* RoundButton.swift */; };
+		0A482AEA1F4D0602005205E1 /* SnapViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A482AE91F4D0602005205E1 /* SnapViewer.swift */; };
 		0A4CF7691F45F6DE001A1B65 /* SignUpVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4CF7681F45F6DE001A1B65 /* SignUpVC.swift */; };
 		0A4E4A411F20E6E10039EF05 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4E4A401F20E6E10039EF05 /* AppDelegate.swift */; };
 		0A4E4A431F20E6E10039EF05 /* CameraVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4E4A421F20E6E10039EF05 /* CameraVC.swift */; };
@@ -39,6 +40,7 @@
 		0A27CBB11F33B22000F8AA60 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		0A27CBB41F33BABD00F8AA60 /* TextFieldExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFieldExt.swift; sourceTree = "<group>"; };
 		0A4268F01F326101000E9694 /* RoundButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundButton.swift; sourceTree = "<group>"; };
+		0A482AE91F4D0602005205E1 /* SnapViewer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapViewer.swift; sourceTree = "<group>"; };
 		0A4CF7681F45F6DE001A1B65 /* SignUpVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpVC.swift; sourceTree = "<group>"; };
 		0A4E4A3D1F20E6E10039EF05 /* DevChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DevChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A4E4A401F20E6E10039EF05 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -147,6 +149,7 @@
 				0AFA17981F325A3400C54076 /* RoundTextField.swift */,
 				0A4268F01F326101000E9694 /* RoundButton.swift */,
 				0A27CBAF1F3392A800F8AA60 /* UserCell.swift */,
+				0A482AE91F4D0602005205E1 /* SnapViewer.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -315,6 +318,7 @@
 				0A5CEE591F46385500C7ECC3 /* ReviewSnapVC.swift in Sources */,
 				0AF05BC01F47411000507371 /* UIImageViewExt.swift in Sources */,
 				0A8820511F3FA82400257B23 /* ViewSnapsVC.swift in Sources */,
+				0A482AEA1F4D0602005205E1 /* SnapViewer.swift in Sources */,
 				0A88204F1F3FA49800257B23 /* InboxVC.swift in Sources */,
 				0A27CBB21F33B22000F8AA60 /* User.swift in Sources */,
 				0A7E34691F3253C5007F84D4 /* LoginVC.swift in Sources */,
