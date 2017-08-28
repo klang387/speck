@@ -11,6 +11,7 @@ import FirebaseAuth
 import SwiftyCam
 import AVFoundation
 import AVKit
+import CoreGraphics
 
 class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
@@ -19,8 +20,16 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
     var dataType: String = ""
     
+    var blurView: UIVisualEffectView!
+    var blurStatus = false
+    
     @IBOutlet weak var captureBtn: SwiftyCamButton!
     @IBOutlet weak var switchCameraBtn: UIButton!
+    @IBOutlet weak var blurMaskView: UIView!
+    @IBOutlet weak var recFrame: UIImageView!
+    @IBOutlet weak var inboxFrame: UIImageView!
+    @IBOutlet weak var switchCameraFrame: UIImageView!
+    @IBOutlet weak var topFrame: UIImageView!
     
     @IBAction func switchCameraBtnPressed(_ sender: Any) {
         switchCamera()
@@ -28,6 +37,18 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
     @IBAction func inboxBtnPressed(_ sender: Any) {
         performSegue(withIdentifier: "toInboxVC", sender: nil)
+    }
+    
+    @IBAction func settingsPressed(_ sender: Any) {
+        performSegue(withIdentifier: "toSettingsVC", sender: nil)
+    }
+    
+    @IBAction func friendsPressed(_ sender: Any) {
+        performSegue(withIdentifier: "toFriendsVC", sender: nil)
+    }
+    
+    @IBAction func flashPressed(_ sender: Any) {
+        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -42,9 +63,6 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         }
     }
     
-    @IBAction func settingsPressed(_ sender: Any) {
-        performSegue(withIdentifier: "toSettingsVC", sender: nil)
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,15 +70,41 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         captureBtn.delegate = self
         maximumVideoDuration = 10.0
         
+        let blur = UIBlurEffect(style: .light)
+        blurView = UIVisualEffectView(effect: blur)
+        blurView.frame = self.view.bounds
+        blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        self.view.insertSubview(blurView, belowSubview: blurMaskView)
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(true)
+        super.viewDidAppear(animated)
         
         guard Auth.auth().currentUser != nil else {
             performSegue(withIdentifier: "toLoginVC", sender: nil)
             return
         }
+
+        if !blurStatus {
+            
+            let maskView = UIImage(view: blurMaskView)
+            let maskImage = maskView.cgImage?.copy(maskingColorComponents: [222,255,222,255,222,255,222,255])
+            blurMaskView.backgroundColor = UIColor.clear
+            
+            recFrame.image = UIImage(named: "RecFrame")
+            inboxFrame.image = UIImage(named: "InboxFrame")
+            switchCameraFrame.image = UIImage(named: "SwitchCameraFrame")
+            topFrame.image = UIImage(named: "TopFrame")
+            
+            let imageView = UIImageView(image: UIImage(cgImage: maskImage!))
+            imageView.frame = view.frame
+            blurView.mask = imageView
+            
+            blurStatus = true
+            
+        }
+        
     }
     
     func swiftyCam(_ swiftyCam: SwiftyCamViewController, didTake photo: UIImage) {

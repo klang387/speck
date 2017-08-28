@@ -9,21 +9,38 @@
 import UIKit
 
 class UserCell: UITableViewCell {
-
-    @IBOutlet weak var nameLbl: UILabel!
-    @IBOutlet weak var profPic: UIImageView!
-    @IBOutlet weak var snapCountLbl: UILabel!
+    
+    var profPic: UIImageView!
+    var nameLbl: UILabel!
+    var icon: UIImageView!
+    var snapCountLbl: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        setCheckmark(selected: false)
+        let height: CGFloat = 36
+        let width: CGFloat = 36
+        profPic = UIImageView(frame: CGRect(x: frame.width / 10, y: frame.midY - height / 2, width: width, height: height))
+        nameLbl = UILabel(frame: CGRect(x: profPic.frame.maxX + 20, y: profPic.frame.minY, width: 200, height: height))
+        icon = UIImageView()
+        snapCountLbl = UILabel()
+        
+        addSubview(profPic)
+        addSubview(nameLbl)
+        addSubview(icon)
+        icon.addSubview(snapCountLbl)
+        
+        setAccessoryView(imageStr: "CheckboxEmpty")
         self.selectionStyle = .none
     }
     
-    func setCheckmark(selected: Bool) {
-        let imageStr = selected ? "messageChecked" : "messageUnchecked"
+    func setAccessoryView(imageStr: String) {
         self.accessoryView = UIImageView(image: UIImage(named: imageStr))
     }
+    
+//    func setCheckmark(selected: Bool) {
+//        let imageStr = selected ? "messageChecked" : "messageUnchecked"
+//        self.accessoryView = UIImageView(image: UIImage(named: imageStr))
+//    }
     
     func updateUI(user: User, snapCount: Int?) {
         nameLbl.text = user.name

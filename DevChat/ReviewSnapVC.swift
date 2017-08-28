@@ -22,6 +22,8 @@ class ReviewSnapVC: UIViewController {
     
     var dataType: String = ""
     
+    lazy var slideInTransitioningDelegate = SlideInPresentationManager()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -41,6 +43,10 @@ class ReviewSnapVC: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let sendSnapVC = segue.destination as? SendSnapVC {
+            slideInTransitioningDelegate.direction = .right
+            sendSnapVC.transitioningDelegate = slideInTransitioningDelegate
+            sendSnapVC.modalPresentationStyle = .custom
+            
             if dataType == "video" {
                 sendSnapVC.tempVidUrl = sender as? URL
             } else if dataType == "photo" {

@@ -20,6 +20,10 @@ class AuthService {
         return _instance
     }
     
+    var currentUser: String? {
+        return Auth.auth().currentUser?.uid
+    }
+    
     func login(email: String, password: String, onComplete: Completion?) {
         Auth.auth().signIn(withEmail: email, password: password, completion: { (user, error) in
             if error != nil {

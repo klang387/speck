@@ -32,6 +32,8 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     private var _tempVidUrl: URL?
     private var _tempPhotoData: Data?
     
+    private var _friendsObserver: UInt!
+    
     var tempPhotoData: Data? {
         set {
             _tempPhotoData = newValue
@@ -53,11 +55,25 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
         tableView.delegate = self
         tableView.dataSource = self
+
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
-        DataService.instance.loadUsers(completion: { () in
-            self._users = DataService.instance.users
+        _friendsObserver = DataService.instance.friendsRef.observe(.value, with: { (snapshot) in
+            self._users = DataService.instance.loadUsers(snapshot: snapshot)
+            print("USERS: \(self._users)")
             self.tableView.reloadData()
         })
+        
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        DataService.instance.friendsRef.removeObserver(withHandle: _friendsObserver)
+        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -69,14 +85,14 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! UserCell
-        cell.setCheckmark(selected: true)
+        cell.setAccessoryView(imageStr: "CheckboxFilled")
         let user = _users[indexPath.row]
         _selectedUsers[user.uid!] = true
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! UserCell
-        cell.setCheckmark(selected: false)
+        cell.setAccessoryView(imageStr: "CheckboxEmpty")
         let user = _users[indexPath.row]
         _selectedUsers[user.uid!] = nil
     }

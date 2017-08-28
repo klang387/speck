@@ -57,11 +57,7 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
         }
         
         if let firstVC = snapViewControllers.first {
-            pageVC.setViewControllers([firstVC], direction: .forward, animated: true, completion: { (true) in
-//                firstVC.avPlayerLayer?.player?.replaceCurrentItem(with: firstVC.playerItem)
-//                firstVC.avQueuePlayer?.play()
-                print("Completion handled")
-            })
+            pageVC.setViewControllers([firstVC], direction: .forward, animated: true, completion: nil)
         }
         
     }

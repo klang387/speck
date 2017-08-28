@@ -55,7 +55,6 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         let user = User(snap: fromUser)
         let snaps = fromUser["snaps"] as? [String:Any]
         let snapCount = snaps?.count
-        print("SNAP: \(fromUser)")
         cell.updateUI(user: user, snapCount: snapCount)
         return cell
     }

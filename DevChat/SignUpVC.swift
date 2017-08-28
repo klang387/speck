@@ -17,7 +17,7 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
     @IBOutlet weak var email: RoundTextField!
     @IBOutlet weak var password: RoundTextField!
     @IBOutlet weak var passwordConfirm: RoundTextField!
-    @IBOutlet weak var profilePicPreview: UIImageView!
+    @IBOutlet weak var selectProfilePic: RoundedButton!
     
     var imagePicker: UIImagePickerController!
     
@@ -57,7 +57,7 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         if let image = info[UIImagePickerControllerEditedImage] as? UIImage {
-            profilePicPreview.image = image
+            selectProfilePic.imageView?.image = image
         } else {
             print("Failed to select valid image")
         }
@@ -84,7 +84,7 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
                     print("Error creating user: \(error!.debugDescription)")
                 } else {
                     print("Firebase user created successfully")
-                    if let imageData = UIImageJPEGRepresentation(self.profilePicPreview.image!, 0.2) {
+                    if let imageData = UIImageJPEGRepresentation(self.selectProfilePic.imageView!.image!, 0.2) {
                         DataService.instance.profPicStorageRef.child("\(NSUUID().uuidString)").putData(imageData, metadata: StorageMetadata(), completion: { (metadata, error) in
                             if error != nil {
                                 print("Image upload to Firebase failed: \(error.debugDescription)")
