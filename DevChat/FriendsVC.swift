@@ -34,6 +34,7 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.register(UserCell.self as AnyClass, forCellReuseIdentifier: "UserCell")
         
         let currentUser = AuthService.instance.currentUser!
         DataService.instance.profilesRef.child(currentUser).observeSingleEvent(of: .value, with: { (snapshot) in
@@ -76,12 +77,33 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         return 3
     }
     
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return sectionHeaders[section]
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 40
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        <#code#>
+        print("viewForHeader")
+        let rect = CGRect(x: 0, y: 0, width: tableView.frame.size.width, height: 40)
+        let headerView = UIView(frame: rect)
+        let sectionTitle = UILabel(frame: CGRect(x: 15, y: 0, width: tableView.frame.width / 2, height: 40))
+        sectionTitle.font = UIFont(name: "Avenir", size: 18)
+        sectionTitle.textColor = UIColor.darkGray
+        headerView.addSubview(sectionTitle)
+        
+        switch section {
+        case 0:
+            headerView.backgroundColor = UIColorFromHex(rgbValue: 0xCCD677)
+            sectionTitle.text = "Friend Requests"
+        case 1:
+            headerView.backgroundColor = UIColorFromHex(rgbValue: 0xE1EC80)
+            sectionTitle.text = "Friends"
+        case 2:
+            headerView.backgroundColor = UIColorFromHex(rgbValue: 0xEDF4B2)
+            sectionTitle.text = "All Users"
+        default:  break
+        }
+        
+        return headerView
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -93,9 +115,17 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 70
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell: UserCell
-        cell = tableView.dequeueReusableCell(withIdentifier: "UserCell") as! UserCell
+        print("creating cell")
+        let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell") as! UserCell
+        if cell.nameLbl == nil {
+            cell.frame = CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 70)
+            cell.setupCell(rowHeight: tableView.rectForRow(at: indexPath).size.height)
+        }
         switch indexPath.section {
         case 0:
             cell.updateUI(user: friendRequestsArray[indexPath.row], snapCount: nil)
@@ -130,5 +160,13 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             }
         }
         
+    }
+    
+    func UIColorFromHex(rgbValue:UInt32, alpha:Double=1.0)->UIColor {
+        let red = CGFloat((rgbValue & 0xFF0000) >> 16)/256.0
+        let green = CGFloat((rgbValue & 0xFF00) >> 8)/256.0
+        let blue = CGFloat(rgbValue & 0xFF)/256.0
+        
+        return UIColor(red:red, green:green, blue:blue, alpha:CGFloat(alpha))
     }
 }

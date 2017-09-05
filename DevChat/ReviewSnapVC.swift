@@ -30,11 +30,6 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
     var currentView = "preview"
     var sendSnapVC: SendSnapVC?
     
-    var blurView: UIVisualEffectView!
-    var maskView: UIView!
-    var maskViewTop: UIImageView!
-    var maskViewBottom: UIImageView!
-    
     var navBarVisible = true
     var alphaTarget: CGFloat = 1
     var animatable = true
@@ -46,29 +41,6 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        maskViewTop = UIImageView()
-        maskViewTop.contentMode = .scaleAspectFit
-        maskViewTop.image = UIImage(named: "TopBackRed")
-        maskViewTop.frame = topBar.frame
-        
-        maskViewBottom = UIImageView()
-        maskViewBottom.contentMode = .scaleAspectFit
-        maskViewBottom.image = UIImage(named: "BottomSendGreen")
-        maskViewBottom.frame = bottomBar.frame
-        
-        maskView = UIView()
-        maskView.frame = view.frame
-        maskView.addSubview(maskViewTop)
-        maskView.addSubview(maskViewBottom)
-        
-        let blur = UIBlurEffect(style: .light)
-        
-        blurView = UIVisualEffectView(effect: blur)
-        blurView.frame = view.frame
-        blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        blurView.mask = maskView
-        self.view.insertSubview(blurView, belowSubview: bottomBar)
-        
         newViewStartFrame = CGRect(origin: CGPoint(x: view.frame.origin.x + view.frame.width, y: view.frame.origin.y), size: view.frame.size)
         
         if dataType == "video" {
@@ -79,7 +51,7 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
         }
         
         addChildViewController(snapViewer)
-        view.insertSubview(snapViewer.view, belowSubview: blurView)
+        view.insertSubview(snapViewer.view, belowSubview: topBar)
         
     }
     
@@ -92,7 +64,6 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
                 self.backBtn.alpha = self.alphaTarget
                 self.bottomBar.alpha = self.alphaTarget
                 self.sendBtn.alpha = self.alphaTarget
-                self.blurView.alpha = self.alphaTarget
             }) { (finished) in
                 self.animatable = true
             }
@@ -103,7 +74,7 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
         if currentView == "preview" {
             tapRecognizer.isEnabled = false
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            sendSnapVC = storyboard.instantiateViewController(withIdentifier: "SendSnapVC") as! SendSnapVC
+            sendSnapVC = storyboard.instantiateViewController(withIdentifier: "SendSnapVC") as? SendSnapVC
             sendSnapVC!.delegate = self
             
             if dataType == "video" {

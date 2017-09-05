@@ -11,15 +11,14 @@ import FirebaseAuth
 
 class SettingsVC: UIViewController {
 
-    @IBOutlet weak var profileName: RoundTextField!
-    @IBOutlet weak var profilePic: RoundedButton!
+    @IBOutlet weak var profilePic: UIImageView!
     
     var image: UIImage?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        profilePic.setBackgroundImage(image, for: .normal)
+        profilePic.image = image
         
     }
     

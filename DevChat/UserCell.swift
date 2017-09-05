@@ -15,12 +15,12 @@ class UserCell: UITableViewCell {
     var icon: UIImageView!
     var snapCountLbl: UILabel!
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        let height: CGFloat = 36
-        let width: CGFloat = 36
+    func setupCell(rowHeight: CGFloat) {
+        print("Width: \(frame.width)  Height:  \(frame.height)")
+        let height: CGFloat = 54
+        let width: CGFloat = 54
         profPic = UIImageView(frame: CGRect(x: frame.width / 10, y: frame.midY - height / 2, width: width, height: height))
-        profPic.layer.cornerRadius = 18.0
+        profPic.layer.cornerRadius = height / 2
         profPic.layer.masksToBounds = true
         nameLbl = UILabel(frame: CGRect(x: profPic.frame.maxX + 20, y: profPic.frame.minY, width: 200, height: height))
         nameLbl.font = UIFont(name: "Avenir", size: 18)
@@ -34,6 +34,7 @@ class UserCell: UITableViewCell {
         
         setAccessoryView(imageStr: "CheckboxEmpty")
         self.selectionStyle = .none
+        
     }
     
     func setAccessoryView(imageStr: String) {
