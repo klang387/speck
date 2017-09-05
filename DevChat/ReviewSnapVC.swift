@@ -9,10 +9,15 @@
 import UIKit
 import AVFoundation
 import AVKit
+import QuartzCore
 
-class ReviewSnapVC: UIViewController {
+class ReviewSnapVC: UIViewController, SendSnapDelegate {
 
-    @IBOutlet weak var closeBtn: UIButton!
+    @IBOutlet weak var bottomBar: UIImageView!
+    @IBOutlet weak var topBar: UIImageView!
+    @IBOutlet weak var sendBtn: UIButton!
+    @IBOutlet weak var backBtn: UIButton!
+    @IBOutlet var tapRecognizer: UITapGestureRecognizer!
     
     let snapViewer = SnapViewer()
     
@@ -22,58 +27,152 @@ class ReviewSnapVC: UIViewController {
     
     var dataType: String = ""
     
+    var currentView = "preview"
+    var sendSnapVC: SendSnapVC?
+    
+    var blurView: UIVisualEffectView!
+    var maskView: UIView!
+    var maskViewTop: UIImageView!
+    var maskViewBottom: UIImageView!
+    
+    var navBarVisible = true
+    var alphaTarget: CGFloat = 1
+    var animatable = true
+    
+    var newViewStartFrame: CGRect!
+    
     lazy var slideInTransitioningDelegate = SlideInPresentationManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        addChildViewController(snapViewer)
-        view.insertSubview(snapViewer.view, belowSubview: closeBtn)
+        
+        maskViewTop = UIImageView()
+        maskViewTop.contentMode = .scaleAspectFit
+        maskViewTop.image = UIImage(named: "TopBackRed")
+        maskViewTop.frame = topBar.frame
+        
+        maskViewBottom = UIImageView()
+        maskViewBottom.contentMode = .scaleAspectFit
+        maskViewBottom.image = UIImage(named: "BottomSendGreen")
+        maskViewBottom.frame = bottomBar.frame
+        
+        maskView = UIView()
+        maskView.frame = view.frame
+        maskView.addSubview(maskViewTop)
+        maskView.addSubview(maskViewBottom)
+        
+        let blur = UIBlurEffect(style: .light)
+        
+        blurView = UIVisualEffectView(effect: blur)
+        blurView.frame = view.frame
+        blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        blurView.mask = maskView
+        self.view.insertSubview(blurView, belowSubview: bottomBar)
+        
+        newViewStartFrame = CGRect(origin: CGPoint(x: view.frame.origin.x + view.frame.width, y: view.frame.origin.y), size: view.frame.size)
         
         if dataType == "video" {
-            let playerItem = AVPlayerItem(url: tempVidUrl!)
-            snapViewer.avPlayerLayer?.player?.replaceCurrentItem(with: playerItem)
-            snapViewer.avPlayerLayer?.player?.play()
+            snapViewer.playerItem = AVPlayerItem(url: tempVidUrl!)
         } else if dataType == "photo" {
             snapViewer.imageView.image = tempPhoto
             tempPhotoData = UIImageJPEGRepresentation(tempPhoto!, 0.2)
         }
         
+        addChildViewController(snapViewer)
+        view.insertSubview(snapViewer.view, belowSubview: blurView)
+        
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let sendSnapVC = segue.destination as? SendSnapVC {
-            slideInTransitioningDelegate.direction = .right
-            sendSnapVC.transitioningDelegate = slideInTransitioningDelegate
-            sendSnapVC.modalPresentationStyle = .custom
-            
-            if dataType == "video" {
-                sendSnapVC.tempVidUrl = sender as? URL
-            } else if dataType == "photo" {
-                sendSnapVC.tempPhotoData = sender as? Data
+    @IBAction func tapGesture(_ sender: Any) {
+        if animatable {
+            animatable = false
+            alphaTarget = abs(alphaTarget - 1)
+            UIView.animate(withDuration: 0.2, animations: {
+                self.topBar.alpha = self.alphaTarget
+                self.backBtn.alpha = self.alphaTarget
+                self.bottomBar.alpha = self.alphaTarget
+                self.sendBtn.alpha = self.alphaTarget
+                self.blurView.alpha = self.alphaTarget
+            }) { (finished) in
+                self.animatable = true
             }
         }
     }
     
     @IBAction func sendToUsersBtnPressed(_ sender: Any) {
-        if dataType == "video" {
-            performSegue(withIdentifier: "toSendSnapVC", sender: tempVidUrl)
-        } else if dataType == "photo" {
-            performSegue(withIdentifier: "toSendSnapVC", sender: tempPhotoData)
+        if currentView == "preview" {
+            tapRecognizer.isEnabled = false
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            sendSnapVC = storyboard.instantiateViewController(withIdentifier: "SendSnapVC") as! SendSnapVC
+            sendSnapVC!.delegate = self
+            
+            if dataType == "video" {
+                sendSnapVC!.tempVidUrl = tempVidUrl
+            } else if dataType == "photo" {
+                sendSnapVC!.tempPhotoData = tempPhotoData
+            }
+            
+            addChildViewController(sendSnapVC!)
+            sendSnapVC!.view.frame = newViewStartFrame
+            view.insertSubview(sendSnapVC!.view, belowSubview: bottomBar)
+            UIView.animate(withDuration: 0.3, animations: { 
+                self.sendSnapVC!.view.frame = self.view.frame
+            }, completion: { (finished) in
+                if finished {
+                    self.bottomBar.image = UIImage(named: "BottomSendWhite")
+                    self.currentView = "send"
+                }
+            })
+        } else if currentView == "send" {
+            if sendSnapVC != nil {
+                DataService.instance.uploadMedia(tempVidUrl: sendSnapVC!.tempVidUrl, tempPhotoData: sendSnapVC!.tempPhotoData, caption: nil, recipients: sendSnapVC!.selectedUsers, completion: {
+                    removeSendSnapVC()
+                })
+            }
         }
+        
     }
     
     @IBAction func closePreviewBtnPressed(_ sender: Any) {
-        if dataType == "video" {
-            let fileManager = FileManager.default
-            do {
-                try fileManager.removeItem(at: tempVidUrl!)
-                print("Successfully deleted temp video")
-            } catch {
-                print("Could not delete temp video: \(error)")
+        if currentView == "preview" {
+            if dataType == "video" {
+                let fileManager = FileManager.default
+                do {
+                    try fileManager.removeItem(at: tempVidUrl!)
+                    print("Successfully deleted temp video")
+                } catch {
+                    print("Could not delete temp video: \(error)")
+                }
             }
+            self.dismiss(animated: true, completion: nil)
+        } else if currentView == "send" {
+            removeSendSnapVC()
         }
-        self.dismiss(animated: true, completion: nil)
+    }
+    
+    func removeSendSnapVC() {
+        bottomBar.image = UIImage(named: "BottomSendAlpha")
+        sendBtn.imageView?.image = UIImage(named: "SendBtnGreen")
+        UIView.animate(withDuration: 0.3, animations: {
+            self.sendSnapVC!.view.frame = self.newViewStartFrame
+        }, completion: { (finished) in
+            if finished {
+                self.sendSnapVC!.removeFromParentViewController()
+                self.currentView = "preview"
+                self.tapRecognizer.isEnabled = true
+            }
+        })
+    }
+    
+    func rowsAreSelected(selected: Bool) {
+        print("rowsAreSelected executed")
+        if selected {
+            bottomBar.image = UIImage(named: "BottomSendGreen")
+            sendBtn.imageView?.image = UIImage(named: "SendBtnWhite")
+        } else {
+            bottomBar.image = UIImage(named: "BottomSendWhite")
+            sendBtn.imageView?.image = UIImage(named: "SendBtnGreen")
+        }
     }
 
 }

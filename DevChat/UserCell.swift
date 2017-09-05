@@ -20,7 +20,10 @@ class UserCell: UITableViewCell {
         let height: CGFloat = 36
         let width: CGFloat = 36
         profPic = UIImageView(frame: CGRect(x: frame.width / 10, y: frame.midY - height / 2, width: width, height: height))
+        profPic.layer.cornerRadius = 18.0
+        profPic.layer.masksToBounds = true
         nameLbl = UILabel(frame: CGRect(x: profPic.frame.maxX + 20, y: profPic.frame.minY, width: 200, height: height))
+        nameLbl.font = UIFont(name: "Avenir", size: 18)
         icon = UIImageView()
         snapCountLbl = UILabel()
         

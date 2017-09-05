@@ -15,6 +15,9 @@ import CoreGraphics
 
 class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
+    var currentUser = ""
+    var profilePic: UIImage?
+    
     var tempVidUrl: URL?
     var tempPhoto: UIImage?
     
@@ -25,11 +28,14 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
     @IBOutlet weak var captureBtn: SwiftyCamButton!
     @IBOutlet weak var switchCameraBtn: UIButton!
+    @IBOutlet weak var settingsBtn: RoundedButton!
+    @IBOutlet weak var flashBtn: UIButton!
     @IBOutlet weak var blurMaskView: UIView!
     @IBOutlet weak var recFrame: UIImageView!
     @IBOutlet weak var inboxFrame: UIImageView!
     @IBOutlet weak var switchCameraFrame: UIImageView!
     @IBOutlet weak var topFrame: UIImageView!
+
     
     @IBAction func switchCameraBtnPressed(_ sender: Any) {
         switchCamera()
@@ -43,22 +49,32 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         performSegue(withIdentifier: "toSettingsVC", sender: nil)
     }
     
-    @IBAction func friendsPressed(_ sender: Any) {
-        performSegue(withIdentifier: "toFriendsVC", sender: nil)
-    }
-    
     @IBAction func flashPressed(_ sender: Any) {
-        
+        if flashEnabled {
+            flashEnabled = false
+            flashBtn.setImage(UIImage(named: "FlashBtnOff"), for: .normal)
+        } else {
+            flashEnabled = true
+            flashBtn.setImage(UIImage(named: "FlashBtnOn"), for: .normal)
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let reviewSnapVC = segue.destination as? ReviewSnapVC {
-            if dataType == "video" {
-                reviewSnapVC.tempVidUrl = sender as? URL
-                reviewSnapVC.dataType = "video"
-            } else if dataType == "photo" {
-                reviewSnapVC.tempPhoto = sender as? UIImage
-                reviewSnapVC.dataType = "photo"
+        if segue.identifier == "toReviewSnapVC" {
+            if let reviewSnapVC = segue.destination as? ReviewSnapVC {
+                if dataType == "video" {
+                    reviewSnapVC.tempVidUrl = sender as? URL
+                    reviewSnapVC.dataType = "video"
+                } else if dataType == "photo" {
+                    reviewSnapVC.tempPhoto = sender as? UIImage
+                    reviewSnapVC.dataType = "photo"
+                }
+            }
+        }
+        
+        if segue.identifier == "toSettingsVC" {
+            if let settingsVC = segue.destination as? SettingsVC, let image = profilePic {
+                settingsVC.image = image
             }
         }
     }
@@ -69,6 +85,9 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         cameraDelegate = self
         captureBtn.delegate = self
         maximumVideoDuration = 10.0
+        flashEnabled = false
+        
+        flashBtn.imageView?.contentMode = .scaleAspectFit
         
         let blur = UIBlurEffect(style: .light)
         blurView = UIVisualEffectView(effect: blur)
@@ -81,9 +100,26 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        guard Auth.auth().currentUser != nil else {
+        if let currentUser = Auth.auth().currentUser?.uid {
+            self.currentUser = currentUser
+            DataService.instance.profilesRef.child(currentUser).observeSingleEvent(of: .value, with: { (snapshot) in
+                if let profile = snapshot.value as? [String:Any] {
+                    if let profPicUrl = profile["profPicUrl"] as? String {
+                        URLSession.shared.dataTask(with: NSURL(string: profPicUrl)! as URL, completionHandler: { (data, response, error) -> Void in
+                            if error != nil {
+                                print(error!)
+                                return
+                            }
+                            DispatchQueue.main.async(execute: { () -> Void in
+                                self.profilePic = UIImage(data: data!)
+                                self.settingsBtn.setImage(self.profilePic, for: .normal)
+                            })
+                        }).resume()
+                    }
+                }
+            })
+        } else {
             performSegue(withIdentifier: "toLoginVC", sender: nil)
-            return
         }
 
         if !blurStatus {

@@ -2,17 +2,17 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "FrameInboxBtn.png",
+      "filename" : "FrameInbox.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "FrameInboxBtn@2x.png",
+      "filename" : "FrameInbox@2x.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "FrameInboxBtn@3x.png",
+      "filename" : "FrameInbox@3x.png",
       "scale" : "3x"
     }
   ],

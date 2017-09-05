@@ -26,70 +26,74 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="InboxFrameMask" translatesAutoresizingMaskIntoConstraints="NO" id="0kR-iV-nqK">
-                                        <rect key="frame" x="-6" y="452" width="93" height="117"/>
+                                        <rect key="frame" x="-1" y="469" width="65" height="100"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="SwitchCameraFrameMask" translatesAutoresizingMaskIntoConstraints="NO" id="B1j-xv-X8t">
-                                        <rect key="frame" x="237" y="440" width="88" height="128"/>
+                                        <rect key="frame" x="255" y="469" width="68" height="99"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="RecFrameMask" translatesAutoresizingMaskIntoConstraints="NO" id="wQH-m6-v7P" userLabel="FrameRecBtn">
-                                        <rect key="frame" x="57" y="480" width="207" height="89"/>
+                                        <rect key="frame" x="68" y="489" width="185" height="79"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="TopFrameMask" translatesAutoresizingMaskIntoConstraints="NO" id="wbK-jN-HSt">
                                         <rect key="frame" x="0.0" y="-7" width="320" height="74"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oAX-j3-OdA">
-                                        <rect key="frame" x="135" y="18" width="57" height="30"/>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4eK-xB-UgP" userLabel="SwitchCameraBtn">
+                                        <rect key="frame" x="272" y="516" width="46" height="46"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <state key="normal" title="Settings">
+                                        <state key="normal" image="SwitchCameraBtn"/>
+                                        <connections>
+                                            <action selector="switchCameraBtnPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="cjY-nO-NcY"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="I3b-5i-Bpj">
+                                        <rect key="frame" x="3" y="516" width="46" height="46"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" image="InboxBtn"/>
+                                        <connections>
+                                            <action selector="inboxBtnPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="X27-Op-T5w"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleAspectFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oAX-j3-OdA" customClass="RoundedButton" customModule="DevChat" customModuleProvider="target">
+                                        <rect key="frame" x="22" y="23" width="32" height="32"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" red="0.52179171954314718" green="0.52179171954314718" blue="0.52179171954314718" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <state key="normal">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                <real key="value" value="16"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                                <real key="value" value="2"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                                <color key="value" red="0.4789656400680542" green="0.70071405172348022" blue="0.90655112266540527" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
                                         <connections>
                                             <action selector="settingsPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ytP-z2-uAk"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleAspectFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QZO-BK-4Gf">
+                                        <rect key="frame" x="269" y="19" width="40" height="40"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" image="FlashBtnOff"/>
+                                        <connections>
+                                            <action selector="flashPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Cf4-Zh-GLX"/>
                                         </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QZO-BK-4Gf">
-                                <rect key="frame" x="275" y="20" width="33" height="33"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" image="FlashOff"/>
-                                <connections>
-                                    <action selector="flashPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Cf4-Zh-GLX"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8xy-IG-f4O" userLabel="CaptureBtn" customClass="SwiftyCamButton" customModule="SwiftyCam">
-                                <rect key="frame" x="126" y="492" width="69" height="71"/>
+                                <rect key="frame" x="126" y="498" width="69" height="71"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="RecBtn"/>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="I3b-5i-Bpj" userLabel="InboxBtn">
-                                <rect key="frame" x="8" y="512" width="46" height="46"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" image="InboxBtn"/>
-                                <connections>
-                                    <action selector="inboxBtnPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="X27-Op-T5w"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4eK-xB-UgP" userLabel="SwitchCameraBtn">
-                                <rect key="frame" x="265" y="512" width="46" height="46"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" image="SwitchCameraBtn"/>
-                                <connections>
-                                    <action selector="switchCameraBtnPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="cjY-nO-NcY"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tkO-Ph-E6B">
-                                <rect key="frame" x="12" y="21" width="33" height="32"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" image="Friends"/>
-                                <connections>
-                                    <action selector="friendsPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="qXB-ij-giB"/>
-                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -97,8 +101,10 @@
                     <connections>
                         <outlet property="blurMaskView" destination="Uqp-69-ycm" id="80H-zl-J98"/>
                         <outlet property="captureBtn" destination="8xy-IG-f4O" id="6ss-jg-Lty"/>
+                        <outlet property="flashBtn" destination="QZO-BK-4Gf" id="0AQ-o7-M7P"/>
                         <outlet property="inboxFrame" destination="0kR-iV-nqK" id="7sn-yF-5le"/>
                         <outlet property="recFrame" destination="wQH-m6-v7P" id="V1Q-un-2Bu"/>
+                        <outlet property="settingsBtn" destination="oAX-j3-OdA" id="aVl-Tn-T4Q"/>
                         <outlet property="switchCameraBtn" destination="4eK-xB-UgP" id="zuj-aA-0fJ"/>
                         <outlet property="switchCameraFrame" destination="B1j-xv-X8t" id="eNt-67-rDD"/>
                         <outlet property="topFrame" destination="wbK-jN-HSt" id="YOU-bX-acz"/>
@@ -106,7 +112,6 @@
                         <segue destination="ctK-C7-7lg" kind="presentation" identifier="toInboxVC" id="XUI-hJ-Hrl"/>
                         <segue destination="Cbu-dt-dES" kind="presentation" identifier="toSettingsVC" id="0kJ-61-0Ou"/>
                         <segue destination="ju6-W3-mZ3" kind="presentation" identifier="toReviewSnapVC" modalPresentationStyle="overFullScreen" modalTransitionStyle="crossDissolve" id="Eyz-YP-rDZ"/>
-                        <segue destination="xTd-WS-Uet" kind="presentation" identifier="toFriendsVC" id="y8q-Ds-1Fs"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -547,7 +552,7 @@
                     </connections>
                 </searchDisplayController>
             </objects>
-            <point key="canvasLocation" x="37.5" y="-679.22535211267609"/>
+            <point key="canvasLocation" x="1626" y="-679"/>
         </scene>
         <!--SettingsVC-->
         <scene sceneID="dEw-S2-OOK">
@@ -561,29 +566,154 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nP2-Wz-a9s">
-                                <rect key="frame" x="130" y="301" width="60" height="30"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="SettingsBg" translatesAutoresizingMaskIntoConstraints="NO" id="Fud-Ng-CZc">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Sign Out"/>
+                            </imageView>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="TopBackRed" translatesAutoresizingMaskIntoConstraints="NO" id="hHu-tA-aLk">
+                                <rect key="frame" x="0.0" y="-2" width="320" height="74"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nP2-Wz-a9s" customClass="RoundedButton" customModule="DevChat" customModuleProvider="target">
+                                <rect key="frame" x="60" y="446" width="200" height="40"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="17"/>
+                                <state key="normal" title="Sign Out">
+                                    <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                        <real key="value" value="2"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                        <color key="value" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="bgColor">
+                                        <color key="value" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="10"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="signOutPressed:" destination="Cbu-dt-dES" eventType="touchUpInside" id="JoN-az-Gka"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Iar-7f-woT">
-                                <rect key="frame" x="30" y="28" width="34" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Iar-7f-woT">
+                                <rect key="frame" x="21" y="29" width="34" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Back"/>
+                                <state key="normal" image="BackBtnWhite"/>
                                 <connections>
                                     <action selector="backPressed:" destination="Cbu-dt-dES" eventType="touchUpInside" id="FhO-aA-GkS"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cee-sK-ZFG" customClass="RoundedButton" customModule="DevChat" customModuleProvider="target">
+                                <rect key="frame" x="60" y="398" width="200" height="40"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="17"/>
+                                <state key="normal" title="Friends">
+                                    <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                        <real key="value" value="2"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                        <color key="value" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="bgColor">
+                                        <color key="value" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="10"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="friendsPressed:" destination="Cbu-dt-dES" eventType="touchUpInside" id="VTK-HO-Dg9"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Ul-e3-yWy" customClass="RoundedButton" customModule="DevChat" customModuleProvider="target">
+                                <rect key="frame" x="75" y="77" width="170" height="170"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                        <real key="value" value="2"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                        <color key="value" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="bgColor">
+                                        <color key="value" red="0.88750606779999996" green="0.93236356970000001" blue="0.97449690099999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="85"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="profilePicPressed:" destination="Cbu-dt-dES" eventType="touchUpInside" id="uce-LX-dMo"/>
+                                </connections>
+                            </button>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="Kevin Langelier" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="H36-Yj-XBe" customClass="RoundTextField" customModule="DevChat" customModuleProvider="target">
+                                <rect key="frame" x="60" y="264" width="200" height="40"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="10"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                        <color key="value" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                        <real key="value" value="2"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="bgColor">
+                                        <color key="value" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="placeholderColor">
+                                        <color key="value" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qes-EY-10g" customClass="RoundedButton" customModule="DevChat" customModuleProvider="target">
+                                <rect key="frame" x="60" y="312" width="200" height="40"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="17"/>
+                                <state key="normal" title="Save Profile Changes">
+                                    <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                        <real key="value" value="2"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                        <color key="value" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="bgColor">
+                                        <color key="value" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="10"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="saveProfilePressed:" destination="Cbu-dt-dES" eventType="touchUpInside" id="Hzy-Uo-W7s"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
+                    <connections>
+                        <outlet property="profileName" destination="H36-Yj-XBe" id="gqG-77-3sS"/>
+                        <outlet property="profilePic" destination="3Ul-e3-yWy" id="T8l-QQ-SEK"/>
+                        <segue destination="xTd-WS-Uet" kind="presentation" identifier="toFriendsVC" id="JN8-Zy-SbA"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dUX-YX-N4e" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="855" y="-679"/>
+            <point key="canvasLocation" x="855" y="-679.22535211267609"/>
         </scene>
         <!--ReviewSnapVC-->
         <scene sceneID="9uG-qG-bEL">
@@ -597,38 +727,56 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="INH-4L-EPz">
-                                <rect key="frame" x="16" y="28" width="55" height="30"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="BottomSendAlpha" translatesAutoresizingMaskIntoConstraints="NO" id="zBS-w0-hSz">
+                                <rect key="frame" x="0.0" y="498" width="320" height="70"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.86535906789999995" green="0.17267754669999999" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <state key="normal" title="Close">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="closePreviewBtnPressed:" destination="ju6-W3-mZ3" eventType="touchUpInside" id="Sp9-GS-za4"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Os-1c-D3C">
-                                <rect key="frame" x="248" y="515" width="59" height="30"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Os-1c-D3C">
+                                <rect key="frame" x="257" y="510" width="44" height="43"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.27632034449999998" green="0.65319638319999995" blue="0.12757182559999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <state key="normal" title="Send">
+                                <state key="normal" image="SendBtnGreen">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
                                     <action selector="sendToUsersBtnPressed:" destination="ju6-W3-mZ3" eventType="touchUpInside" id="lEp-oa-OOd"/>
                                 </connections>
                             </button>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="TopBackAlpha" translatesAutoresizingMaskIntoConstraints="NO" id="bXN-JA-XbL">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="70"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="INH-4L-EPz">
+                                <rect key="frame" x="22" y="26" width="34" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="BackBtnRed">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="closePreviewBtnPressed:" destination="ju6-W3-mZ3" eventType="touchUpInside" id="Sp9-GS-za4"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="41j-Pq-8XZ" appends="YES" id="2AI-JR-AQU"/>
+                        </connections>
                     </view>
                     <navigationItem key="navigationItem" id="Z5d-EU-asL"/>
                     <connections>
-                        <outlet property="closeBtn" destination="INH-4L-EPz" id="s29-kz-lFV"/>
-                        <segue destination="jev-eN-UJH" kind="presentation" identifier="toSendSnapVC" id="T4l-FA-3lf"/>
+                        <outlet property="backBtn" destination="INH-4L-EPz" id="XAR-k6-LrS"/>
+                        <outlet property="bottomBar" destination="zBS-w0-hSz" id="Wuh-HU-KHR"/>
+                        <outlet property="sendBtn" destination="2Os-1c-D3C" id="c3m-EG-rh5"/>
+                        <outlet property="tapRecognizer" destination="41j-Pq-8XZ" id="DG3-3K-mlV"/>
+                        <outlet property="topBar" destination="bXN-JA-XbL" id="SVg-5s-r1x"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dpG-8f-int" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="41j-Pq-8XZ">
+                    <connections>
+                        <action selector="tapGesture:" destination="ju6-W3-mZ3" id="OoD-eZ-O7u"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="37.5" y="773.23943661971828"/>
         </scene>
@@ -659,30 +807,6 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="TopBackWhite" translatesAutoresizingMaskIntoConstraints="NO" id="JmE-Ii-tLr">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="69"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Amr-64-S62" userLabel="BackBtn">
-                                <rect key="frame" x="19" y="25" width="34" height="35"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" image="BackBtnRed"/>
-                                <connections>
-                                    <action selector="backBtnPressed:" destination="jev-eN-UJH" eventType="touchUpInside" id="938-GW-vvT"/>
-                                </connections>
-                            </button>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="BottomSendWhite" translatesAutoresizingMaskIntoConstraints="NO" id="o4e-HJ-h4O">
-                                <rect key="frame" x="0.0" y="496" width="320" height="72"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FV5-FE-vDp" userLabel="SendBtn">
-                                <rect key="frame" x="256" y="511" width="44" height="43"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" image="SendBtnGreen"/>
-                                <connections>
-                                    <action selector="sendBtnPressed:" destination="jev-eN-UJH" eventType="touchUpInside" id="DjF-Xq-zVv"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -706,8 +830,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="n1r-Fb-Taz">
-                                <rect key="frame" x="0.0" y="50" width="320" height="518"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="n1r-Fb-Taz">
+                                <rect key="frame" x="0.0" y="67" width="320" height="501"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="UserCell" id="5on-AC-5YC" customClass="UserCell" customModule="DevChat" customModuleProvider="target">
@@ -720,22 +845,20 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e4P-ru-pD4">
-                                <rect key="frame" x="15" y="12" width="34" height="30"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="TopBackRed" translatesAutoresizingMaskIntoConstraints="NO" id="SI7-ij-wcL">
+                                <rect key="frame" x="-2" y="-1" width="322" height="66"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Back"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e4P-ru-pD4">
+                                <rect key="frame" x="19" y="23" width="36" height="36"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="BackBtnWhite"/>
                                 <connections>
                                     <action selector="backBtn:" destination="ctK-C7-7lg" eventType="touchUpInside" id="fxB-li-hcY"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstAttribute="trailing" secondItem="n1r-Fb-Taz" secondAttribute="trailing" id="0Ep-pb-fAl"/>
-                            <constraint firstItem="n1r-Fb-Taz" firstAttribute="top" secondItem="FnV-PM-zY4" secondAttribute="top" constant="50" id="9Tx-cL-6VR"/>
-                            <constraint firstItem="uT1-0y-FjA" firstAttribute="top" secondItem="n1r-Fb-Taz" secondAttribute="bottom" id="iAQ-b1-zWi"/>
-                            <constraint firstItem="n1r-Fb-Taz" firstAttribute="leading" secondItem="FnV-PM-zY4" secondAttribute="leading" id="whO-12-vIL"/>
-                        </constraints>
                     </view>
                     <connections>
                         <outlet property="tableView" destination="n1r-Fb-Taz" id="Ijf-Zu-z1Q"/>
@@ -782,23 +905,23 @@
         </scene>
     </scenes>
     <resources>
-        <image name="BackBtnRed" width="34" height="35"/>
-        <image name="BackBtnWhite" width="34" height="35"/>
-        <image name="BottomSendWhite" width="320" height="70"/>
+        <image name="BackBtnRed" width="36" height="36"/>
+        <image name="BackBtnWhite" width="36" height="36"/>
+        <image name="BottomSendAlpha" width="320" height="70"/>
         <image name="CreateAccountBg" width="320" height="568"/>
-        <image name="FlashOff" width="33" height="33"/>
-        <image name="Friends" width="33" height="32"/>
-        <image name="InboxBtn" width="47" height="48"/>
-        <image name="InboxFrameMask" width="80" height="116"/>
-        <image name="RecBtn" width="67" height="68"/>
-        <image name="RecFrameMask" width="199" height="85"/>
+        <image name="FlashBtnOff" width="26" height="26"/>
+        <image name="InboxBtn" width="42" height="42"/>
+        <image name="InboxFrameMask" width="67" height="107"/>
+        <image name="RecBtn" width="60" height="60"/>
+        <image name="RecFrameMask" width="183" height="78"/>
         <image name="SendBtnGreen" width="44" height="43"/>
+        <image name="SettingsBg" width="320" height="568"/>
         <image name="SignInBg" width="320" height="568"/>
-        <image name="SwitchCameraBtn" width="47" height="48"/>
-        <image name="SwitchCameraFrameMask" width="80" height="116"/>
-        <image name="TopBackRed" width="320" height="69"/>
-        <image name="TopBackWhite" width="320" height="69"/>
-        <image name="TopFrameMask" width="320" height="72"/>
-        <image name="UploadProfilePic" width="94" height="95"/>
+        <image name="SwitchCameraBtn" width="42" height="42"/>
+        <image name="SwitchCameraFrameMask" width="67" height="107"/>
+        <image name="TopBackAlpha" width="320" height="70"/>
+        <image name="TopBackRed" width="320" height="70"/>
+        <image name="TopFrameMask" width="320" height="63"/>
+        <image name="UploadProfilePic" width="98" height="93"/>
     </resources>
 </document>

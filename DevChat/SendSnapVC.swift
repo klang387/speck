@@ -14,17 +14,7 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     @IBOutlet weak var tableView: UITableView!
     
-    @IBAction func sendBtnPressed(_ sender: Any) {
-
-        DataService.instance.uploadMedia(tempVidUrl: _tempVidUrl, tempPhotoData: _tempPhotoData, caption: nil, recipients: _selectedUsers, completion: { completion in
-            self.dismiss(animated: true, completion: nil)
-        })
-        
-    }
-    
-    @IBAction func backBtnPressed(_ sender: Any) {
-        self.dismiss(animated: true, completion: nil)
-    }
+    var delegate: SendSnapDelegate?
     
     private var _users = [User]()
     private var _selectedUsers = [String:Bool]()
@@ -47,6 +37,14 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
             _tempVidUrl = newValue
         } get {
             return _tempVidUrl
+        }
+    }
+    
+    var selectedUsers: [String:Bool] {
+        set {
+            _selectedUsers = newValue
+        } get {
+            return _selectedUsers
         }
     }
     
@@ -88,6 +86,7 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         cell.setAccessoryView(imageStr: "CheckboxFilled")
         let user = _users[indexPath.row]
         _selectedUsers[user.uid!] = true
+        delegate?.rowsAreSelected(selected: true)
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
@@ -95,10 +94,17 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         cell.setAccessoryView(imageStr: "CheckboxEmpty")
         let user = _users[indexPath.row]
         _selectedUsers[user.uid!] = nil
+        if _selectedUsers.count == 0 {
+            delegate?.rowsAreSelected(selected: false)
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return _users.count
     }
 
+}
+
+protocol SendSnapDelegate {
+    func rowsAreSelected(selected: Bool)
 }

@@ -11,14 +11,38 @@ import FirebaseAuth
 
 class SettingsVC: UIViewController {
 
+    @IBOutlet weak var profileName: RoundTextField!
+    @IBOutlet weak var profilePic: RoundedButton!
+    
+    var image: UIImage?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
         
+        profilePic.setBackgroundImage(image, for: .normal)
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        
+    }
+    
+    @IBAction func profilePicPressed(_ sender: Any) {
+    
+    }
+
+    @IBAction func friendsPressed(_ sender: Any) {
+        performSegue(withIdentifier: "toFriendsVC", sender: nil)
     }
 
     @IBAction func backPressed(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
+    }
+    
+    @IBAction func saveProfilePressed(_ sender: Any) {
+    
     }
     
     @IBAction func signOutPressed(_ sender: Any) {

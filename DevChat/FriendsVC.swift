@@ -80,6 +80,10 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         return sectionHeaders[section]
     }
     
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        <#code#>
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return friendRequestsArray.count
@@ -91,22 +95,19 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UserCell
+        cell = tableView.dequeueReusableCell(withIdentifier: "UserCell") as! UserCell
         switch indexPath.section {
         case 0:
-            cell = tableView.dequeueReusableCell(withIdentifier: "FriendRequestCell") as! UserCell
             cell.updateUI(user: friendRequestsArray[indexPath.row], snapCount: nil)
         case 1:
-            cell = tableView.dequeueReusableCell(withIdentifier: "FriendCell") as! UserCell
             cell.updateUI(user: friendsArray[indexPath.row], snapCount: nil)
         default:
-            cell = tableView.dequeueReusableCell(withIdentifier: "UserCell") as! UserCell
             cell.updateUI(user: allUsersArray[indexPath.row], snapCount: nil)
         }
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("Row Selected")
         switch indexPath.section {
         case 0:
             if let currentUser = AuthService.instance.currentUser {
