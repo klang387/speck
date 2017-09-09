@@ -51,11 +51,19 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell") as! UserCell
+        if cell.nameLbl == nil {
+            cell.frame = CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 70)
+            cell.setupCell()
+            cell.addStyleSquare(alignment: "right")
+            cell.backgroundColor = view.UIColorFromHex(rgbValue: 0xBCD9E6)
+            cell.addSnapCount()
+        }
         let fromUser = snapsReceived[indexPath.row]
         let user = User(snap: fromUser)
-        let snaps = fromUser["snaps"] as? [String:Any]
-        let snapCount = snaps?.count
-        cell.updateUI(user: user, snapCount: snapCount)
+        if let snaps = fromUser["snaps"] as? [String:Any] {
+            cell.snapCount?.text = "\(snaps.count)"
+        }
+        cell.updateUI(user: user)
         return cell
     }
     
@@ -65,6 +73,10 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             performSegue(withIdentifier: "toViewSnapsVC", sender: snaps)
         }
         
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 70
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

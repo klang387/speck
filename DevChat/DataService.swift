@@ -43,6 +43,11 @@ class DataService {
         return usersRef.child(user).child("friendRequests")
     }
     
+    var outgoingRequestsRef: DatabaseReference {
+        let user = Auth.auth().currentUser!.uid
+        return usersRef.child(user).child("outgoingRequests")
+    }
+    
     var usersRef: DatabaseReference {
         return mainRef.child("users")
     }
@@ -71,7 +76,6 @@ class DataService {
     func loadUsers(snapshot: DataSnapshot) -> [User] {
         var userArray: [User] = []
         if let users = snapshot.value as? [String:Any] {
-            print("Converting snapshot success")
             for (key, value) in users {
                 if let dict = value as? [String:Any] {
                     if let name = dict["name"] as? String, let profPicUrl = dict["profPicUrl"] as? String {
@@ -82,7 +86,6 @@ class DataService {
             }
             return userArray
         } else {
-            print("Converting snapshot to dictionary failed.")
             return []
         }
     }

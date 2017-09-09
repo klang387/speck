@@ -8,7 +8,7 @@
 
 import UIKit
 
-class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UserCellDelegate {
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
@@ -22,12 +22,21 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     var friendRequestsArray = [User]()
     var friendsArray = [User]()
     var allUsersArray = [User]()
+    var outgoingRequests = [String:Bool]()
     
     var friendsObserver: UInt!
     var friendRequestsObserver: UInt!
     var allUsersObserver: UInt!
+    var outgoingRequestsObserver: UInt!
     
-    var myProfile = [String:Any]()
+    var myProfile: [String:Any]?
+    var currentUser: String?
+    var userDict: [String:Any]?
+    var user: User?
+    
+    var section0Hidden = false
+    var section1Hidden = false
+    var section2Hidden = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,12 +45,16 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         tableView.dataSource = self
         tableView.register(UserCell.self as AnyClass, forCellReuseIdentifier: "UserCell")
         
-        let currentUser = AuthService.instance.currentUser!
-        DataService.instance.profilesRef.child(currentUser).observeSingleEvent(of: .value, with: { (snapshot) in
-            if let profile = snapshot.value as? [String:Any] {
-                self.myProfile[currentUser] = profile
-            }
-        })
+        if let currentUser = AuthService.instance.currentUser {
+            self.currentUser = currentUser
+            
+            DataService.instance.profilesRef.child(currentUser).observeSingleEvent(of: .value, with: { (snapshot) in
+                if let profile = snapshot.value as? [String:Any] {
+                    self.myProfile = [currentUser : profile]
+                }
+            })
+        }
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -62,6 +75,15 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             self.tableView.reloadData()
         })
         
+        outgoingRequestsObserver = DataService.instance.outgoingRequestsRef.observe(.value, with: { (snapshot) in
+            if let outgoingDict = snapshot.value as? [String:Bool] {
+                self.outgoingRequests = outgoingDict
+            } else {
+                self.outgoingRequests.removeAll()
+            }
+            self.tableView.reloadData()
+        })
+        
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -70,6 +92,7 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         DataService.instance.friendsRef.removeObserver(withHandle: friendsObserver)
         DataService.instance.friendRequestsRef.removeObserver(withHandle: friendRequestsObserver)
         DataService.instance.profilesRef.removeObserver(withHandle: allUsersObserver)
+        DataService.instance.outgoingRequestsRef.removeObserver(withHandle: outgoingRequestsObserver)
         
     }
 
@@ -82,23 +105,39 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        print("viewForHeader")
         let rect = CGRect(x: 0, y: 0, width: tableView.frame.size.width, height: 40)
         let headerView = UIView(frame: rect)
+        
         let sectionTitle = UILabel(frame: CGRect(x: 15, y: 0, width: tableView.frame.width / 2, height: 40))
         sectionTitle.font = UIFont(name: "Avenir", size: 18)
         sectionTitle.textColor = UIColor.darkGray
         headerView.addSubview(sectionTitle)
         
+        let sectionCount = UILabel(frame: CGRect(x: headerView.frame.width - 30, y: 0, width: 30, height: headerView.frame.height))
+        sectionCount.font = UIFont(name: "Avenir", size: 18)
+        sectionCount.textColor = UIColor.darkGray
+        headerView.addSubview(sectionCount)
+        
+        let sectionBtn = UIButton(frame: headerView.frame)
+        sectionBtn.tag = section
+        sectionBtn.addTarget(self, action: #selector(toggleSectionVisibility), for: .touchUpInside)
+        headerView.addSubview(sectionBtn)
+        
         switch section {
         case 0:
-            headerView.backgroundColor = UIColorFromHex(rgbValue: 0xCCD677)
+            headerView.backgroundColor = self.view.UIColorFromHex(rgbValue: 0xE1EC80)
             sectionTitle.text = "Friend Requests"
+            if friendRequestsArray.count > 0 {
+                sectionCount.text = String(friendRequestsArray.count)
+            }
         case 1:
-            headerView.backgroundColor = UIColorFromHex(rgbValue: 0xE1EC80)
+            headerView.backgroundColor = self.view.UIColorFromHex(rgbValue: 0x8BBFD6)
             sectionTitle.text = "Friends"
+            if friendsArray.count > 0 {
+                sectionCount.text = String(friendsArray.count)
+            }
         case 2:
-            headerView.backgroundColor = UIColorFromHex(rgbValue: 0xEDF4B2)
+            headerView.backgroundColor = self.view.UIColorFromHex(rgbValue: 0xDCDCDC)
             sectionTitle.text = "All Users"
         default:  break
         }
@@ -108,9 +147,9 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return friendRequestsArray.count
-        case 1: return friendsArray.count
-        case 2: return allUsersArray.count
+        case 0: return section0Hidden ? 0 : friendRequestsArray.count
+        case 1: return section1Hidden ? 0 : friendsArray.count
+        case 2: return section2Hidden ? 0 : allUsersArray.count
         default: return 0
         }
     }
@@ -120,53 +159,127 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        print("creating cell")
         let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell") as! UserCell
         if cell.nameLbl == nil {
             cell.frame = CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 70)
-            cell.setupCell(rowHeight: tableView.rectForRow(at: indexPath).size.height)
+            cell.setupCell()
+        }
+        if cell.cellSelected {
+            cell.resetCellPostion()
+        }
+        if cell.animateDistance! > cell.frame.height && indexPath.section != 0 {
+            cell.animateDistance = cell.frame.height
+        }
+        if cell.iconView != nil {
+            cell.iconView?.removeFromSuperview()
+            cell.iconView = nil
         }
         switch indexPath.section {
         case 0:
-            cell.updateUI(user: friendRequestsArray[indexPath.row], snapCount: nil)
+            cell.updateUI(user: friendRequestsArray[indexPath.row])
         case 1:
-            cell.updateUI(user: friendsArray[indexPath.row], snapCount: nil)
+            cell.updateUI(user: friendsArray[indexPath.row])
+        case 2:
+            let user = allUsersArray[indexPath.row]
+            cell.updateUI(user: user)
+            if checkRequestStatus(user: user) {
+                print("request sent true")
+                cell.requestSent = true
+                cell.toggleWaitingIcon()
+            } else {
+                print("request sent false")
+                cell.requestSent = false
+                cell.toggleWaitingIcon()
+            }
         default:
-            cell.updateUI(user: allUsersArray[indexPath.row], snapCount: nil)
+            break
         }
+        cell.delegate = self
+        
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        switch indexPath.section {
-        case 0:
-            if let currentUser = AuthService.instance.currentUser {
-                print("Accepting friend request")
-                let user = friendRequestsArray[indexPath.row]
-                let userDict: [String:Any] = [user.uid!:["name": user.name, "profPicUrl":user.profPicUrl]]
-                DataService.instance.usersRef.child(currentUser).child("friendRequests").child(user.uid!).removeValue()
-                DataService.instance.usersRef.child(currentUser).child("friends").updateChildValues(userDict)
+        if let cell = tableView.cellForRow(at: indexPath) as? UserCell {
+            switch indexPath.section {
+            case 0:
+                cell.toggleButtons(tableSection: 0)
+                user = friendRequestsArray[indexPath.row]
+            case 1:
+                cell.toggleButtons(tableSection: 1)
+                user = friendsArray[indexPath.row]
+            case 2:
+                cell.toggleButtons(tableSection: 2)
+                user = allUsersArray[indexPath.row]
+            default:
+                break
             }
-        case 1:
-            if let user = friendsArray[indexPath.row].uid, let currentUser = AuthService.instance.currentUser {
-                print("Deleting friend")
-                DataService.instance.usersRef.child(user).child("friends").child(currentUser).removeValue()
-                DataService.instance.usersRef.child(currentUser).child("friends").child(user).removeValue()
-            }
-        default:
-            if let user = allUsersArray[indexPath.row].uid {
-                print("Uploading friend request")
-                DataService.instance.usersRef.child(user).child("friendRequests").updateChildValues(myProfile)
+            
+            if let uid = user?.uid {
+                userDict = [uid:["name": user?.name, "profPicUrl":user?.profPicUrl]]
+            } else {
+                print("Error getting user data")
             }
         }
         
     }
     
-    func UIColorFromHex(rgbValue:UInt32, alpha:Double=1.0)->UIColor {
-        let red = CGFloat((rgbValue & 0xFF0000) >> 16)/256.0
-        let green = CGFloat((rgbValue & 0xFF00) >> 8)/256.0
-        let blue = CGFloat(rgbValue & 0xFF)/256.0
-        
-        return UIColor(red:red, green:green, blue:blue, alpha:CGFloat(alpha))
+    func toggleSectionVisibility(sender: UIButton) {
+        switch sender.tag {
+        case 0:
+            section0Hidden = !section0Hidden
+        case 1:
+            section1Hidden = !section1Hidden
+        case 2:
+            section2Hidden = !section2Hidden
+        default:
+            break
+        }
+        tableView.reloadData()
     }
+    
+    func checkRequestStatus(user: User) -> Bool {
+        guard user.uid != nil else { return false }
+        guard outgoingRequests[user.uid!] != nil else { return false }
+        return true
+    }
+    
+    func acceptFriendRequest() {
+        if let currentUser = self.currentUser, let user = self.user?.uid, let userDict = self.userDict, let myProfile = self.myProfile {
+            DataService.instance.usersRef.child(currentUser).child("friendRequests").child(user).removeValue()
+            DataService.instance.usersRef.child(user).child("friends").updateChildValues(myProfile)
+            DataService.instance.usersRef.child(currentUser).child("friends").updateChildValues(userDict)
+            DataService.instance.usersRef.child(user).child("outgoingRequests").child(currentUser).removeValue()
+        }
+    }
+    
+    func deleteFriendRequest() {
+        if let currentUser = self.currentUser, let user = self.user?.uid {
+            DataService.instance.usersRef.child(currentUser).child("friendRequests").child(user).removeValue()
+            DataService.instance.usersRef.child(user).child("outgoingRequests").child(currentUser).removeValue()
+        }
+    }
+    
+    func deleteFriend() {
+        if let currentUser = self.currentUser, let user = self.user?.uid {
+            DataService.instance.usersRef.child(user).child("friends").child(currentUser).removeValue()
+            DataService.instance.usersRef.child(currentUser).child("friends").child(user).removeValue()
+        }
+    }
+    
+    func sendFriendRequest() {
+        if let currentUser = self.currentUser, let user = self.user?.uid, let myProfile = self.myProfile {
+            DataService.instance.usersRef.child(user).child("friendRequests").updateChildValues(myProfile)
+            DataService.instance.usersRef.child(currentUser).child("outgoingRequests").updateChildValues([user:true])
+        }
+    }
+    
+    func cancelFriendRequest() {
+        if let user = self.user?.uid, let currentUser = self.currentUser {
+            DataService.instance.usersRef.child(user).child("friendRequests").child(currentUser).removeValue()
+            DataService.instance.usersRef.child(currentUser).child("outgoingRequests").child(user).removeValue()
+        }
+    }
+    
+    
 }

@@ -76,14 +76,20 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell") as! UserCell
+        if cell.nameLbl == nil {
+            cell.frame = CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 70)
+            cell.setupCell()
+            cell.addStyleSquare(alignment: "left")
+        }
         let user = _users[indexPath.row]
-        cell.updateUI(user: user, snapCount: nil)
+        print("Name: \(user.name)")
+        cell.updateUI(user: user)
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! UserCell
-        cell.setAccessoryView(imageStr: "CheckboxFilled")
+        cell.contentView.backgroundColor = view.UIColorFromHex(rgbValue: 0xE1EC80)
         let user = _users[indexPath.row]
         _selectedUsers[user.uid!] = true
         delegate?.rowsAreSelected(selected: true)
@@ -91,7 +97,7 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! UserCell
-        cell.setAccessoryView(imageStr: "CheckboxEmpty")
+        cell.contentView.backgroundColor = view.UIColorFromHex(rgbValue: 0xF7F7F7)
         let user = _users[indexPath.row]
         _selectedUsers[user.uid!] = nil
         if _selectedUsers.count == 0 {
@@ -102,6 +108,22 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return _users.count
     }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 70
+    }
+    
+//    func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
+//        let cell = tableView.cellForRow(at: indexPath)
+//        cell?.contentView.backgroundColor = UIColor.red
+//        cell?.backgroundColor = UIColor.red
+//    }
+//    
+//    func tableView(_ tableView: UITableView, didUnhighlightRowAt indexPath: IndexPath) {
+//        let cell = tableView.cellForRow(at: indexPath)
+//        cell?.contentView.backgroundColor = UIColor.blue
+//        cell?.backgroundColor = UIColor.blue
+//    }
 
 }
 

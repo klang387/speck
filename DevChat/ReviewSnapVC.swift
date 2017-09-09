@@ -31,7 +31,8 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
     var sendSnapVC: SendSnapVC?
     
     var navBarVisible = true
-    var alphaTarget: CGFloat = 1
+    var btnAlphaTarget: CGFloat = 1
+    var barAlphaTarget: CGFloat = 0.25
     var animatable = true
     
     var newViewStartFrame: CGRect!
@@ -51,19 +52,20 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
         }
         
         addChildViewController(snapViewer)
-        view.insertSubview(snapViewer.view, belowSubview: topBar)
+        view.insertSubview(snapViewer.view, belowSubview: bottomBar)
         
     }
     
     @IBAction func tapGesture(_ sender: Any) {
         if animatable {
             animatable = false
-            alphaTarget = abs(alphaTarget - 1)
+            btnAlphaTarget = abs(btnAlphaTarget - 1)
+            barAlphaTarget = abs(barAlphaTarget - 0.25)
             UIView.animate(withDuration: 0.2, animations: {
-                self.topBar.alpha = self.alphaTarget
-                self.backBtn.alpha = self.alphaTarget
-                self.bottomBar.alpha = self.alphaTarget
-                self.sendBtn.alpha = self.alphaTarget
+                self.topBar.alpha = self.barAlphaTarget
+                self.backBtn.alpha = self.btnAlphaTarget
+                self.bottomBar.alpha = self.barAlphaTarget
+                self.sendBtn.alpha = self.btnAlphaTarget
             }) { (finished) in
                 self.animatable = true
             }
@@ -88,14 +90,17 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
             view.insertSubview(sendSnapVC!.view, belowSubview: bottomBar)
             UIView.animate(withDuration: 0.3, animations: { 
                 self.sendSnapVC!.view.frame = self.view.frame
+                self.topBar.alpha = 1
+                self.bottomBar.alpha = 1
             }, completion: { (finished) in
                 if finished {
-                    self.bottomBar.image = UIImage(named: "BottomSendWhite")
                     self.currentView = "send"
+                    self.sendBtn.setImage(UIImage(named: "SendBtnGrey"), for: .normal)
                 }
             })
-        } else if currentView == "send" {
-            if sendSnapVC != nil {
+        } else if currentView == "send" && sendSnapVC != nil {
+            if let count = sendSnapVC?.selectedUsers.count {
+                guard count > 0 else { return }
                 DataService.instance.uploadMedia(tempVidUrl: sendSnapVC!.tempVidUrl, tempPhotoData: sendSnapVC!.tempPhotoData, caption: nil, recipients: sendSnapVC!.selectedUsers, completion: {
                     removeSendSnapVC()
                 })
@@ -122,10 +127,12 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
     }
     
     func removeSendSnapVC() {
-        bottomBar.image = UIImage(named: "BottomSendAlpha")
+        bottomBar.image = UIImage(named: "BottomBarGrey")
         sendBtn.imageView?.image = UIImage(named: "SendBtnGreen")
         UIView.animate(withDuration: 0.3, animations: {
             self.sendSnapVC!.view.frame = self.newViewStartFrame
+            self.bottomBar.alpha = 0.25
+            self.topBar.alpha = 0.25
         }, completion: { (finished) in
             if finished {
                 self.sendSnapVC!.removeFromParentViewController()
@@ -136,13 +143,12 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
     }
     
     func rowsAreSelected(selected: Bool) {
-        print("rowsAreSelected executed")
         if selected {
-            bottomBar.image = UIImage(named: "BottomSendGreen")
-            sendBtn.imageView?.image = UIImage(named: "SendBtnWhite")
-        } else {
-            bottomBar.image = UIImage(named: "BottomSendWhite")
+            bottomBar.image = UIImage(named: "BottomBarGreen")
             sendBtn.imageView?.image = UIImage(named: "SendBtnGreen")
+        } else {
+            bottomBar.image = UIImage(named: "BottomBarGrey")
+            sendBtn.imageView?.image = UIImage(named: "SendBtnGrey")
         }
     }
 

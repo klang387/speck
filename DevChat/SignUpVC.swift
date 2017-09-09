@@ -85,7 +85,8 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
                 } else {
                     print("Firebase user created successfully")
                     if let imageData = UIImageJPEGRepresentation(self.selectProfilePic.imageView!.image!, 0.2) {
-                        DataService.instance.profPicStorageRef.child("\(NSUUID().uuidString)").putData(imageData, metadata: StorageMetadata(), completion: { (metadata, error) in
+                        let imageName = NSUUID().uuidString
+                        DataService.instance.profPicStorageRef.child(imageName).putData(imageData, metadata: StorageMetadata(), completion: { (metadata, error) in
                             if error != nil {
                                 print("Image upload to Firebase failed: \(error.debugDescription)")
                                 return
@@ -94,6 +95,7 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
                                 if let downloadURL = metadata?.downloadURL()?.absoluteString {
                                     if let uid = Auth.auth().currentUser?.uid {
                                         DataService.instance.saveUserToDatabase(uid: uid, firstName: self.firstName.text!, lastName: self.lastName.text!, profPicUrl: downloadURL)
+                                        DataService.instance.usersRef.child(uid).child("profPicStorageRef").setValue(imageName)
                                         self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
                                     }
                                 }

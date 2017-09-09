@@ -91,8 +91,9 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if let currentUser = Auth.auth().currentUser?.uid {
-            self.currentUser = currentUser
+        if let user = Auth.auth().currentUser?.uid {
+            print(user)
+            self.currentUser = user
             DataService.instance.profilesRef.child(currentUser).observeSingleEvent(of: .value, with: { (snapshot) in
                 if let profile = snapshot.value as? [String:Any] {
                     if let profPicUrl = profile["profPicUrl"] as? String {
