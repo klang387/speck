@@ -34,6 +34,8 @@
 		0ADC3E1A1F323B6F009E2585 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0ADC3E191F323B6F009E2585 /* GoogleService-Info.plist */; };
 		0AF05BC01F47411000507371 /* UIImageViewExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF05BBF1F47411000507371 /* UIImageViewExt.swift */; };
 		0AF05E8A1F607F5F00CF927F /* UIViewExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF05E891F607F5F00CF927F /* UIViewExt.swift */; };
+		0AF05E8C1F643ECD00CF927F /* ChangeNameVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF05E8B1F643ECD00CF927F /* ChangeNameVC.swift */; };
+		0AF05E8E1F643EE600CF927F /* ChangePasswordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF05E8D1F643EE600CF927F /* ChangePasswordVC.swift */; };
 		0AFA17991F325A3400C54076 /* RoundTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFA17981F325A3400C54076 /* RoundTextField.swift */; };
 		0AFCFE811F51E2C7005FBF0D /* UIImageExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFCFE801F51E2C7005FBF0D /* UIImageExt.swift */; };
 		2FFFD730D11A6C12B1494DC2 /* Pods_DevChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B53457DF130A64E0329B207 /* Pods_DevChat.framework */; };
@@ -69,6 +71,8 @@
 		0ADC3E191F323B6F009E2585 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0AF05BBF1F47411000507371 /* UIImageViewExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageViewExt.swift; sourceTree = "<group>"; };
 		0AF05E891F607F5F00CF927F /* UIViewExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewExt.swift; sourceTree = "<group>"; };
+		0AF05E8B1F643ECD00CF927F /* ChangeNameVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangeNameVC.swift; sourceTree = "<group>"; };
+		0AF05E8D1F643EE600CF927F /* ChangePasswordVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangePasswordVC.swift; sourceTree = "<group>"; };
 		0AFA17981F325A3400C54076 /* RoundTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundTextField.swift; sourceTree = "<group>"; };
 		0AFCFE801F51E2C7005FBF0D /* UIImageExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageExt.swift; sourceTree = "<group>"; };
 		7B53457DF130A64E0329B207 /* Pods_DevChat.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DevChat.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -157,6 +161,8 @@
 				0A5CEE561F4633E600C7ECC3 /* SettingsVC.swift */,
 				0A5CEE581F46385500C7ECC3 /* ReviewSnapVC.swift */,
 				0A13BD991F4E17780002D934 /* FriendsVC.swift */,
+				0AF05E8B1F643ECD00CF927F /* ChangeNameVC.swift */,
+				0AF05E8D1F643EE600CF927F /* ChangePasswordVC.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -349,7 +355,9 @@
 				0A27CBB01F3392A800F8AA60 /* UserCell.swift in Sources */,
 				0A27CBA91F32B5B100F8AA60 /* AuthService.swift in Sources */,
 				0A4E4A411F20E6E10039EF05 /* AppDelegate.swift in Sources */,
+				0AF05E8C1F643ECD00CF927F /* ChangeNameVC.swift in Sources */,
 				0A5CEE591F46385500C7ECC3 /* ReviewSnapVC.swift in Sources */,
+				0AF05E8E1F643EE600CF927F /* ChangePasswordVC.swift in Sources */,
 				0A842A261F538971002A21FF /* SlideInPresentationController.swift in Sources */,
 				0AF05BC01F47411000507371 /* UIImageViewExt.swift in Sources */,
 				0A8820511F3FA82400257B23 /* ViewSnapsVC.swift in Sources */,

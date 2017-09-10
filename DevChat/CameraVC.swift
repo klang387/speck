@@ -94,22 +94,30 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         if let user = Auth.auth().currentUser?.uid {
             print(user)
             self.currentUser = user
-            DataService.instance.profilesRef.child(currentUser).observeSingleEvent(of: .value, with: { (snapshot) in
-                if let profile = snapshot.value as? [String:Any] {
-                    if let profPicUrl = profile["profPicUrl"] as? String {
-                        URLSession.shared.dataTask(with: NSURL(string: profPicUrl)! as URL, completionHandler: { (data, response, error) -> Void in
-                            if error != nil {
-                                print(error!)
-                                return
-                            }
-                            DispatchQueue.main.async(execute: { () -> Void in
-                                self.profilePic = UIImage(data: data!)
-                                self.settingsBtn.setImage(self.profilePic, for: .normal)
-                            })
-                        }).resume()
+            if let image = DataService.instance.loadLocalProfilePic() {
+                self.profilePic = image
+                settingsBtn.setImage(image, for: .normal)
+            } else {
+                DataService.instance.profilesRef.child(currentUser).observeSingleEvent(of: .value, with: { (snapshot) in
+                    if let profile = snapshot.value as? [String:Any] {
+                        if let profPicUrl = profile["profPicUrl"] as? String {
+                            URLSession.shared.dataTask(with: NSURL(string: profPicUrl)! as URL, completionHandler: { (data, response, error) -> Void in
+                                if error != nil {
+                                    print(error!)
+                                    return
+                                }
+                                DispatchQueue.main.async(execute: { () -> Void in
+                                    if let imageData = data {
+                                        DataService.instance.saveLocalProfilePic(imageData: imageData)
+                                        self.profilePic = UIImage(data: imageData)
+                                        self.settingsBtn.setImage(self.profilePic, for: .normal)
+                                    }
+                                })
+                            }).resume()
+                        }
                     }
-                }
-            })
+                })
+            }
         } else {
             performSegue(withIdentifier: "toLoginVC", sender: nil)
         }

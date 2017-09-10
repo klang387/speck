@@ -53,6 +53,7 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.register(UserCell.self as AnyClass, forCellReuseIdentifier: "UserCell")
 
     }
     
@@ -60,9 +61,10 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         super.viewWillAppear(animated)
         
         _friendsObserver = DataService.instance.friendsRef.observe(.value, with: { (snapshot) in
-            self._users = DataService.instance.loadUsers(snapshot: snapshot)
-            print("USERS: \(self._users)")
-            self.tableView.reloadData()
+            DataService.instance.loadUsers(snapshot: snapshot, completion: { userArray in
+                self._users = userArray
+                self.tableView.reloadData()
+            })
         })
         
     }

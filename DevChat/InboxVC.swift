@@ -25,6 +25,7 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.register(UserCell.self as AnyClass, forCellReuseIdentifier: "UserCell")
         
         DataService.instance.receivedSnapsRef.queryOrdered(byChild: "mostRecent").observe(.value, with: { (snapshot) in
             self.snapsReceived.removeAll()

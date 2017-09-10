@@ -68,12 +68,37 @@ class DataService {
         return mainStorageRef.child("profilePictures")
     }
     
+    var documentsUrl: URL {
+        return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+    }
+    
     func saveUserToDatabase(uid: String, firstName: String, lastName: String, profPicUrl: String) {
         let profile = ["name": "\(firstName) \(lastName)", "profPicUrl": profPicUrl]
         mainRef.child("profiles").child(uid).updateChildValues(profile)
     }
     
-    func loadUsers(snapshot: DataSnapshot) -> [User] {
+    func loadUsers(snapshot: DataSnapshot, completion: @escaping ([User]) -> Void) {
+        var userArray: [User] = []
+        if let users = snapshot.value as? [String:Bool] {
+            for (key,_) in users {
+                DataService.instance.profilesRef.child(key).observeSingleEvent(of: .value, with: { (snapshot2) in
+                    if let profile = snapshot2.value as? [String:String] {
+                        if let name = profile["name"], let profPicUrl = profile["profPicUrl"]{
+                            let user = User(uid: key, name: name, profPicUrl: profPicUrl)
+                            userArray.append(user)
+                            if userArray.count == users.keys.count {
+                                completion(userArray)
+                            }
+                        }
+                    }
+                })
+            }
+        } else {
+            completion(userArray)
+        }
+    }
+    
+    func loadAllUsers(snapshot: DataSnapshot) -> [User] {
         var userArray: [User] = []
         if let users = snapshot.value as? [String:Any] {
             for (key, value) in users {
@@ -153,6 +178,25 @@ class DataService {
                 }
             }
         }
+    }
+    
+    func saveLocalProfilePic(imageData: Data) {
+        let fileURL = documentsUrl.appendingPathComponent("profilePic")
+        if FileManager.default.fileExists(atPath: fileURL.absoluteString) {
+            try? FileManager.default.removeItem(at: fileURL)
+        }
+        try? imageData.write(to: fileURL, options: .atomic)
+    }
+    
+    func loadLocalProfilePic() -> UIImage? {
+        let fileURL = documentsUrl.appendingPathComponent("profilePic")
+        do {
+            let imageData = try Data(contentsOf: fileURL)
+            return UIImage(data: imageData)
+        } catch {
+            print("Error loading image: \(error)")
+        }
+        return nil
     }
     
     

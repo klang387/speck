@@ -41,7 +41,7 @@ class UserCell: UITableViewCell {
     
     func updateUI(user: User) {
         nameLbl.text = user.name
-        profPic.imageFromServerURL(urlString: user.profPicUrl)
+        profPic.imageFromServerURL(urlString: user.profPicUrl, completion: nil)
     }
     
     func addStyleSquare(alignment: String) {
@@ -100,7 +100,7 @@ class UserCell: UITableViewCell {
                     button1?.addTarget(self, action: #selector(sendRequest), for: .touchUpInside)
                 } else {
                     button1?.setImage(UIImage(named: "RequestRemove"), for: .normal)
-                    button1?.addTarget(self, action: #selector(deleteRequest), for: .touchUpInside)
+                    button1?.addTarget(self, action: #selector(cancelRequest), for: .touchUpInside)
                 }
             default:
                 break

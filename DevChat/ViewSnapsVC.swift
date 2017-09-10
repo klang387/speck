@@ -12,12 +12,30 @@ import AVFoundation
 class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
 
     @IBOutlet weak var closeBtn: UIButton!
+    @IBOutlet weak var nextBtn: UIButton!
+    @IBOutlet weak var previousBtn: UIButton!
     
     let pageVC = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     var snapViewControllers = [SnapViewer]()
     
     @IBAction func closePressed(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
+    }
+    
+    @IBAction func nextPressed(_ sender: Any) {
+        guard let currentViewController = pageVC.viewControllers?.first else { return }
+        guard let nextViewController = pageVC.dataSource?.pageViewController(pageVC, viewControllerAfter: currentViewController) else { return }
+        pageVC.setViewControllers([nextViewController], direction: .forward, animated: true) { (finished) in
+            
+        }
+    }
+    
+    @IBAction func previousPressed(_ sender: Any) {
+        guard let currentViewController = pageVC.viewControllers?.first else { return }
+        guard let previousViewController = pageVC.dataSource?.pageViewController(pageVC, viewControllerBefore: currentViewController) else { return }
+        pageVC.setViewControllers([previousViewController], direction: .reverse, animated: true) { (finished) in
+            
+        }
     }
     
     var snaps = [String:Any]()
@@ -42,7 +60,7 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
             let snapView = SnapViewer()
             if let mediaType = snap["mediaType"] as? String, let databaseUrl = snap["databaseUrl"] as? String {
                 if mediaType == "photo" {
-                    snapView.imageView.imageFromServerURL(urlString: databaseUrl)
+                    snapView.imageView.imageFromServerURL(urlString: databaseUrl, completion: nil)
                 } else if mediaType == "video" {
                     if let url = URL(string: databaseUrl) {
                         snapView.playerItem = AVPlayerItem(url: url)

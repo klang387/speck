@@ -9,7 +9,7 @@
 import AVKit
 
 extension UIImageView {
-    public func imageFromServerURL(urlString: String) {
+    public func imageFromServerURL(urlString: String, completion: (() -> Void)?) {
         
         URLSession.shared.dataTask(with: NSURL(string: urlString)! as URL, completionHandler: { (data, response, error) -> Void in
             
@@ -20,6 +20,9 @@ extension UIImageView {
             DispatchQueue.main.async(execute: { () -> Void in
                 let image = UIImage(data: data!)
                 self.image = image
+                if completion != nil {
+                    completion!()
+                }
             })
             
         }).resume()

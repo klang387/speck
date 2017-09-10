@@ -78,32 +78,40 @@ class AuthService {
             case .success(let grantedPermissions, let declinedPermissions, let accessToken):
                 print("Logged into Facebook with permissions: \(grantedPermissions)")
                 let credential = FacebookAuthProvider.credential(withAccessToken: accessToken.authenticationToken)
-                let request = GraphRequest(graphPath: "me", parameters: ["fields" : "first_name, last_name, picture.type(large)"])
-                request.start({ (response, result) in
-                    switch result{
-                    case .success(let resultDict):
-                        if let first = resultDict.dictionaryValue?["first_name"] as? String, let last = resultDict.dictionaryValue?["last_name"] as? String {
-                            firstName = first
-                            lastName = last
-                        }
-                        if let picture = resultDict.dictionaryValue?["picture"] as? [String:Any] {
-                            if let data = picture["data"] as? [String:Any] {
-                                if let picUrl = data["url"] as? String {
-                                    profPicUrl = picUrl
-                                }
-                            }
-                        }
-                    case .failed(let error):
-                        print("Facebook Graph Request Failed: \(error)")
-                    }
-                })
                 Auth.auth().signIn(with: credential, completion: { (user, error) in
-                    if (error != nil) {
+                    if error != nil {
                         print("Unable to sign in with Firebase: \(error)")
                     } else {
                         print("Successful sign in with Firebase")
-                        DataService.instance.saveUserToDatabase(uid: user!.uid, firstName: firstName, lastName: lastName, profPicUrl: profPicUrl)
-                        completion()
+                        DataService.instance.profilesRef.child(user!.uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                            if snapshot.value != nil {
+                                print("User already exists")
+                                completion()
+                            } else {
+                                let request = GraphRequest(graphPath: "me", parameters: ["fields" : "first_name, last_name, picture.type(large)"])
+                                request.start({ (response, result) in
+                                    switch result{
+                                    case .success(let resultDict):
+                                        if let first = resultDict.dictionaryValue?["first_name"] as? String, let last = resultDict.dictionaryValue?["last_name"] as? String {
+                                            firstName = first
+                                            lastName = last
+                                        }
+                                        if let picture = resultDict.dictionaryValue?["picture"] as? [String:Any] {
+                                            if let data = picture["data"] as? [String:Any] {
+                                                if let picUrl = data["url"] as? String {
+                                                    profPicUrl = picUrl
+                                                    DataService.instance.saveUserToDatabase(uid: user!.uid, firstName: firstName, lastName: lastName, profPicUrl: profPicUrl)
+                                                    completion()
+                                                }
+                                            }
+                                        }
+                                    case .failed(let error):
+                                        print("Facebook Graph Request Failed: \(error)")
+                                    }
+                                })
+                            }
+                        })
+                        
                     }
                 })
             }

@@ -29,31 +29,25 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     var allUsersObserver: UInt!
     var outgoingRequestsObserver: UInt!
     
-    var myProfile: [String:Any]?
     var currentUser: String?
-    var userDict: [String:Any]?
     var user: User?
     
     var section0Hidden = false
     var section1Hidden = false
     var section2Hidden = false
     
+    var profilePicCache: NSCache<NSString,UIImage>!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        profilePicCache = NSCache()
+        
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UserCell.self as AnyClass, forCellReuseIdentifier: "UserCell")
         
-        if let currentUser = AuthService.instance.currentUser {
-            self.currentUser = currentUser
-            
-            DataService.instance.profilesRef.child(currentUser).observeSingleEvent(of: .value, with: { (snapshot) in
-                if let profile = snapshot.value as? [String:Any] {
-                    self.myProfile = [currentUser : profile]
-                }
-            })
-        }
+        currentUser = AuthService.instance.currentUser!
         
     }
     
@@ -61,17 +55,21 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         super.viewWillAppear(animated)
         
         friendsObserver = DataService.instance.friendsRef.observe(.value, with: { (snapshot) in
-            self.friendsArray = DataService.instance.loadUsers(snapshot: snapshot)
-            self.tableView.reloadData()
+            DataService.instance.loadUsers(snapshot: snapshot, completion: { userArray in
+                self.friendsArray = userArray
+                self.tableView.reloadData()
+            })
         })
         
         friendRequestsObserver = DataService.instance.friendRequestsRef.observe(.value, with: { (snapshot) in
-            self.friendRequestsArray = DataService.instance.loadUsers(snapshot: snapshot)
-            self.tableView.reloadData()
+            DataService.instance.loadUsers(snapshot: snapshot, completion: { userArray in
+                self.friendRequestsArray = userArray
+                self.tableView.reloadData()
+            })
         })
         
         allUsersObserver = DataService.instance.profilesRef.observe(.value, with: { (snapshot) in
-            self.allUsersArray = DataService.instance.loadUsers(snapshot: snapshot)
+            self.allUsersArray = DataService.instance.loadAllUsers(snapshot: snapshot)
             self.tableView.reloadData()
         })
         
@@ -176,18 +174,27 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         }
         switch indexPath.section {
         case 0:
-            cell.updateUI(user: friendRequestsArray[indexPath.row])
+            let user = friendRequestsArray[indexPath.row]
+            cell.nameLbl.text = user.name
+            getProfileImage(user: user, completion: { image in
+                cell.profPic.image = image
+            })
         case 1:
-            cell.updateUI(user: friendsArray[indexPath.row])
+            let user = friendsArray[indexPath.row]
+            cell.nameLbl.text = user.name
+            getProfileImage(user: user, completion: { image in
+                cell.profPic.image = image
+            })
         case 2:
             let user = allUsersArray[indexPath.row]
-            cell.updateUI(user: user)
+            cell.nameLbl.text = user.name
+            getProfileImage(user: user, completion: { image in
+                cell.profPic.image = image
+            })
             if checkRequestStatus(user: user) {
-                print("request sent true")
                 cell.requestSent = true
                 cell.toggleWaitingIcon()
             } else {
-                print("request sent false")
                 cell.requestSent = false
                 cell.toggleWaitingIcon()
             }
@@ -214,12 +221,6 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             default:
                 break
             }
-            
-            if let uid = user?.uid {
-                userDict = [uid:["name": user?.name, "profPicUrl":user?.profPicUrl]]
-            } else {
-                print("Error getting user data")
-            }
         }
         
     }
@@ -245,11 +246,11 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     }
     
     func acceptFriendRequest() {
-        if let currentUser = self.currentUser, let user = self.user?.uid, let userDict = self.userDict, let myProfile = self.myProfile {
+        if let currentUser = self.currentUser, let user = self.user?.uid {
             DataService.instance.usersRef.child(currentUser).child("friendRequests").child(user).removeValue()
-            DataService.instance.usersRef.child(user).child("friends").updateChildValues(myProfile)
-            DataService.instance.usersRef.child(currentUser).child("friends").updateChildValues(userDict)
             DataService.instance.usersRef.child(user).child("outgoingRequests").child(currentUser).removeValue()
+            DataService.instance.usersRef.child(currentUser).child("friends").updateChildValues([user:true])
+            DataService.instance.usersRef.child(user).child("friends").updateChildValues([currentUser:true])
         }
     }
     
@@ -268,18 +269,40 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     }
     
     func sendFriendRequest() {
-        if let currentUser = self.currentUser, let user = self.user?.uid, let myProfile = self.myProfile {
-            DataService.instance.usersRef.child(user).child("friendRequests").updateChildValues(myProfile)
+        if let currentUser = self.currentUser, let user = self.user?.uid {
+            DataService.instance.usersRef.child(user).child("friendRequests").updateChildValues([currentUser:true])
             DataService.instance.usersRef.child(currentUser).child("outgoingRequests").updateChildValues([user:true])
         }
     }
     
     func cancelFriendRequest() {
-        if let user = self.user?.uid, let currentUser = self.currentUser {
+        if let currentUser = self.currentUser, let user = self.user?.uid {
             DataService.instance.usersRef.child(user).child("friendRequests").child(currentUser).removeValue()
             DataService.instance.usersRef.child(currentUser).child("outgoingRequests").child(user).removeValue()
         }
     }
-    
+
+    func getProfileImage(user: User, completion: @escaping (UIImage) -> Void) {
+        if let image = profilePicCache.object(forKey: user.uid! as NSString) {
+            print("Image from cache")
+            completion(image)
+        } else {
+            print("Image from net")
+            URLSession.shared.dataTask(with: NSURL(string: user.profPicUrl)! as URL, completionHandler: { (data, response, error) -> Void in
+                if error != nil {
+                    print(error!)
+                    return
+                }
+                DispatchQueue.main.async(execute: { () -> Void in
+                    if let image = UIImage(data: data!) {
+                        self.profilePicCache.setObject(image, forKey: user.uid! as NSString)
+                        completion(image)
+                        
+                    }
+                })
+            }).resume()
+        }
+
+    }
     
 }

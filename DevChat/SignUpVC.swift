@@ -12,18 +12,21 @@ import FirebaseAuth
 
 class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
 
-    @IBOutlet weak var firstName: RoundTextField!
-    @IBOutlet weak var lastName: RoundTextField!
-    @IBOutlet weak var email: RoundTextField!
-    @IBOutlet weak var password: RoundTextField!
-    @IBOutlet weak var passwordConfirm: RoundTextField!
-    @IBOutlet weak var selectProfilePic: RoundedButton!
+    @IBOutlet weak var firstName: UITextField!
+    @IBOutlet weak var lastName: UITextField!
+    @IBOutlet weak var email: UITextField!
+    @IBOutlet weak var password: UITextField!
+    @IBOutlet weak var passwordConfirm: UITextField!
+    @IBOutlet weak var selectProfilePic: UIButton!
     
     var imagePicker: UIImagePickerController!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        selectProfilePic.imageView?.contentMode = .scaleAspectFit
+        selectProfilePic.setImage(UIImage(named: "UploadProfilePic"), for: .normal)
+        
         imagePicker = UIImagePickerController()
         imagePicker.allowsEditing = true
         imagePicker.delegate = self
@@ -33,6 +36,8 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
         email.delegate = self
         password.delegate = self
         passwordConfirm.delegate = self
+        
+        
         
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing(_:))))
         
@@ -57,7 +62,10 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         if let image = info[UIImagePickerControllerEditedImage] as? UIImage {
-            selectProfilePic.imageView?.image = image
+            selectProfilePic.setImage(image, for: .normal)
+            if let imageData = UIImageJPEGRepresentation(image, 0.2) {
+                DataService.instance.saveLocalProfilePic(imageData: imageData)
+            }
         } else {
             print("Failed to select valid image")
         }
@@ -77,7 +85,8 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
             (lastName.text?.characters.count)! > 0 &&
             (email.text?.characters.count)! > 0 &&
             (password.text?.characters.count)! > 0 &&
-            password.text == passwordConfirm.text {
+            password.text == passwordConfirm.text &&
+            selectProfilePic.image(for: .normal) != UIImage(named: "UploadProfilePic") {
             
             AuthService.instance.createUser(email: self.email.text!, password: self.password.text!, onComplete: { (error, data) in
                 if error != nil {
@@ -94,7 +103,7 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
                                 print("Image uploaded to Firebase successful.")
                                 if let downloadURL = metadata?.downloadURL()?.absoluteString {
                                     if let uid = Auth.auth().currentUser?.uid {
-                                        DataService.instance.saveUserToDatabase(uid: uid, firstName: self.firstName.text!, lastName: self.lastName.text!, profPicUrl: downloadURL)
+                                        DataService.instance.saveUserToDatabase(uid: uid, firstName: self.firstName.text!.capitalized, lastName: self.lastName.text!.capitalized, profPicUrl: downloadURL)
                                         DataService.instance.usersRef.child(uid).child("profPicStorageRef").setValue(imageName)
                                         self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
                                     }
