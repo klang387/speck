@@ -8,14 +8,10 @@
 
 import UIKit
 
-class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UserCellDelegate {
+class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, UserCellDelegate {
 
     @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var searchBar: UISearchBar!
-    
-    @IBAction func backPressed(_ sender: Any) {
-        dismiss(animated: true, completion: nil)
-    }
+    @IBOutlet weak var searchBar: CustomSearchBar!
     
     let sectionHeaders = ["Friend Requests", "Friends", "All Users"]
     
@@ -24,10 +20,15 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     var allUsersArray = [User]()
     var outgoingRequests = [String:Bool]()
     
+    var filteredFriendRequests = [User]()
+    var filteredFriends = [User]()
+    var filteredAllUsers = [User]()
+    
     var friendsObserver: UInt!
     var friendRequestsObserver: UInt!
-    var allUsersObserver: UInt!
     var outgoingRequestsObserver: UInt!
+    
+    var observersLoading = [true,true,true,true]
     
     var currentUser: String?
     var user: User?
@@ -37,15 +38,20 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     var section2Hidden = false
     
     var profilePicCache: NSCache<NSString,UIImage>!
+   
+    var allUsersHaveLoaded = false
+    var numberOfUsersToLoad: UInt = 5
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         profilePicCache = NSCache()
         
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UserCell.self as AnyClass, forCellReuseIdentifier: "UserCell")
+        
+        searchBar.delegate = self
         
         currentUser = AuthService.instance.currentUser!
         
@@ -54,33 +60,77 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        friendsObserver = DataService.instance.friendsRef.observe(.value, with: { (snapshot) in
-            DataService.instance.loadUsers(snapshot: snapshot, completion: { userArray in
-                self.friendsArray = userArray
-                self.tableView.reloadData()
-            })
-        })
-        
         friendRequestsObserver = DataService.instance.friendRequestsRef.observe(.value, with: { (snapshot) in
+            self.observersLoading[0] = true
             DataService.instance.loadUsers(snapshot: snapshot, completion: { userArray in
                 self.friendRequestsArray = userArray
-                self.tableView.reloadData()
+                self.filteredFriendRequests = self.friendRequestsArray
+                self.observersLoading[0] = false
+                if !self.loading() {
+                    self.tableView.reloadData()
+                }
             })
         })
         
-        allUsersObserver = DataService.instance.profilesRef.observe(.value, with: { (snapshot) in
-            self.allUsersArray = DataService.instance.loadAllUsers(snapshot: snapshot)
-            self.tableView.reloadData()
+        friendsObserver = DataService.instance.friendsRef.observe(.value, with: { (snapshot) in
+            self.observersLoading[1] = true
+            DataService.instance.loadUsers(snapshot: snapshot, completion: { userArray in
+                self.friendsArray = userArray.sorted(by: { (user1, user2) -> Bool in
+                    user1.name < user2.name
+                })
+                self.filteredFriends = self.friendsArray
+                self.observersLoading[1] = false
+                if !self.loading() {
+                    self.tableView.reloadData()
+                }
+            })
         })
         
+        loadAllUsers()
+        
         outgoingRequestsObserver = DataService.instance.outgoingRequestsRef.observe(.value, with: { (snapshot) in
+            self.observersLoading[3] = true
             if let outgoingDict = snapshot.value as? [String:Bool] {
                 self.outgoingRequests = outgoingDict
             } else {
                 self.outgoingRequests.removeAll()
             }
-            self.tableView.reloadData()
+            self.observersLoading[3] = false
+            if !self.loading() {
+                self.tableView.reloadData()
+            }
         })
+        
+    }
+    
+    func loading() -> Bool {
+        for status in observersLoading {
+            if status {
+                return true
+            }
+        }
+        return false
+    }
+    
+    func loadAllUsers() {
+        if searchBar.text == nil || searchBar.text == "" {
+            DataService.instance.profilesRef.queryLimited(toFirst: numberOfUsersToLoad).observeSingleEvent(of: .value, with: { (snapshot) in
+                self.observersLoading[2] = true
+                self.allUsersArray = DataService.instance.loadAllUsers(snapshot: snapshot)
+                if self.allUsersArray.count < Int(self.numberOfUsersToLoad) {
+                    self.allUsersHaveLoaded = true
+                }
+                self.observersLoading[2] = false
+                if !self.loading() {
+                    self.tableView.reloadData()
+                }
+            })
+        } else {
+            DataService.instance.profilesRef.queryEqual(toValue: <#T##Any?#>)
+            self.filteredAllUsers = self.searchBar.text == nil || self.searchBar.text == "" ? self.allUsersArray : self.allUsersArray.filter({ (user) -> Bool in
+                return user.name.range(of: self.searchBar.text!, options: .caseInsensitive, range: nil, locale: nil) != nil
+            })
+        }
         
     }
     
@@ -89,9 +139,25 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         
         DataService.instance.friendsRef.removeObserver(withHandle: friendsObserver)
         DataService.instance.friendRequestsRef.removeObserver(withHandle: friendRequestsObserver)
-        DataService.instance.profilesRef.removeObserver(withHandle: allUsersObserver)
         DataService.instance.outgoingRequestsRef.removeObserver(withHandle: outgoingRequestsObserver)
         
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.endEditing(true)
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        filteredFriendRequests = searchText.isEmpty ? friendRequestsArray : friendRequestsArray.filter({ (user) -> Bool in
+            return user.name.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
+        })
+        filteredFriends = searchText.isEmpty ? friendsArray : friendsArray.filter({ (user) -> Bool in
+            return user.name.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
+        })
+        filteredAllUsers = searchText.isEmpty ? allUsersArray : allUsersArray.filter({ (user) -> Bool in
+            return user.name.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
+        })
+        tableView.reloadData()
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -145,9 +211,9 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return section0Hidden ? 0 : friendRequestsArray.count
-        case 1: return section1Hidden ? 0 : friendsArray.count
-        case 2: return section2Hidden ? 0 : allUsersArray.count
+        case 0: return section0Hidden ? 0 : filteredFriendRequests.count
+        case 1: return section1Hidden ? 0 : filteredFriends.count
+        case 2: return section2Hidden ? 0 : allUsersHaveLoaded ? filteredAllUsers.count : filteredAllUsers.count + 1
         default: return 0
         }
     }
@@ -172,21 +238,32 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             cell.iconView?.removeFromSuperview()
             cell.iconView = nil
         }
+        cell.profPic.image = nil
         switch indexPath.section {
         case 0:
-            let user = friendRequestsArray[indexPath.row]
+            let user = filteredFriendRequests[indexPath.row]
             cell.nameLbl.text = user.name
             getProfileImage(user: user, completion: { image in
                 cell.profPic.image = image
             })
         case 1:
-            let user = friendsArray[indexPath.row]
+            let user = filteredFriends[indexPath.row]
             cell.nameLbl.text = user.name
             getProfileImage(user: user, completion: { image in
                 cell.profPic.image = image
             })
         case 2:
-            let user = allUsersArray[indexPath.row]
+            if indexPath.row == filteredAllUsers.count {
+                let loadMore = UITableViewCell(frame: CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 70))
+                let label = UILabel(frame: CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 70))
+                label.text = "Load More Users"
+                label.textAlignment = .center
+                label.font = UIFont(name: "Avenir", size: 14)
+                label.numberOfLines = 1
+                loadMore.addSubview(label)
+                return loadMore
+            }
+            let user = filteredAllUsers[indexPath.row]
             cell.nameLbl.text = user.name
             getProfileImage(user: user, completion: { image in
                 cell.profPic.image = image
@@ -221,6 +298,11 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             default:
                 break
             }
+        } else if indexPath.section == 2 && indexPath.row == filteredAllUsers.count {
+            print("Load More Users")
+            numberOfUsersToLoad += 5
+            loadAllUsers()
+            tableView.deselectRow(at: indexPath, animated: true)
         }
         
     }
@@ -240,8 +322,7 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     }
     
     func checkRequestStatus(user: User) -> Bool {
-        guard user.uid != nil else { return false }
-        guard outgoingRequests[user.uid!] != nil else { return false }
+        guard outgoingRequests[user.uid] != nil else { return false }
         return true
     }
     
@@ -283,7 +364,7 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     }
 
     func getProfileImage(user: User, completion: @escaping (UIImage) -> Void) {
-        if let image = profilePicCache.object(forKey: user.uid! as NSString) {
+        if let image = profilePicCache.object(forKey: user.uid as NSString) {
             print("Image from cache")
             completion(image)
         } else {
@@ -295,7 +376,7 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
                 }
                 DispatchQueue.main.async(execute: { () -> Void in
                     if let image = UIImage(data: data!) {
-                        self.profilePicCache.setObject(image, forKey: user.uid! as NSString)
+                        self.profilePicCache.setObject(image, forKey: user.uid as NSString)
                         completion(image)
                         
                     }
@@ -304,5 +385,6 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         }
 
     }
+    
     
 }

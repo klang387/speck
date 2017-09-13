@@ -36,9 +36,7 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
     var animatable = true
     
     var newViewStartFrame: CGRect!
-    
-    lazy var slideInTransitioningDelegate = SlideInPresentationManager()
-    
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -122,13 +120,14 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
             }
             self.dismiss(animated: true, completion: nil)
         } else if currentView == "send" {
+            sendSnapVC?.searchBar.endEditing(true)
             removeSendSnapVC()
         }
     }
     
     func removeSendSnapVC() {
         bottomBar.image = UIImage(named: "BottomBarGrey")
-        sendBtn.imageView?.image = UIImage(named: "SendBtnGreen")
+        sendBtn.setImage(UIImage(named: "SendBtnGreen"), for: .normal)
         UIView.animate(withDuration: 0.3, animations: {
             self.sendSnapVC!.view.frame = self.newViewStartFrame
             self.bottomBar.alpha = 0.25

@@ -14,11 +14,35 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
     @IBOutlet weak var closeBtn: UIButton!
     @IBOutlet weak var nextBtn: UIButton!
     @IBOutlet weak var previousBtn: UIButton!
-    
+    @IBOutlet var tapRecognizer: UITapGestureRecognizer!
+
     let pageVC = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     var snapViewControllers = [SnapViewer]()
+    var senderUid = String()
+    
+    var snaps = [String:Any]()
+    var snapsArray = [[String:Any]]()
+    var viewedSnaps = 0
+    
+    var animatable = true
+    var btnAlphaTarget: CGFloat = 1
+    
+    @IBAction func tapGesture(_ sender: Any) {
+        if animatable {
+            animatable = false
+            btnAlphaTarget = abs(btnAlphaTarget - 1)
+            UIView.animate(withDuration: 0.2, animations: {
+                self.closeBtn.alpha = self.btnAlphaTarget
+                self.nextBtn.alpha = self.btnAlphaTarget
+                self.previousBtn.alpha = self.btnAlphaTarget
+            }) { (finished) in
+                self.animatable = true
+            }
+        }
+    }
     
     @IBAction func closePressed(_ sender: Any) {
+        deleteSnaps()
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -26,7 +50,11 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
         guard let currentViewController = pageVC.viewControllers?.first else { return }
         guard let nextViewController = pageVC.dataSource?.pageViewController(pageVC, viewControllerAfter: currentViewController) else { return }
         pageVC.setViewControllers([nextViewController], direction: .forward, animated: true) { (finished) in
-            
+            guard let currentIndex = (self.pageVC.viewControllers?.first as? SnapViewer)?.index else { return }
+            if currentIndex > self.viewedSnaps {
+                self.viewedSnaps = currentIndex
+            }
+            print(self.viewedSnaps)
         }
     }
     
@@ -37,9 +65,6 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
             
         }
     }
-    
-    var snaps = [String:Any]()
-    var snapsArray = [[String:Any]]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,8 +81,13 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
             }
         }
         
+        print(snapsArray)
+        print(senderUid)
+        
+        var count = 0
         for snap in snapsArray {
             let snapView = SnapViewer()
+            snapView.index = count
             if let mediaType = snap["mediaType"] as? String, let databaseUrl = snap["databaseUrl"] as? String {
                 if mediaType == "photo" {
                     snapView.imageView.imageFromServerURL(urlString: databaseUrl, completion: nil)
@@ -72,6 +102,7 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
             } else {
                 print("Error adding snapView to PVC array")
             }
+            count += 1
         }
         
         if let firstVC = snapViewControllers.first {
@@ -105,6 +136,36 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
             return nil
         } else {
             return snapViewControllers[nextIndex]
+        }
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+        
+        guard let currentIndex = (pageVC.viewControllers?.first as? SnapViewer)?.index else { return }
+        if currentIndex > viewedSnaps && completed {
+            viewedSnaps = currentIndex
+        }
+        print(viewedSnaps)
+
+    }
+    
+    func deleteSnaps() {
+        for index in 0...viewedSnaps {
+            if let storageName = snapsArray[index]["storageName"] as? String, let snapUid = snapsArray[index]["snapUid"] as? String, let currentUser = AuthService.instance.currentUser {
+                print(storageName)
+                print(snapUid)
+                DataService.instance.mediaStorageRef.child(storageName).delete(completion: { (error) in
+                    if error != nil {
+                        print("Error deleting media from storage: \(error)")
+                    } else {
+                        DataService.instance.usersRef.child(currentUser).child("snapsReceived").child(self.senderUid).child("snaps").child(snapUid).removeValue(completionBlock: { (error, ref) in
+                            if error != nil {
+                                print("Error deleting snap from database: \(error)")
+                            }
+                        })
+                    }
+                })
+            }
         }
     }
 

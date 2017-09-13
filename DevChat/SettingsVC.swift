@@ -14,6 +14,8 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
 
     @IBOutlet weak var profilePic: UIImageView!
     @IBOutlet weak var buttonsView: UIView!
+    @IBOutlet weak var friendsBadge: UILabel!
+    @IBOutlet weak var topBar: UIImageView!
     
     var image: UIImage?
     var imagePicker: UIImagePickerController!
@@ -22,28 +24,64 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     var changePasswordVC: ChangePasswordVC?
     
     var currentView: String!
+    var newViewStartFrame: CGRect!
+    
+    var friendsObserver: UInt!
+    var requestCount: Int!
+    var currentUser = String()
+    
+    var friendsVC: FriendsVC?
+    
+    var tapGesture: UITapGestureRecognizer!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        newViewStartFrame = CGRect(origin: CGPoint(x: view.frame.origin.x + view.frame.width, y: view.frame.origin.y), size: view.frame.size)
+        
         profilePic.image = image
         profilePic.layer.cornerRadius = profilePic.frame.width / 2
         profilePic.layer.masksToBounds = true
+        
+        friendsBadge.layer.cornerRadius = friendsBadge.layer.frame.width / 2
+        friendsBadge.layer.masksToBounds = true
+        friendsBadge.text = String(requestCount)
+        if requestCount > 0 {
+            friendsBadge.isHidden = false
+        }
         
         imagePicker = UIImagePickerController()
         imagePicker.allowsEditing = true
         imagePicker.sourceType = .photoLibrary
         imagePicker.delegate = self
         
-        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing(_:))))
+        tapGesture = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing(_:)))
+        self.view.addGestureRecognizer(tapGesture)
         
         currentView = "settings"
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        if let user = AuthService.instance.currentUser {
+            currentUser = user
+            friendsObserver = DataService.instance.usersRef.child(currentUser).child("friendRequests").observe(.value, with: { (snapshot) in
+                if let friendRequests = snapshot.value as? [String:Any] {
+                    self.friendsBadge.text = String(friendRequests.count)
+                    self.friendsBadge.isHidden = false
+                } else {
+                    self.friendsBadge.isHidden = true
+                }
+            })
+        }
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
         
+        DataService.instance.usersRef.child(currentUser).child("friendRequests").removeObserver(withHandle: friendsObserver)
     }
     
     @IBAction func changePhotoPressed(_ sender: Any) {
@@ -95,7 +133,20 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     }
     
     @IBAction func friendsPressed(_ sender: Any) {
-        performSegue(withIdentifier: "toFriendsVC", sender: nil)
+        tapGesture.isEnabled = false
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        friendsVC = storyboard.instantiateViewController(withIdentifier: "FriendsVC") as? FriendsVC
+        addChildViewController(friendsVC!)
+        friendsVC?.view.frame = newViewStartFrame
+        view.insertSubview(friendsVC!.view, belowSubview: topBar)
+        UIView.animate(withDuration: 0.3, animations: {
+            self.friendsVC?.view.frame = self.view.frame
+        }, completion: { (finished) in
+            if finished {
+                self.currentView = "friends"
+            }
+        })
+        //performSegue(withIdentifier: "toFriendsVC", sender: nil)
     }
 
     @IBAction func backPressed(_ sender: Any) {
@@ -106,6 +157,8 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
             changeNameDismiss()
         case "password":
             changePasswordDismiss()
+        case "friends":
+            friendsDismiss()
         default: break
         }
     }
@@ -180,6 +233,19 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
             self.changeNameVC?.removeFromParentViewController()
         }
         currentView = "settings"
+    }
+    
+    func friendsDismiss() {
+        friendsVC?.searchBar.endEditing(true)
+        UIView.animate(withDuration: 0.2, animations: {
+            self.friendsVC?.view.frame.origin.x += self.view.frame.width
+        }) { (finished) in
+            self.friendsVC?.view.removeFromSuperview()
+            self.friendsVC?.removeFromParentViewController()
+            self.friendsVC = nil
+        }
+        currentView = "settings"
+        tapGesture.isEnabled = true
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {

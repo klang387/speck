@@ -98,47 +98,58 @@ class DataService {
         }
     }
     
+//    func loadAllUsers(snapshot: DataSnapshot) -> [User] {
+//        var userArray: [User] = []
+//        if let users = snapshot.value as? [String:Any] {
+//            for (key, value) in users {
+//                if let dict = value as? [String:Any] {
+//                    if let name = dict["name"] as? String, let profPicUrl = dict["profPicUrl"] as? String {
+//                        let user = User(uid: key, name: name, profPicUrl: profPicUrl)
+//                        userArray.append(user)
+//                    }
+//                }
+//            }
+//            return userArray
+//        } else {
+//            return []
+//        }
+//    }
+    
     func loadAllUsers(snapshot: DataSnapshot) -> [User] {
         var userArray: [User] = []
-        if let users = snapshot.value as? [String:Any] {
-            for (key, value) in users {
-                if let dict = value as? [String:Any] {
-                    if let name = dict["name"] as? String, let profPicUrl = dict["profPicUrl"] as? String {
-                        let user = User(uid: key, name: name, profPicUrl: profPicUrl)
-                        userArray.append(user)
-                    }
+        let sortedArray = snapshot.children.allObjects as! [DataSnapshot]
+        for user in sortedArray {
+            if let dict = user.value as? [String:Any] {
+                if let name = dict["name"] as? String, let profPicUrl = dict["profPicUrl"] as? String {
+                    let user = User(uid: user.key, name: name, profPicUrl: profPicUrl)
+                    userArray.append(user)
                 }
             }
-            return userArray
-        } else {
-            return []
         }
+        return userArray
     }
     
     func uploadMedia(tempVidUrl: URL?, tempPhotoData: Data?, caption: String?, recipients: [String:Bool], completion: () -> Void){
-        let ref = mediaStorageRef.child("\(NSUUID().uuidString)")
+        let storageName = NSUUID().uuidString
+        let ref = mediaStorageRef.child(storageName)
         if let url = tempVidUrl {
-    
             ref.putFile(from: url, metadata: nil, completion: { (meta: StorageMetadata?, err: Error?) in
-                
                 if err != nil {
                     print("Error uploading video: \(err!.localizedDescription)")
                 } else {
                     if let downloadURL = meta?.downloadURL()?.absoluteString {
-                        self.sendSnap(databaseUrl: downloadURL, mediaType: "video", caption: caption, recipients: recipients)
+                        self.sendSnap(storageName: storageName, databaseUrl: downloadURL, mediaType: "video", caption: caption, recipients: recipients)
                     }
                 }
             })
             
         } else if let photo = tempPhotoData {
-            
             ref.putData(photo, metadata: nil, completion: { (meta: StorageMetadata?, err: Error?) in
-                
                 if err != nil {
                     print("Error uploading photo: \(err!.localizedDescription)")
                 } else {
                     if let downloadURL = meta?.downloadURL()?.absoluteString {
-                        self.sendSnap(databaseUrl: downloadURL, mediaType: "photo", caption: caption, recipients: recipients)
+                        self.sendSnap(storageName: storageName, databaseUrl: downloadURL, mediaType: "photo", caption: caption, recipients: recipients)
                     }
                 }
             })
@@ -147,7 +158,7 @@ class DataService {
         completion()
     }
     
-    func sendSnap(databaseUrl: String, mediaType: String, caption: String?, recipients: [String:Bool]) {
+    func sendSnap(storageName: String, databaseUrl: String, mediaType: String, caption: String?, recipients: [String:Bool]) {
         
         var snapDict = [String:Any]()
         
@@ -163,6 +174,7 @@ class DataService {
         snapDict["databaseUrl"] = databaseUrl
         snapDict["mediaType"] = mediaType
         snapDict["timestamp"] = ServerValue.timestamp()
+        snapDict["storageName"] = storageName
         
         for (key,_) in recipients {
             self.usersRef.child(key).child("snapsReceived").child(currentUser).child("snaps").childByAutoId().setValue(snapDict) { (err, ref) in

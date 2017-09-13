@@ -20,6 +20,8 @@ class SnapViewer: UIViewController {
     
     var imageView = UIImageView()
     
+    var index: Int?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

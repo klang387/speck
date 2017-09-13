@@ -19,6 +19,7 @@ class UserCell: UITableViewCell {
     var snapCount: UILabel?
     var requestSent = false
     var iconView: UIImageView?
+    var styleSquare: UIView?
     
     var delegate: UserCellDelegate?
     
@@ -31,6 +32,7 @@ class UserCell: UITableViewCell {
         profPic = UIImageView(frame: CGRect(x: frame.height / 2 - width / 2, y: frame.midY - height / 2, width: width, height: height))
         profPic.layer.cornerRadius = height / 2
         profPic.layer.masksToBounds = true
+        profPic.contentMode = .scaleAspectFill
         nameLbl = UILabel(frame: CGRect(x: profPic.frame.maxX + 25, y: profPic.frame.minY, width: 200, height: height))
         nameLbl.font = UIFont(name: "Avenir", size: 18)
         nameLbl.textColor = UIColor.darkGray
@@ -49,10 +51,10 @@ class UserCell: UITableViewCell {
         if alignment == "right" {
             rect = CGRect(x: frame.width - frame.height, y: 0, width: frame.height, height: frame.height)
         }
-        let styleSquare = UIView(frame: rect)
-        styleSquare.backgroundColor = UIColor.black
-        styleSquare.alpha = 0.1
-        insertSubview(styleSquare, belowSubview: profPic)
+        styleSquare = UIView(frame: rect)
+        styleSquare?.backgroundColor = UIColor.black
+        styleSquare?.alpha = 0.1
+        insertSubview(styleSquare!, belowSubview: profPic)
     }
     
     func addSnapCount() {

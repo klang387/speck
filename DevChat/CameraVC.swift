@@ -22,6 +22,10 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
     var dataType: String = ""
     
+    var inboxObserver: UInt!
+    var friendsObserver: UInt!
+    var friendRequests = 0
+    
     @IBOutlet weak var captureBtn: SwiftyCamButton!
     @IBOutlet weak var switchCameraBtn: UIButton!
     @IBOutlet weak var settingsBtn: UIButton!
@@ -30,6 +34,8 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     @IBOutlet weak var inboxFrame: UIImageView!
     @IBOutlet weak var switchCameraFrame: UIImageView!
     @IBOutlet weak var topFrame: UIImageView!
+    @IBOutlet weak var inboxBadge: UILabel!
+    @IBOutlet weak var friendsBadge: UILabel!
 
     
     @IBAction func switchCameraBtnPressed(_ sender: Any) {
@@ -54,27 +60,6 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         }
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "toReviewSnapVC" {
-            if let reviewSnapVC = segue.destination as? ReviewSnapVC {
-                if dataType == "video" {
-                    reviewSnapVC.tempVidUrl = sender as? URL
-                    reviewSnapVC.dataType = "video"
-                } else if dataType == "photo" {
-                    reviewSnapVC.tempPhoto = sender as? UIImage
-                    reviewSnapVC.dataType = "photo"
-                }
-            }
-        }
-        
-        if segue.identifier == "toSettingsVC" {
-            if let settingsVC = segue.destination as? SettingsVC, let image = profilePic {
-                settingsVC.image = image
-            }
-        }
-    }
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         cameraDelegate = self
@@ -85,6 +70,10 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         let settingsMask = UIImageView(image: UIImage(named: "SettingsBtnMask"))
         settingsMask.frame.size = settingsBtn.frame.size
         settingsBtn.mask = settingsMask
+        inboxBadge.layer.cornerRadius = inboxBadge.layer.frame.width / 2
+        inboxBadge.layer.masksToBounds = true
+        friendsBadge.layer.cornerRadius = friendsBadge.layer.frame.width / 2
+        friendsBadge.layer.masksToBounds = true
         
     }
     
@@ -92,8 +81,37 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         super.viewDidAppear(animated)
         
         if let user = Auth.auth().currentUser?.uid {
-            print(user)
             self.currentUser = user
+            
+            friendsObserver = DataService.instance.usersRef.child(currentUser).child("friendRequests").observe(.value, with: { (snapshot) in
+                if let friendRequests = snapshot.value as? [String:Any] {
+                    self.friendRequests = friendRequests.count
+                    self.friendsBadge.text = String(friendRequests.count)
+                    self.friendsBadge.isHidden = false
+                } else {
+                    self.friendsBadge.isHidden = true
+                }
+            })
+            
+            inboxObserver = DataService.instance.usersRef.child(currentUser).child("snapsReceived").observe(.value, with: { (snapshot) in
+                var count = 0
+                if let snapsReceived = snapshot.value as? [String:Any] {
+                    for (_,value) in snapsReceived {
+                        if let contents = value as? [String:Any] {
+                            if let snaps = contents["snaps"] as? [String:Any] {
+                                count += snaps.count
+                            }
+                        }
+                    }
+                }
+                if count > 0 {
+                    self.inboxBadge.text = String(count)
+                    self.inboxBadge.isHidden = false
+                } else {
+                    self.inboxBadge.isHidden = true
+                }
+            })
+            
             if let image = DataService.instance.loadLocalProfilePic() {
                 self.profilePic = image
                 settingsBtn.setImage(image, for: .normal)
@@ -122,6 +140,34 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
             performSegue(withIdentifier: "toLoginVC", sender: nil)
         }
         
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        DataService.instance.usersRef.child(currentUser).child("snapsReceived").removeObserver(withHandle: inboxObserver)
+        DataService.instance.usersRef.child(currentUser).child("friendRequests").removeObserver(withHandle: friendsObserver)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "toReviewSnapVC" {
+            if let reviewSnapVC = segue.destination as? ReviewSnapVC {
+                if dataType == "video" {
+                    reviewSnapVC.tempVidUrl = sender as? URL
+                    reviewSnapVC.dataType = "video"
+                } else if dataType == "photo" {
+                    reviewSnapVC.tempPhoto = sender as? UIImage
+                    reviewSnapVC.dataType = "photo"
+                }
+            }
+        }
+        
+        if segue.identifier == "toSettingsVC" {
+            if let settingsVC = segue.destination as? SettingsVC, let image = profilePic {
+                settingsVC.image = image
+                settingsVC.requestCount = friendRequests
+            }
+        }
     }
     
     func swiftyCam(_ swiftyCam: SwiftyCamViewController, didTake photo: UIImage) {

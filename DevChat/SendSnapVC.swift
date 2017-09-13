@@ -10,13 +10,15 @@ import UIKit
 import FirebaseDatabase
 import FirebaseStorage
 
-class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
 
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var searchBar: CustomSearchBar!
     
     var delegate: SendSnapDelegate?
     
     private var _users = [User]()
+    private var _filteredUsers = [User]()
     private var _selectedUsers = [String:Bool]()
     
     private var _tempVidUrl: URL?
@@ -55,6 +57,7 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         tableView.dataSource = self
         tableView.register(UserCell.self as AnyClass, forCellReuseIdentifier: "UserCell")
 
+        searchBar.delegate = self
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -63,17 +66,27 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         _friendsObserver = DataService.instance.friendsRef.observe(.value, with: { (snapshot) in
             DataService.instance.loadUsers(snapshot: snapshot, completion: { userArray in
                 self._users = userArray
+                self._filteredUsers = self._users
                 self.tableView.reloadData()
             })
         })
-        
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
         DataService.instance.friendsRef.removeObserver(withHandle: _friendsObserver)
-        
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.endEditing(true)
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        _filteredUsers = searchText.isEmpty ? _users : _users.filter({ (user) -> Bool in
+            return user.name.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
+        })
+        tableView.reloadData()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -83,8 +96,7 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
             cell.setupCell()
             cell.addStyleSquare(alignment: "left")
         }
-        let user = _users[indexPath.row]
-        print("Name: \(user.name)")
+        let user = _filteredUsers[indexPath.row]
         cell.updateUI(user: user)
         return cell
     }
@@ -92,40 +104,28 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! UserCell
         cell.contentView.backgroundColor = view.UIColorFromHex(rgbValue: 0xE1EC80)
-        let user = _users[indexPath.row]
-        _selectedUsers[user.uid!] = true
+        let user = _filteredUsers[indexPath.row]
+        _selectedUsers[user.uid] = true
         delegate?.rowsAreSelected(selected: true)
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! UserCell
         cell.contentView.backgroundColor = view.UIColorFromHex(rgbValue: 0xF7F7F7)
-        let user = _users[indexPath.row]
-        _selectedUsers[user.uid!] = nil
+        let user = _filteredUsers[indexPath.row]
+        _selectedUsers[user.uid] = nil
         if _selectedUsers.count == 0 {
             delegate?.rowsAreSelected(selected: false)
         }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return _users.count
+        return _filteredUsers.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 70
     }
-    
-//    func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
-//        let cell = tableView.cellForRow(at: indexPath)
-//        cell?.contentView.backgroundColor = UIColor.red
-//        cell?.backgroundColor = UIColor.red
-//    }
-//    
-//    func tableView(_ tableView: UITableView, didUnhighlightRowAt indexPath: IndexPath) {
-//        let cell = tableView.cellForRow(at: indexPath)
-//        cell?.contentView.backgroundColor = UIColor.blue
-//        cell?.backgroundColor = UIColor.blue
-//    }
 
 }
 

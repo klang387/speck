@@ -11,9 +11,9 @@ import Foundation
 struct User {
     private var _name: String
     private var _profPicUrl: String
-    private var _uid: String?
+    private var _uid: String
     
-    var uid: String? {
+    var uid: String {
         return _uid
     }
     
@@ -33,6 +33,7 @@ struct User {
     }
     
     init (snap: [String:Any]) {
+        _uid = snap["senderUid"] as? String ?? ""
         _name = snap["name"] as? String ?? ""
         _profPicUrl = snap["profPicUrl"] as? String ?? ""
     }
