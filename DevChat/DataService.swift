@@ -72,18 +72,20 @@ class DataService {
         return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
     }
     
-    func saveUserToDatabase(uid: String, firstName: String, lastName: String, profPicUrl: String) {
+    func saveUserToDatabase(uid: String, firstName: String, lastName: String, profPicUrl: String, email: String) {
         let profile = ["name": "\(firstName) \(lastName)", "profPicUrl": profPicUrl]
+        let emailRef = [uid:email]
         mainRef.child("profiles").child(uid).updateChildValues(profile)
+        mainRef.child("emails").updateChildValues(emailRef)
     }
     
-    func loadUsers(snapshot: DataSnapshot, completion: @escaping ([User]) -> Void) {
+    func loadUsersFromSnapshot(snapshot: DataSnapshot, completion: @escaping ([User]) -> Void) {
         var userArray: [User] = []
         if let users = snapshot.value as? [String:Bool] {
             for (key,_) in users {
                 DataService.instance.profilesRef.child(key).observeSingleEvent(of: .value, with: { (snapshot2) in
                     if let profile = snapshot2.value as? [String:String] {
-                        if let name = profile["name"], let profPicUrl = profile["profPicUrl"]{
+                        if let name = profile["name"], let profPicUrl = profile["profPicUrl"] {
                             let user = User(uid: key, name: name, profPicUrl: profPicUrl)
                             userArray.append(user)
                             if userArray.count == users.keys.count {
@@ -98,22 +100,36 @@ class DataService {
         }
     }
     
-//    func loadAllUsers(snapshot: DataSnapshot) -> [User] {
-//        var userArray: [User] = []
-//        if let users = snapshot.value as? [String:Any] {
-//            for (key, value) in users {
-//                if let dict = value as? [String:Any] {
-//                    if let name = dict["name"] as? String, let profPicUrl = dict["profPicUrl"] as? String {
-//                        let user = User(uid: key, name: name, profPicUrl: profPicUrl)
-//                        userArray.append(user)
-//                    }
-//                }
-//            }
-//            return userArray
-//        } else {
-//            return []
-//        }
-//    }
+    func searchDatabaseForUser(searchTerm: String, completion: @escaping ([User]) -> Void) {
+        let url = URL(string: "https://us-central1-devchat-9ca73.cloudfunctions.net/findUser?name=" + searchTerm)
+        let task = URLSession.shared.dataTask(with: url!) {data, response, error in
+            guard error == nil else {
+                print(error!)
+                return
+            }
+            guard let data = data else {
+                print("Data is empty")
+                return
+            }
+            let json = try! JSONSerialization.jsonObject(with: data, options: [])
+            let uidArray = json as! [String]
+            var userArray: [User] = []
+            for uid in uidArray {
+                DataService.instance.profilesRef.child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                    if let profile = snapshot.value as? [String:String] {
+                        if let name = profile["name"], let profPicUrl = profile["profPicUrl"] {
+                            let user = User(uid: uid, name: name, profPicUrl: profPicUrl)
+                            userArray.append(user)
+                            if userArray.count == uidArray.count {
+                                completion(userArray)
+                            }
+                        }
+                    }
+                })
+            }
+        }
+        task.resume()
+    }
     
     func loadAllUsers(snapshot: DataSnapshot) -> [User] {
         var userArray: [User] = []
@@ -159,9 +175,7 @@ class DataService {
     }
     
     func sendSnap(storageName: String, databaseUrl: String, mediaType: String, caption: String?, recipients: [String:Bool]) {
-        
         var snapDict = [String:Any]()
-        
         var currentUser = String()
         if let user = Auth.auth().currentUser?.uid {
             currentUser = user

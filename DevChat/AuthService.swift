@@ -71,7 +71,7 @@ class AuthService {
         var firstName = String()
         var lastName = String()
         var profPicUrl = String()
-        loginManager.logIn([.publicProfile]) { (loginResult) in
+        loginManager.logIn([.publicProfile, .email]) { (loginResult) in
             switch loginResult {
             case .failed(let error): print("Facebook login failed: \(error)")
             case .cancelled: print("User cancelled Facebook login.")
@@ -84,14 +84,17 @@ class AuthService {
                     } else {
                         print("Successful sign in with Firebase")
                         DataService.instance.profilesRef.child(user!.uid).observeSingleEvent(of: .value, with: { (snapshot) in
-                            if snapshot.value != nil {
-                                print("User already exists")
+                            print("Snapshot: \(snapshot)")
+                            if let _ = snapshot.value as? String  {
+                                print("User already exists \(user!.uid)")
                                 completion()
                             } else {
+                                print("EMAIL : \(user?.email)")
                                 let request = GraphRequest(graphPath: "me", parameters: ["fields" : "first_name, last_name, picture.type(large)"])
                                 request.start({ (response, result) in
                                     switch result{
                                     case .success(let resultDict):
+                                        print("GraphResult: \(resultDict)")
                                         if let first = resultDict.dictionaryValue?["first_name"] as? String, let last = resultDict.dictionaryValue?["last_name"] as? String {
                                             firstName = first
                                             lastName = last
@@ -100,8 +103,12 @@ class AuthService {
                                             if let data = picture["data"] as? [String:Any] {
                                                 if let picUrl = data["url"] as? String {
                                                     profPicUrl = picUrl
-                                                    DataService.instance.saveUserToDatabase(uid: user!.uid, firstName: firstName, lastName: lastName, profPicUrl: profPicUrl)
-                                                    completion()
+                                                    if let email = user?.email {
+                                                        DataService.instance.saveUserToDatabase(uid: user!.uid, firstName: firstName, lastName: lastName, profPicUrl: profPicUrl, email: email)
+                                                        completion()
+                                                    } else {
+                                                        // REQUEST EMAIL FROM USER - FB UNABLE TO PROVIDE
+                                                    }
                                                 }
                                             }
                                         }

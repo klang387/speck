@@ -13,8 +13,8 @@ import FacebookLogin
 
 class LoginVC: UIViewController, UITextFieldDelegate {
 
-    @IBOutlet weak var emailField: RoundTextField!
-    @IBOutlet weak var passwordField: RoundTextField!
+    @IBOutlet weak var emailField: UITextField!
+    @IBOutlet weak var passwordField: UITextField!
     
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -64,7 +64,7 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         super.viewWillAppear(animated)
         
         _friendsObserver = DataService.instance.friendsRef.observe(.value, with: { (snapshot) in
-            DataService.instance.loadUsers(snapshot: snapshot, completion: { userArray in
+            DataService.instance.loadUsersFromSnapshot(snapshot: snapshot, completion: { userArray in
                 self._users = userArray
                 self._filteredUsers = self._users
                 self.tableView.reloadData()

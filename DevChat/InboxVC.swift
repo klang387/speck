@@ -38,6 +38,7 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
         
         DataService.instance.receivedSnapsRef.queryOrdered(byChild: "mostRecent").observe(.value, with: { (snapshot) in
             self.snapsReceived.removeAll()
+            self.filteredSnaps.removeAll()
             let sortedArray = snapshot.children.allObjects as! [DataSnapshot]
             for snap in sortedArray.reversed() {
                 if var snapDict = snap.value as? [String:Any] {
@@ -58,9 +59,7 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
                     })
                 }
             }
-            
         })
-        
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {

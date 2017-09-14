@@ -36,7 +36,6 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     @IBOutlet weak var topFrame: UIImageView!
     @IBOutlet weak var inboxBadge: UILabel!
     @IBOutlet weak var friendsBadge: UILabel!
-
     
     @IBAction func switchCameraBtnPressed(_ sender: Any) {
         switchCamera()
@@ -62,6 +61,7 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         cameraDelegate = self
         captureBtn.delegate = self
         maximumVideoDuration = 10.0
@@ -79,7 +79,6 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
         if let user = Auth.auth().currentUser?.uid {
             self.currentUser = user
             
@@ -144,9 +143,10 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        
-        DataService.instance.usersRef.child(currentUser).child("snapsReceived").removeObserver(withHandle: inboxObserver)
-        DataService.instance.usersRef.child(currentUser).child("friendRequests").removeObserver(withHandle: friendsObserver)
+        if currentUser != "" {
+            DataService.instance.usersRef.child(currentUser).child("snapsReceived").removeObserver(withHandle: inboxObserver)
+            DataService.instance.usersRef.child(currentUser).child("friendRequests").removeObserver(withHandle: friendsObserver)
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

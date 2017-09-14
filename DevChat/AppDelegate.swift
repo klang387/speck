@@ -22,6 +22,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         FirebaseApp.configure()
         AppEventsLogger.activate(application)
+        //UserDefaults.standard.set("Hello", forKey: "test")
+        if UserDefaults.standard.bool(forKey: "firstRun") != false {
+            try! Auth.auth().signOut()
+        } else {
+            UserDefaults.standard.set(false, forKey: "firstRun")
+            UserDefaults.standard.synchronize()
+        }
         
         return true
     }

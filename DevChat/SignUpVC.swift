@@ -102,8 +102,8 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
                             } else {
                                 print("Image uploaded to Firebase successful.")
                                 if let downloadURL = metadata?.downloadURL()?.absoluteString {
-                                    if let uid = Auth.auth().currentUser?.uid {
-                                        DataService.instance.saveUserToDatabase(uid: uid, firstName: self.firstName.text!.capitalized, lastName: self.lastName.text!.capitalized, profPicUrl: downloadURL)
+                                    if let uid = Auth.auth().currentUser?.uid, let email = Auth.auth().currentUser?.email {
+                                        DataService.instance.saveUserToDatabase(uid: uid, firstName: self.firstName.text!.capitalized, lastName: self.lastName.text!.capitalized, profPicUrl: downloadURL, email: email)
                                         DataService.instance.usersRef.child(uid).child("profPicStorageRef").setValue(imageName)
                                         self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
                                     }
