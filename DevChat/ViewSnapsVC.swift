@@ -26,15 +26,22 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
     
     var animatable = true
     var btnAlphaTarget: CGFloat = 1
+    var currentVC: SnapViewer?
     
     @IBAction func tapGesture(_ sender: Any) {
         if animatable {
             animatable = false
             btnAlphaTarget = abs(btnAlphaTarget - 1)
+            if let viewer = self.pageVC.viewControllers?.first {
+                currentVC = (viewer as! SnapViewer)
+            }
             UIView.animate(withDuration: 0.2, animations: {
                 self.closeBtn.alpha = self.btnAlphaTarget
                 self.nextBtn.alpha = self.btnAlphaTarget
                 self.previousBtn.alpha = self.btnAlphaTarget
+                self.currentVC?.captionField?.alpha = self.btnAlphaTarget
+                self.currentVC?.timestampLbl?.alpha = self.btnAlphaTarget
+                
             }) { (finished) in
                 self.animatable = true
             }
@@ -97,6 +104,25 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
                     } else {
                         print("Invalid url")
                     }
+                }
+                if let captionText = snap["captionText"] as? String, let captionPosY = snap["captionPosY"] as? CGFloat {
+                    snapView.addCaption(editingEnabled: false)
+                    snapView.captionField?.text = captionText
+                    snapView.captionField?.center.y = captionPosY
+                    snapView.panRecognizer = nil
+                }
+                if var timestamp = snap["timestamp"] as? Double {
+                    timestamp = floor(timestamp/1000)
+                    let date = NSDate(timeIntervalSince1970: timestamp)
+                    print(date)
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.timeStyle = DateFormatter.Style.medium
+                    dateFormatter.dateStyle = DateFormatter.Style.medium
+                    dateFormatter.timeZone = TimeZone.current
+                    let localTimestamp = dateFormatter.string(from: date as Date)
+                    snapView.addTimestamp()
+                    snapView.timestampLbl?.text = localTimestamp
+                    print(localTimestamp)
                 }
                 snapViewControllers.append(snapView)
             } else {

@@ -74,16 +74,16 @@ class DataService {
     
     func saveUserToDatabase(uid: String, firstName: String, lastName: String, profPicUrl: String, email: String) {
         let profile = ["name": "\(firstName) \(lastName)", "profPicUrl": profPicUrl]
-        let emailRef = [uid:email]
+        let emailRef = [uid:email.lowercased()]
         mainRef.child("profiles").child(uid).updateChildValues(profile)
         mainRef.child("emails").updateChildValues(emailRef)
     }
     
     func loadUsersFromSnapshot(snapshot: DataSnapshot, completion: @escaping ([User]) -> Void) {
         var userArray: [User] = []
-        if let users = snapshot.value as? [String:Bool] {
+        if let users = snapshot.value as? [String:Any] {
             for (key,_) in users {
-                DataService.instance.profilesRef.child(key).observeSingleEvent(of: .value, with: { (snapshot2) in
+                self.profilesRef.child(key).observeSingleEvent(of: .value, with: { (snapshot2) in
                     if let profile = snapshot2.value as? [String:String] {
                         if let name = profile["name"], let profPicUrl = profile["profPicUrl"] {
                             let user = User(uid: key, name: name, profPicUrl: profPicUrl)
@@ -115,7 +115,7 @@ class DataService {
             let uidArray = json as! [String]
             var userArray: [User] = []
             for uid in uidArray {
-                DataService.instance.profilesRef.child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                self.profilesRef.child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
                     if let profile = snapshot.value as? [String:String] {
                         if let name = profile["name"], let profPicUrl = profile["profPicUrl"] {
                             let user = User(uid: uid, name: name, profPicUrl: profPicUrl)
@@ -129,6 +129,15 @@ class DataService {
             }
         }
         task.resume()
+    }
+    
+    func searchUsersByEmail(searchTerm: String, handler: @escaping ([User]) -> Void) {
+        self.mainRef.child("emails").queryOrderedByValue().queryEqual(toValue: searchTerm.lowercased()).observeSingleEvent(of: .value, with: { (snapshot) in
+            self.loadUsersFromSnapshot(snapshot: snapshot, completion: { (users) in
+                let array = users
+                handler(array)
+            })
+        })
     }
     
     func loadAllUsers(snapshot: DataSnapshot) -> [User] {
@@ -145,7 +154,7 @@ class DataService {
         return userArray
     }
     
-    func uploadMedia(tempVidUrl: URL?, tempPhotoData: Data?, caption: String?, recipients: [String:Bool], completion: () -> Void){
+    func uploadMedia(tempVidUrl: URL?, tempPhotoData: Data?, caption: [String:Any]?, recipients: [String:Bool], completion: () -> Void){
         let storageName = NSUUID().uuidString
         let ref = mediaStorageRef.child(storageName)
         if let url = tempVidUrl {
@@ -174,7 +183,7 @@ class DataService {
         completion()
     }
     
-    func sendSnap(storageName: String, databaseUrl: String, mediaType: String, caption: String?, recipients: [String:Bool]) {
+    func sendSnap(storageName: String, databaseUrl: String, mediaType: String, caption: [String:Any]?, recipients: [String:Bool]) {
         var snapDict = [String:Any]()
         var currentUser = String()
         if let user = Auth.auth().currentUser?.uid {
@@ -184,7 +193,10 @@ class DataService {
             return
         }
         
-        snapDict["caption"] = caption
+        if let captionText = caption?["text"] as? String, let captionPosY = caption?["yPos"] as? CGFloat {
+            snapDict["captionText"] = captionText
+            snapDict["captionPosY"] = captionPosY
+        }
         snapDict["databaseUrl"] = databaseUrl
         snapDict["mediaType"] = mediaType
         snapDict["timestamp"] = ServerValue.timestamp()

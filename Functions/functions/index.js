@@ -18,6 +18,9 @@ exports.findUser = functions.https.onRequest((request, response) => {
       if (name.toLowerCase().includes(searchTerm.toLowerCase())){
         userList.push(key);
       }
+      if (userList.length == 5) {
+        return response.send(userList);
+      }
     }
     response.send(userList);
   });

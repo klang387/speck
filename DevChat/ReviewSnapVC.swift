@@ -17,6 +17,7 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
     @IBOutlet weak var topBar: UIImageView!
     @IBOutlet weak var sendBtn: UIButton!
     @IBOutlet weak var backBtn: UIButton!
+    @IBOutlet weak var captionBtn: UIButton!
     @IBOutlet var tapRecognizer: UITapGestureRecognizer!
     
     let snapViewer = SnapViewer()
@@ -36,7 +37,7 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
     var animatable = true
     
     var newViewStartFrame: CGRect!
-        
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -50,7 +51,7 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
         }
         
         addChildViewController(snapViewer)
-        view.insertSubview(snapViewer.view, belowSubview: bottomBar)
+        view.insertSubview(snapViewer.view, belowSubview: captionBtn)
         
     }
     
@@ -68,6 +69,10 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
                 self.animatable = true
             }
         }
+    }
+    
+    @IBAction func captionPressed(_ sender: Any) {
+        snapViewer.addCaption(editingEnabled: true)
     }
     
     @IBAction func sendToUsersBtnPressed(_ sender: Any) {
@@ -99,16 +104,20 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
         } else if currentView == "send" && sendSnapVC != nil {
             if let count = sendSnapVC?.selectedUsers.count {
                 guard count > 0 else { return }
-                DataService.instance.uploadMedia(tempVidUrl: sendSnapVC!.tempVidUrl, tempPhotoData: sendSnapVC!.tempPhotoData, caption: nil, recipients: sendSnapVC!.selectedUsers, completion: {
+                var caption: [String:Any]?
+                if let text = snapViewer.captionField?.text, let position = snapViewer.captionField?.center.y {
+                    caption = ["text":text, "yPos":position]
+                }
+                DataService.instance.uploadMedia(tempVidUrl: sendSnapVC!.tempVidUrl, tempPhotoData: sendSnapVC!.tempPhotoData, caption: caption, recipients: sendSnapVC!.selectedUsers, completion: {
                     removeSendSnapVC()
                 })
             }
         }
-        
     }
     
     @IBAction func closePreviewBtnPressed(_ sender: Any) {
         if currentView == "preview" {
+            snapViewer.captionField?.endEditing(true)
             if dataType == "video" {
                 let fileManager = FileManager.default
                 do {

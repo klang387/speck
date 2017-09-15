@@ -592,6 +592,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mHd-Ry-I4r">
+                                <rect key="frame" x="276" y="49" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Text"/>
+                                <connections>
+                                    <action selector="captionPressed:" destination="ju6-W3-mZ3" eventType="touchUpInside" id="u8d-mI-bcw"/>
+                                </connections>
+                            </button>
                             <imageView userInteractionEnabled="NO" alpha="0.25" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="BottomBarGrey" translatesAutoresizingMaskIntoConstraints="NO" id="zBS-w0-hSz">
                                 <rect key="frame" x="0.0" y="498" width="320" height="70"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -631,6 +639,7 @@
                     <connections>
                         <outlet property="backBtn" destination="INH-4L-EPz" id="XAR-k6-LrS"/>
                         <outlet property="bottomBar" destination="zBS-w0-hSz" id="Wuh-HU-KHR"/>
+                        <outlet property="captionBtn" destination="mHd-Ry-I4r" id="x0k-BG-sIz"/>
                         <outlet property="sendBtn" destination="2Os-1c-D3C" id="c3m-EG-rh5"/>
                         <outlet property="tapRecognizer" destination="41j-Pq-8XZ" id="DG3-3K-mlV"/>
                         <outlet property="topBar" destination="bXN-JA-XbL" id="SVg-5s-r1x"/>
@@ -744,6 +753,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="G2K-WX-uvu">
+                                <rect key="frame" x="150" y="274" width="20" height="20"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </activityIndicatorView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cZL-Yo-ZDi">
                                 <rect key="frame" x="16" y="20" width="34" height="34"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -795,7 +808,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="1322" y="773"/>
+            <point key="canvasLocation" x="1321.875" y="772.18309859154931"/>
         </scene>
         <!--Change PasswordVC-->
         <scene sceneID="2um-QN-C7M">

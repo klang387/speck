@@ -301,10 +301,17 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             }
         } else if indexPath.section == 2 && indexPath.row == filteredAllUsers.count {
             if searching {
-                DataService.instance.searchDatabaseForUser(searchTerm: searchBar.text!, completion: { users in
-                    self.filteredAllUsers = users
-                    self.tableView.reloadData()
-                })
+                if searchBar.text?.range(of: "@") == nil {
+                    DataService.instance.searchDatabaseForUser(searchTerm: searchBar.text!, completion: { users in
+                        self.filteredAllUsers = users
+                        self.tableView.reloadData()
+                    })
+                } else {
+                    DataService.instance.searchUsersByEmail(searchTerm: searchBar.text!, handler: { users in
+                        self.filteredAllUsers = users
+                        self.tableView.reloadData()
+                    })
+                }
             } else {
                 numberOfUsersToLoad += 5
                 loadMoreUsers()
