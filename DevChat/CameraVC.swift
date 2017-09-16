@@ -7,14 +7,12 @@
 //
 
 import UIKit
-import FirebaseAuth
 import SwiftyCam
 import AVFoundation
 import AVKit
 
 class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
-    var currentUser = ""
     var profilePic: UIImage?
     
     var tempVidUrl: URL?
@@ -61,7 +59,7 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         cameraDelegate = self
         captureBtn.delegate = self
         maximumVideoDuration = 10.0
@@ -79,8 +77,10 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if let user = Auth.auth().currentUser?.uid {
-            self.currentUser = user
+        if AuthService.instance.currentUser != "" {
+            let currentUser = AuthService.instance.currentUser
+            
+            customViewDidAppear()
             
             friendsObserver = DataService.instance.usersRef.child(currentUser).child("friendRequests").observe(.value, with: { (snapshot) in
                 if let friendRequests = snapshot.value as? [String:Any] {
@@ -143,7 +143,8 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        if currentUser != "" {
+        if AuthService.instance.currentUser != "" {
+            let currentUser = AuthService.instance.currentUser
             DataService.instance.usersRef.child(currentUser).child("snapsReceived").removeObserver(withHandle: inboxObserver)
             DataService.instance.usersRef.child(currentUser).child("friendRequests").removeObserver(withHandle: friendsObserver)
         }

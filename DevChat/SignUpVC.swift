@@ -88,7 +88,7 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
             password.text == passwordConfirm.text &&
             selectProfilePic.image(for: .normal) != UIImage(named: "UploadProfilePic") {
             
-            AuthService.instance.createUser(email: self.email.text!, password: self.password.text!, onComplete: { (error, data) in
+            AuthService.instance.createUser(email: self.email.text!, password: self.password.text!, completion: { (data, error) in
                 if error != nil {
                     print("Error creating user: \(error!.debugDescription)")
                 } else {

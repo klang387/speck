@@ -25,3 +25,47 @@ exports.findUser = functions.https.onRequest((request, response) => {
     response.send(userList);
   });
 });
+
+exports.friendRequestNotification = functions.database.ref("/users/{recipientUid}/friendRequests/{requesterUid}").onCreate(event => {
+  const recipientUid = event.params.recipientUid;
+  const requesterUid = event.params.requesterUid;
+
+  console.log("recipientUid = ", recipientUid, " and requesterUid = ", requesterUid)
+
+  const getDeviceTokensPromise = admin.database().ref("/users/" + recipientUid + "/tokens").once("value");
+  const getRequesterProfilePromise = admin.database().ref("/profiles/" + requesterUid + "/name").once("value");
+
+  return Promise.all([getDeviceTokensPromise, getRequesterProfilePromise]).then(results => {
+    const tokensSnapshot = results[0];
+    const requesterSnapshot = results[1];
+
+    if (!tokensSnapshot.hasChildren()) {
+      return
+    }
+
+
+    const name = requesterSnapshot.val();
+
+    const payload = {
+      notification: {
+        body: "New friend request from " + name,
+        sound: "default"
+      }
+    };
+
+    const tokens = Object.keys(tokensSnapshot.val());
+
+    return admin.messaging().sendToDevice(tokens, payload).then(response => {
+      const tokensToRemove = [];
+      response.results.forEach((result, index) => {
+        const error = result.error;
+        if (error) {
+          if (error.code === "messaging/invalid-registration-token" || error.code === "messaging/registration-token-not-registered") {
+            tokensToRemove.push(tokensSnapshot.ref.child(tokens[index]).remove());
+          }
+        }
+      });
+      return Promise.all(tokensToRemove);
+    });
+  });
+});

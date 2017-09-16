@@ -10,9 +10,10 @@ import UIKit
 import Firebase
 import FacebookCore
 import FacebookLogin
+import UserNotifications
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
     var window: UIWindow?
 
@@ -22,12 +23,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         FirebaseApp.configure()
         AppEventsLogger.activate(application)
-        //UserDefaults.standard.set("Hello", forKey: "test")
-        if UserDefaults.standard.bool(forKey: "firstRun") != false {
-            try! Auth.auth().signOut()
+        
+        if #available(iOS 10.0, *) {
+            // For iOS 10 display notification (sent via APNS)
+            UNUserNotificationCenter.current().delegate = self
+            
+            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+            UNUserNotificationCenter.current().requestAuthorization(
+                options: authOptions,
+                completionHandler: {_, _ in })
         } else {
-            UserDefaults.standard.set(false, forKey: "firstRun")
-            UserDefaults.standard.synchronize()
+            let settings: UIUserNotificationSettings =
+                UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
+            application.registerUserNotificationSettings(settings)
+        }
+        
+        application.registerForRemoteNotifications()
+        
+        if UserDefaults.standard.integer(forKey: "firstRun") != 1 {
+            do {
+                try Auth.auth().signOut()
+                UserDefaults.standard.set(1, forKey: "firstRun")
+                UserDefaults.standard.synchronize()
+            } catch {
+                print("Sign out failed: \(error)")
+            }
         }
         
         return true

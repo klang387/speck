@@ -30,7 +30,7 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     
     var observersLoading = [true,true,true,true]
     
-    var currentUser: String?
+    var currentUser: String!
     var user: User?
     
     var section0Hidden = false
@@ -55,7 +55,7 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         
         searchBar.delegate = self
         
-        currentUser = AuthService.instance.currentUser!
+        currentUser = AuthService.instance.currentUser
         
     }
     

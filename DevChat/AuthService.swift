@@ -8,10 +8,11 @@
 
 import Foundation
 import FirebaseAuth
+import FirebaseMessaging
 import FacebookCore
 import FacebookLogin
 
-typealias Completion = (_ errMsg: String?, _ data: AnyObject?) -> Void
+typealias Completion = (_ data: AnyObject?, _ error: String?) -> Void
 
 class AuthService {
     private static let _instance = AuthService()
@@ -20,50 +21,56 @@ class AuthService {
         return _instance
     }
     
-    var currentUser: String? {
-        return Auth.auth().currentUser?.uid
+    var currentUser: String {
+        return Auth.auth().currentUser?.uid ?? ""
     }
     
-    func login(email: String, password: String, onComplete: Completion?) {
-        Auth.auth().signIn(withEmail: email, password: password, completion: { (user, error) in
-            if error != nil {
-                self.handleFirebaseError(error: error! as NSError, onComplete: onComplete)
-            } else {
-                onComplete?(nil, user)
-            }
-        })
+    var fcmToken: String {
+        return Messaging.messaging().fcmToken!
     }
     
-    func createUser(email: String, password: String, onComplete: Completion?) {
-        Auth.auth().createUser(withEmail: email, password: password, completion: { (user, error) in
-            if error != nil {
-                self.handleFirebaseError(error: error! as NSError, onComplete: onComplete)
-            } else {
-                self.login(email: email, password: password, onComplete: onComplete)
-            }
-        })
-    }
-    
-    func handleFirebaseError(error: NSError, onComplete: Completion?) {
-        print(error.debugDescription)
+    func handleFirebaseError(error: NSError, completion: Completion?) {
         if let errorCode = AuthErrorCode(rawValue: error._code) {
             switch (errorCode) {
             case .invalidEmail:
-                onComplete?("Invalid email address", nil)
+                completion?(nil, "Invalid email address")
                 break
             case .wrongPassword:
-                onComplete?("Invalid password", nil)
+                completion?(nil, "Invalid password")
                 break
             case .emailAlreadyInUse:
-                onComplete?("Could not create account.  Email already in use.", nil)
+                completion?(nil, "Could not create account.  Email already in use.")
                 break
             case .userNotFound:
-                onComplete?("User does not exist", nil)
+                completion?(nil, "User does not exist")
                 break
             default:
-                onComplete?("There was a problem authenticating.  Try again.", nil)
+                completion?(nil, "There was a problem authenticating.  Try again.")
             }
         }
+    }
+    
+    func emailSignIn(email: String, password: String, completion: Completion?) {
+        Auth.auth().signIn(withEmail: email, password: password, completion: { (user, error) in
+            if error != nil {
+                self.handleFirebaseError(error: error! as NSError, completion: completion)
+            } else {
+                DataService.instance.addToken()
+                completion?(user, nil)
+            }
+        })
+    }
+    
+    func createUser(email: String, password: String, completion: Completion?) {
+        Auth.auth().createUser(withEmail: email, password: password, completion: { (user, error) in
+            if error != nil {
+                self.handleFirebaseError(error: error! as NSError, completion: completion)
+            } else {
+                self.emailSignIn(email: email, password: password, completion: { (user, error) in
+                    completion?(user,error)
+                })
+            }
+        })
     }
     
     func facebookLogin(completion: @escaping () -> Void) {
@@ -75,26 +82,24 @@ class AuthService {
             switch loginResult {
             case .failed(let error): print("Facebook login failed: \(error)")
             case .cancelled: print("User cancelled Facebook login.")
-            case .success(let grantedPermissions, let declinedPermissions, let accessToken):
+            case .success(let grantedPermissions, _, let accessToken):
                 print("Logged into Facebook with permissions: \(grantedPermissions)")
                 let credential = FacebookAuthProvider.credential(withAccessToken: accessToken.authenticationToken)
                 Auth.auth().signIn(with: credential, completion: { (user, error) in
                     if error != nil {
-                        print("Unable to sign in with Firebase: \(error)")
+                        print("Unable to sign in with Firebase: \(error!)")
                     } else {
                         print("Successful sign in with Firebase")
+                        DataService.instance.addToken()
                         DataService.instance.profilesRef.child(user!.uid).observeSingleEvent(of: .value, with: { (snapshot) in
-                            print("Snapshot: \(snapshot)")
                             if let _ = snapshot.value as? String  {
                                 print("User already exists \(user!.uid)")
                                 completion()
                             } else {
-                                print("EMAIL : \(user?.email)")
                                 let request = GraphRequest(graphPath: "me", parameters: ["fields" : "first_name, last_name, picture.type(large)"])
                                 request.start({ (response, result) in
                                     switch result{
                                     case .success(let resultDict):
-                                        print("GraphResult: \(resultDict)")
                                         if let first = resultDict.dictionaryValue?["first_name"] as? String, let last = resultDict.dictionaryValue?["last_name"] as? String {
                                             firstName = first
                                             lastName = last
@@ -118,7 +123,6 @@ class AuthService {
                                 })
                             }
                         })
-                        
                     }
                 })
             }

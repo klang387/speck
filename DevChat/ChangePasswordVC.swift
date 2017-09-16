@@ -35,7 +35,7 @@ class ChangePasswordVC: UIViewController {
                     } else {
                         Auth.auth().currentUser?.updatePassword(to: self.newPassword.text!, completion: { (error) in
                             if error != nil {
-                                print("Error updating password: \(error)")
+                                print("Error updating password: \(error!)")
                             } else {
                                 self.delegate?.changePasswordDismiss()
                             }

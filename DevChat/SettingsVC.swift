@@ -7,8 +7,8 @@
 //
 
 import UIKit
-import FirebaseAuth
 import FirebaseStorage
+import FirebaseAuth
 
 class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, ChangePasswordDelegate, ChangeNameDelegate {
 
@@ -30,7 +30,7 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     
     var friendsObserver: UInt!
     var requestCount: Int!
-    var currentUser = String()
+    var currentUser: String!
     
     var friendsVC: FriendsVC?
     
@@ -38,6 +38,7 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        currentUser = AuthService.instance.currentUser
         
         newViewStartFrame = CGRect(origin: CGPoint(x: view.frame.origin.x + view.frame.width, y: view.frame.origin.y), size: view.frame.size)
         
@@ -67,17 +68,14 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if let user = AuthService.instance.currentUser {
-            currentUser = user
-            friendsObserver = DataService.instance.usersRef.child(currentUser).child("friendRequests").observe(.value, with: { (snapshot) in
-                if let friendRequests = snapshot.value as? [String:Any] {
-                    self.friendsBadge.text = String(friendRequests.count)
-                    self.friendsBadge.isHidden = false
-                } else {
-                    self.friendsBadge.isHidden = true
-                }
-            })
-        }
+        friendsObserver = DataService.instance.usersRef.child(currentUser).child("friendRequests").observe(.value, with: { (snapshot) in
+            if let friendRequests = snapshot.value as? [String:Any] {
+                self.friendsBadge.text = String(friendRequests.count)
+                self.friendsBadge.isHidden = false
+            } else {
+                self.friendsBadge.isHidden = true
+            }
+        })
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -221,6 +219,7 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     
     @IBAction func signOutPressed(_ sender: Any) {
         do {
+            DataService.instance.removeToken()
             try Auth.auth().signOut()
             weak var cameraVC = self.presentingViewController
             self.dismiss(animated: true) {
@@ -235,31 +234,28 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         if let image = info[UIImagePickerControllerEditedImage] as? UIImage {
             profilePic.image = image
             if let imageData = UIImageJPEGRepresentation(image, 0.2) {
-                if let currentUser = Auth.auth().currentUser?.uid {
-                    DataService.instance.usersRef.child(currentUser).child("profPicStorageRef").observeSingleEvent(of: .value, with: { (snapshot) in
-                        if let profPicStorageRef = snapshot.value as? String {
-                            DataService.instance.profPicStorageRef.child(profPicStorageRef).delete(completion: { (error) in
-                                if error != nil {
-                                    print("Error deleting profile pic: \(error)")
-                                }
-                            })
-                        } else {
-                            print("Failed to get profPicStorageRef")
-                        }
-                    })
-                    let imageName = NSUUID().uuidString
-                    DataService.instance.profPicStorageRef.child(imageName).putData(imageData, metadata: StorageMetadata(), completion: { (metadata, error) in
-                        if let downloadURL = metadata?.downloadURL()?.absoluteString {
-                            DataService.instance.profilesRef.child(currentUser).updateChildValues(["profPicUrl":downloadURL])
-                            DataService.instance.saveLocalProfilePic(imageData: imageData)
-                            print("Successfully changed image")
-                        } else {
-                            print("Failed to get downloadUrl")
-                        }
-                    })
-                } else {
-                    print("Failed to upload image")
-                }
+                DataService.instance.usersRef.child(currentUser).child("profPicStorageRef").observeSingleEvent(of: .value, with: { (snapshot) in
+                    if let profPicStorageRef = snapshot.value as? String {
+                        DataService.instance.profPicStorageRef.child(profPicStorageRef).delete(completion: { (error) in
+                            if error != nil {
+                                print("Error deleting profile pic: \(error!)")
+                            }
+                        })
+                    } else {
+                        print("Failed to get profPicStorageRef")
+                    }
+                })
+                let imageName = NSUUID().uuidString
+                DataService.instance.profPicStorageRef.child(imageName).putData(imageData, metadata: StorageMetadata(), completion: { (metadata, error) in
+                    if let downloadURL = metadata?.downloadURL()?.absoluteString {
+                        DataService.instance.profilesRef.child(self.currentUser).updateChildValues(["profPicUrl":downloadURL])
+                        DataService.instance.saveLocalProfilePic(imageData: imageData)
+                        print("Successfully changed image")
+                    } else {
+                        print("Failed to get downloadUrl")
+                    }
+                })
+                
             } else {
                 print("Failed to create JPEG")
             }

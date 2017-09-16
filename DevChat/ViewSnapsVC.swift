@@ -177,16 +177,15 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
     
     func deleteSnaps() {
         for index in 0...viewedSnaps {
-            if let storageName = snapsArray[index]["storageName"] as? String, let snapUid = snapsArray[index]["snapUid"] as? String, let currentUser = AuthService.instance.currentUser {
-                print(storageName)
-                print(snapUid)
+            if let storageName = snapsArray[index]["storageName"] as? String, let snapUid = snapsArray[index]["snapUid"] as? String {
+                let currentUser = AuthService.instance.currentUser
                 DataService.instance.mediaStorageRef.child(storageName).delete(completion: { (error) in
                     if error != nil {
-                        print("Error deleting media from storage: \(error)")
+                        print("Error deleting media from storage: \(error!)")
                     } else {
                         DataService.instance.usersRef.child(currentUser).child("snapsReceived").child(self.senderUid).child("snaps").child(snapUid).removeValue(completionBlock: { (error, ref) in
                             if error != nil {
-                                print("Error deleting snap from database: \(error)")
+                                print("Error deleting snap from database: \(error!)")
                             }
                         })
                     }

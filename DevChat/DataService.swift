@@ -10,7 +10,6 @@ import Foundation
 import AVKit
 import FirebaseDatabase
 import FirebaseStorage
-import FirebaseAuth
 
 class DataService {
     private static let _instance = DataService()
@@ -29,23 +28,19 @@ class DataService {
     }
     
     var receivedSnapsRef: DatabaseReference {
-        let user = Auth.auth().currentUser!.uid
-        return usersRef.child(user).child("snapsReceived")
+        return usersRef.child(AuthService.instance.currentUser).child("snapsReceived")
     }
     
     var friendsRef: DatabaseReference {
-        let user = Auth.auth().currentUser!.uid
-        return usersRef.child(user).child("friends")
+        return usersRef.child(AuthService.instance.currentUser).child("friends")
     }
     
     var friendRequestsRef: DatabaseReference {
-        let user = Auth.auth().currentUser!.uid
-        return usersRef.child(user).child("friendRequests")
+        return usersRef.child(AuthService.instance.currentUser).child("friendRequests")
     }
     
     var outgoingRequestsRef: DatabaseReference {
-        let user = Auth.auth().currentUser!.uid
-        return usersRef.child(user).child("outgoingRequests")
+        return usersRef.child(AuthService.instance.currentUser).child("outgoingRequests")
     }
     
     var usersRef: DatabaseReference {
@@ -54,6 +49,10 @@ class DataService {
     
     var profilesRef: DatabaseReference {
         return mainRef.child("profiles")
+    }
+    
+    var tokensRef: DatabaseReference {
+        return usersRef.child(AuthService.instance.currentUser).child("tokens")
     }
     
     var mainStorageRef: StorageReference {
@@ -70,6 +69,14 @@ class DataService {
     
     var documentsUrl: URL {
         return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+    }
+    
+    func addToken() {
+        tokensRef.child(AuthService.instance.fcmToken).setValue(true)
+    }
+    
+    func removeToken() {
+        tokensRef.child(AuthService.instance.fcmToken).removeValue()
     }
     
     func saveUserToDatabase(uid: String, firstName: String, lastName: String, profPicUrl: String, email: String) {
@@ -185,13 +192,7 @@ class DataService {
     
     func sendSnap(storageName: String, databaseUrl: String, mediaType: String, caption: [String:Any]?, recipients: [String:Bool]) {
         var snapDict = [String:Any]()
-        var currentUser = String()
-        if let user = Auth.auth().currentUser?.uid {
-            currentUser = user
-        } else {
-            print("Error getting current user")
-            return
-        }
+        let currentUser = AuthService.instance.currentUser
         
         if let captionText = caption?["text"] as? String, let captionPosY = caption?["yPos"] as? CGFloat {
             snapDict["captionText"] = captionText
