@@ -78,6 +78,12 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         DataService.instance.friendsRef.removeObserver(withHandle: _friendsObserver)
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        tableView.reloadData()
+    }
+    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.endEditing(true)
     }
@@ -91,10 +97,12 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell") as! UserCell
+        cell.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 70)
+        cell.bgView.frame = CGRect(x: 0, y: 0.5, width: view.frame.width, height: cell.frame.height - 1)
         if cell.nameLbl == nil {
             cell.frame = CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 70)
             cell.setupCell()
-            cell.addStyleSquare(alignment: "left")
+            //cell.addStyleSquare(alignment: "left")
         }
         let user = _filteredUsers[indexPath.row]
         cell.updateUI(user: user)
@@ -103,7 +111,8 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! UserCell
-        cell.contentView.backgroundColor = view.UIColorFromHex(rgbValue: 0xE1EC80)
+        cell.bgView.backgroundColor = view.UIColorFromHex(rgbValue: 0xE1EC80)
+        cell.backgroundColor = .white
         let user = _filteredUsers[indexPath.row]
         _selectedUsers[user.uid] = true
         delegate?.rowsAreSelected(selected: true)
@@ -111,7 +120,8 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! UserCell
-        cell.contentView.backgroundColor = view.UIColorFromHex(rgbValue: 0xF7F7F7)
+        cell.bgView.backgroundColor = view.UIColorFromHex(rgbValue: 0xF7F7F7)
+        cell.backgroundColor = view.UIColorFromHex(rgbValue: 0x9FA3A6)
         let user = _filteredUsers[indexPath.row]
         _selectedUsers[user.uid] = nil
         if _selectedUsers.count == 0 {

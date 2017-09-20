@@ -140,6 +140,12 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        tableView.reloadData()
+    }
+    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.endEditing(true)
     }
@@ -199,8 +205,9 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
                 sectionCount.text = String(friendsArray.count)
             }
         case 2:
-            headerView.backgroundColor = self.view.UIColorFromHex(rgbValue: 0xDCDCDC)
+            headerView.backgroundColor = self.view.UIColorFromHex(rgbValue: 0x4A5258)
             sectionTitle.text = "All Users"
+            sectionTitle.textColor = .white
         default:  break
         }
         
@@ -222,6 +229,8 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell") as! UserCell
+        cell.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 70)
+        cell.bgView.frame = CGRect(x: 0, y: 0.5, width: view.frame.width, height: cell.frame.height - 1)
         if cell.nameLbl == nil {
             cell.frame = CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 70)
             cell.setupCell()

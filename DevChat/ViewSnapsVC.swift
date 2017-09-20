@@ -73,6 +73,13 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
         }
     }
     
+    func snapsArraySorter(first: [String:Any], second: [String:Any]) -> Bool {
+        if let timestamp1 = first["timestamp"] as? Double, let timestamp2 = second["timestamp"] as? Double {
+            return timestamp1 < timestamp2
+        }
+        return false
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -87,9 +94,8 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
                 snapsArray.append(snapDict)
             }
         }
-        
-        print(snapsArray)
-        print(senderUid)
+
+        snapsArray.sort(by: snapsArraySorter)
         
         var count = 0
         for snap in snapsArray {
@@ -114,7 +120,6 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
                 if var timestamp = snap["timestamp"] as? Double {
                     timestamp = floor(timestamp/1000)
                     let date = NSDate(timeIntervalSince1970: timestamp)
-                    print(date)
                     let dateFormatter = DateFormatter()
                     dateFormatter.timeStyle = DateFormatter.Style.medium
                     dateFormatter.dateStyle = DateFormatter.Style.medium
@@ -122,7 +127,6 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
                     let localTimestamp = dateFormatter.string(from: date as Date)
                     snapView.addTimestamp()
                     snapView.timestampLbl?.text = localTimestamp
-                    print(localTimestamp)
                 }
                 snapViewControllers.append(snapView)
             } else {

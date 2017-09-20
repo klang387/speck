@@ -69,3 +69,51 @@ exports.friendRequestNotification = functions.database.ref("/users/{recipientUid
     });
   });
 });
+
+
+exports.messageNotification = functions.database.ref("/users/{recipientUid}/snapsReceived/{senderUid}/snaps/{snapUid}").onCreate(event => {
+  const recipientUid = event.params.recipientUid;
+  const senderUid = event.params.senderUid;
+  const snapUid = event.params.snapUid;
+
+  console.log("recipientUid = ", recipientUid, " senderUid = ", senderUid, " snapUid = ", snapUid);
+
+  const getDeviceTokensPromise = admin.database().ref("/users/" + recipientUid + "/tokens").once("value");
+  const getSenderProfilePromise = admin.database().ref("/profiles/" + senderUid + "/name").once("value");
+  const getMediaTypePromise = admin.database().ref("/users/"+recipientUid+"/snapsReceived/"+senderUid+"/snaps/"+snapUid+"/mediaType").once("value");
+
+  return Promise.all([getDeviceTokensPromise, getSenderProfilePromise, getMediaTypePromise]).then(results => {
+    const tokensSnapshot = results[0];
+    const senderSnapshot = results[1];
+    const mediaTypeSnapshot = results[2];
+
+    if (!tokensSnapshot.hasChildren()) {
+      return
+    }
+
+    const name = senderSnapshot.val();
+    const mediaType = mediaTypeSnapshot.val();
+
+    const payload = {
+      notification: {
+        body: "New " + mediaType + " from " + name,
+        sound: "default"
+      }
+    };
+
+    const tokens = Object.keys(tokensSnapshot.val());
+
+    return admin.messaging().sendToDevice(tokens, payload).then(response => {
+      const tokensToRemove = [];
+      response.results.forEach((result, index) => {
+        const error = result.error;
+        if (error) {
+          if (error.code === "messaging/invalid-registration-token" || error.code === "messaging/registration-token-not-registered") {
+            tokensToRemove.push(tokensSnapshot.ref.child(tokens[index]).remove());
+          }
+        }
+      });
+      return Promise.all(tokensToRemove);
+    });
+  });
+});

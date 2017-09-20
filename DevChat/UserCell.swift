@@ -10,6 +10,7 @@ import UIKit
 
 class UserCell: UITableViewCell {
     
+    var bgView = UIView()
     var profPic: UIImageView!
     var nameLbl: UILabel!
     var cellSelected = false
@@ -20,13 +21,15 @@ class UserCell: UITableViewCell {
     var requestSent = false
     var iconView: UIImageView?
     var styleSquare: UIView?
+    var animating = false
     
     var delegate: UserCellDelegate?
     
     func setupCell() {
+        bgView.backgroundColor = UIColorFromHex(rgbValue: 0xFBFBFB)
         animateDistance = frame.height
         selectionStyle = .none
-        backgroundColor = UIColorFromHex(rgbValue: 0xF7F7F7)
+        backgroundColor = UIColorFromHex(rgbValue: 0x9FA3A6)
         let height: CGFloat = 54
         let width: CGFloat = 54
         profPic = UIImageView(frame: CGRect(x: frame.height / 2 - width / 2, y: frame.midY - height / 2, width: width, height: height))
@@ -37,6 +40,7 @@ class UserCell: UITableViewCell {
         nameLbl.font = UIFont(name: "Avenir", size: 18)
         nameLbl.textColor = UIColor.darkGray
         
+        addSubview(bgView)
         addSubview(profPic)
         addSubview(nameLbl)
     }
@@ -46,22 +50,22 @@ class UserCell: UITableViewCell {
         profPic.imageFromServerURL(urlString: user.profPicUrl, completion: nil)
     }
     
-    func addStyleSquare(alignment: String) {
-        var rect = CGRect(x: 0, y: 0, width: frame.height, height: frame.height)
-        if alignment == "right" {
-            rect = CGRect(x: frame.width - frame.height, y: 0, width: frame.height, height: frame.height)
-        }
-        styleSquare = UIView(frame: rect)
-        styleSquare?.backgroundColor = UIColor.black
-        styleSquare?.alpha = 0.1
-        insertSubview(styleSquare!, belowSubview: profPic)
-    }
+//    func addStyleSquare(alignment: String) {
+//        var rect = CGRect(x: 0, y: 0, width: frame.height, height: frame.height)
+//        if alignment == "right" {
+//            rect = CGRect(x: frame.width - frame.height, y: 0, width: frame.height, height: frame.height)
+//        }
+//        styleSquare = UIView(frame: rect)
+//        styleSquare?.backgroundColor = UIColor.black
+//        styleSquare?.alpha = 0.1
+//        insertSubview(styleSquare!, belowSubview: profPic)
+//    }
     
     func addSnapCount() {
         snapCount = UILabel(frame: CGRect(x: frame.width - frame.height, y: 0, width: frame.height, height: frame.height))
         snapCount?.font = UIFont(name: "Avenir", size: 16)
         snapCount?.textAlignment = .center
-        snapCount?.textColor = UIColor.darkGray
+        snapCount?.textColor = .white
         addSubview(snapCount!)
     }
     
@@ -78,64 +82,67 @@ class UserCell: UITableViewCell {
     }
     
     func toggleButtons(tableSection: Int) {
-        cellSelected = cellSelected ? false : true
-        if cellSelected {
-            button1 = UIButton(frame: CGRect(x: frame.width, y: 0, width: frame.height, height: frame.height))
-            button1?.backgroundColor = UIColorFromHex(rgbValue: 0xEAEAEA)
-            addSubview(button1!)
-            switch tableSection {
-            case 0:
-                button1?.setImage(UIImage(named: "Delete"), for: .normal)
-                button1?.addTarget(self, action: #selector(deleteRequest), for: .touchUpInside)
-                button2 = UIButton(frame: CGRect(x: frame.width + frame.height + 2, y: 0, width: frame.height, height: frame.height))
-                button2?.backgroundColor = UIColorFromHex(rgbValue: 0xEAEAEA)
-                button2?.setImage(UIImage(named: "Accept"), for: .normal)
-                button2?.addTarget(self, action: #selector(acceptRequest), for: .touchUpInside)
-                addSubview(button2!)
-                self.animateDistance = frame.height * 2 + 2
-            case 1:
-                button1?.setImage(UIImage(named: "Delete"), for: .normal)
-                button1?.addTarget(self, action: #selector(deleteFriend), for: .touchUpInside)
-            case 2:
-                if !requestSent {
-                    button1?.setImage(UIImage(named: "RequestAdd"), for: .normal)
-                    button1?.addTarget(self, action: #selector(sendRequest), for: .touchUpInside)
-                } else {
-                    button1?.setImage(UIImage(named: "RequestRemove"), for: .normal)
-                    button1?.addTarget(self, action: #selector(cancelRequest), for: .touchUpInside)
+        if !animating {
+            animating = true
+            cellSelected = !cellSelected
+            if cellSelected {
+                button1 = UIButton(frame: CGRect(x: frame.width, y: 0, width: frame.height, height: frame.height))
+                button1?.backgroundColor = UIColorFromHex(rgbValue: 0xEAEAEA)
+                addSubview(button1!)
+                switch tableSection {
+                case 0:
+                    button1?.setImage(UIImage(named: "Delete"), for: .normal)
+                    button1?.addTarget(self, action: #selector(deleteRequest), for: .touchUpInside)
+                    button2 = UIButton(frame: CGRect(x: frame.width + frame.height + 2, y: 0, width: frame.height, height: frame.height))
+                    button2?.backgroundColor = UIColorFromHex(rgbValue: 0xEAEAEA)
+                    button2?.setImage(UIImage(named: "Accept"), for: .normal)
+                    button2?.addTarget(self, action: #selector(acceptRequest), for: .touchUpInside)
+                    addSubview(button2!)
+                    self.animateDistance = frame.height * 2 + 2
+                case 1:
+                    button1?.setImage(UIImage(named: "Delete"), for: .normal)
+                    button1?.addTarget(self, action: #selector(deleteFriend), for: .touchUpInside)
+                case 2:
+                    if !requestSent {
+                        button1?.setImage(UIImage(named: "RequestAdd"), for: .normal)
+                        button1?.addTarget(self, action: #selector(sendRequest), for: .touchUpInside)
+                    } else {
+                        button1?.setImage(UIImage(named: "RequestRemove"), for: .normal)
+                        button1?.addTarget(self, action: #selector(cancelRequest), for: .touchUpInside)
+                    }
+                default:
+                    break
                 }
-            default:
-                break
-            }
-            
-            guard animateDistance != nil else { return }
-
-            UIView.animate(withDuration: 0.2, animations: {
-                self.nameLbl.frame.origin.x -= self.frame.height
-                self.profPic.frame.origin.x -= self.frame.height
-                self.nameLbl.textColor = UIColor.lightGray
-                self.button1?.frame.origin.x -= self.animateDistance!
-                if self.button2 != nil {
-                    self.button2?.frame.origin.x -= self.animateDistance!
+                
+                guard animateDistance != nil else { return }
+                
+                UIView.animate(withDuration: 0.2, animations: {
+                    self.nameLbl.frame.origin.x -= self.frame.height
+                    self.profPic.frame.origin.x -= self.frame.height
+                    self.nameLbl.textColor = UIColor.lightGray
+                    self.button1?.frame.origin.x -= self.animateDistance!
+                    if self.button2 != nil {
+                        self.button2?.frame.origin.x -= self.animateDistance!
+                    }
+                }) { (finished) in
+                    self.animating = false
                 }
-            }) { (finished) in
-                // Animation Completion Handler
-            }
-        } else {
-            UIView.animate(withDuration: 0.2, animations: {
-                self.nameLbl.frame.origin.x += self.frame.height
-                self.profPic.frame.origin.x += self.frame.height
-                self.nameLbl.textColor = UIColor.darkGray
-                self.button1?.frame.origin.x += self.animateDistance!
-                if self.button2 != nil {
-                    self.button2?.frame.origin.x += self.animateDistance!
+            } else {
+                UIView.animate(withDuration: 0.2, animations: {
+                    self.nameLbl.frame.origin.x += self.frame.height
+                    self.profPic.frame.origin.x += self.frame.height
+                    self.nameLbl.textColor = UIColor.darkGray
+                    self.button1?.frame.origin.x += self.animateDistance!
+                    if self.button2 != nil {
+                        self.button2?.frame.origin.x += self.animateDistance!
+                    }
+                }) { (finished) in
+                    self.button1?.removeFromSuperview()
+                    if self.button2 != nil {
+                        self.button2?.removeFromSuperview()
+                    }
+                    self.animating = false
                 }
-            }) { (finished) in
-                self.button1?.removeFromSuperview()
-                if self.button2 != nil {
-                    self.button2?.removeFromSuperview()
-                }
-                // Animation Completion Handler
             }
         }
         

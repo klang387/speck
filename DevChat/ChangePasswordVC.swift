@@ -11,9 +11,9 @@ import FirebaseAuth
 
 class ChangePasswordVC: UIViewController {
 
-    @IBOutlet weak var oldPassword: UITextField!
-    @IBOutlet weak var newPassword: UITextField!
-    @IBOutlet weak var repeatNewPassword: UITextField!
+    @IBOutlet weak var oldPassword: UITextField?
+    @IBOutlet weak var newPassword: UITextField?
+    @IBOutlet weak var repeatNewPassword: UITextField?
     
     var delegate: ChangePasswordDelegate?
     
@@ -23,7 +23,7 @@ class ChangePasswordVC: UIViewController {
     }
 
     @IBAction func savePressed(_ sender: Any) {
-        if let oldPassword = oldPassword.text, let newPassword = newPassword.text, let repeatNewPassword = repeatNewPassword.text {
+        if let oldPassword = oldPassword?.text, let newPassword = newPassword?.text, let repeatNewPassword = repeatNewPassword?.text {
             if oldPassword.characters.count > 0 &&
                 newPassword.characters.count > 0 &&
                 repeatNewPassword == newPassword {
@@ -33,7 +33,7 @@ class ChangePasswordVC: UIViewController {
                     if error != nil {
                         print("Incorrect old password")
                     } else {
-                        Auth.auth().currentUser?.updatePassword(to: self.newPassword.text!, completion: { (error) in
+                        Auth.auth().currentUser?.updatePassword(to: self.newPassword!.text!, completion: { (error) in
                             if error != nil {
                                 print("Error updating password: \(error!)")
                             } else {

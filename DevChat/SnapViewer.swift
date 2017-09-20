@@ -45,7 +45,13 @@ class SnapViewer: UIViewController, UITextFieldDelegate {
         
         imageView.frame = view.frame
         view.addSubview(imageView)
+
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
         
+        imageView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
     }
     
     override func viewDidAppear(_ animated: Bool) {

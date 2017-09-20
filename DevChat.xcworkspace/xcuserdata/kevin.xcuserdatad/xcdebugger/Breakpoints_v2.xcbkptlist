@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "DevChat/FriendsVC.swift"
-            timestampString = "527112815.233529"
+            timestampString = "527457752.951339"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "369"
-            endingLineNumber = "369"
+            startingLineNumber = "378"
+            endingLineNumber = "378"
             landmarkName = "sendFriendRequest()"
             landmarkType = "7">
          </BreakpointContent>

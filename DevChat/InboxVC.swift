@@ -17,6 +17,7 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
     
     @IBAction func backBtn(_ sender: Any) {
         searchBar.endEditing(true)
+        AppDelegate.AppUtility.lockOrientation(.portrait)
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -24,6 +25,8 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
     var filteredSnaps = [[String:Any]]()
     
     var profilePicCache: NSCache<NSString,UIImage>!
+    
+    var inboxObserver: UInt!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,7 +39,13 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
         
         searchBar.delegate = self
         
-        DataService.instance.receivedSnapsRef.queryOrdered(byChild: "mostRecent").observe(.value, with: { (snapshot) in
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.snapsReceived.removeAll()
+        self.filteredSnaps.removeAll()
+        inboxObserver = DataService.instance.receivedSnapsRef.queryOrdered(byChild: "mostRecent").observe(.value, with: { (snapshot) in
             self.snapsReceived.removeAll()
             self.filteredSnaps.removeAll()
             let sortedArray = snapshot.children.allObjects as! [DataSnapshot]
@@ -62,6 +71,18 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
         })
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        DataService.instance.receivedSnapsRef.removeObserver(withHandle: inboxObserver)
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        tableView.reloadData()
+    }
+    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.endEditing(true)
     }
@@ -82,29 +103,31 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
         let fromUser = filteredSnaps[indexPath.row]
         let user = User(snap: fromUser)
         let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell") as! UserCell
+        cell.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 70)
+        cell.bgView.frame = CGRect(x: 0, y: 0.5, width: view.frame.width, height: cell.frame.height - 1)
         if cell.nameLbl == nil {
-            cell.frame = CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 70)
             cell.setupCell()
-            cell.addStyleSquare(alignment: "right")
             cell.addSnapCount()
         }
         cell.nameLbl.text = user.name
         getProfileImage(user: user, completion: { image in
             cell.profPic.image = image
         })
-        cell.backgroundColor = view.UIColorFromHex(rgbValue: 0xBCD9E6)
         cell.profPic.alpha = 1
         cell.nameLbl.alpha = 1
         cell.styleSquare?.alpha = 0.1
         if let snaps = fromUser["snaps"] as? [String:Any] {
             cell.snapCount?.text = "\(snaps.count)"
+            cell.bgView.backgroundColor = view.UIColorFromHex(rgbValue: 0x94C4D8)
+            cell.backgroundColor = .white
             return cell
         } else {
             cell.profPic.alpha = 0.5
             cell.nameLbl.alpha = 0.5
             cell.styleSquare?.alpha = 0.01
             cell.snapCount?.text = ""
-            cell.backgroundColor = view.UIColorFromHex(rgbValue: 0xF3F3F3)
+            cell.bgView.backgroundColor = view.UIColorFromHex(rgbValue: 0xF3F3F3)
+            cell.backgroundColor = view.UIColorFromHex(rgbValue: 0x9FA3A6)
             return cell
         }
     }

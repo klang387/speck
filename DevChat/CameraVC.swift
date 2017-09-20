@@ -7,9 +7,9 @@
 //
 
 import UIKit
-import SwiftyCam
 import AVFoundation
 import AVKit
+import SwiftyCam
 
 class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
@@ -24,15 +24,22 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     var friendsObserver: UInt!
     var friendRequests = 0
     
+    var recordingTimer: UILabel?
+    var recordingCount: Int?
+    var timer: Timer?
+    
+    var buttonsArray: [UIButton]!
+    var originalRotation: CATransform3D?
+    
+    var orientation: UIInterfaceOrientationMask?
+    
     @IBOutlet weak var captureBtn: SwiftyCamButton!
     @IBOutlet weak var switchCameraBtn: UIButton!
     @IBOutlet weak var settingsBtn: UIButton!
     @IBOutlet weak var flashBtn: UIButton!
-    @IBOutlet weak var recFrame: UIImageView!
-    @IBOutlet weak var inboxFrame: UIImageView!
-    @IBOutlet weak var switchCameraFrame: UIImageView!
-    @IBOutlet weak var topFrame: UIImageView!
+    @IBOutlet weak var flashFrame: UIImageView!
     @IBOutlet weak var inboxBadge: UILabel!
+    @IBOutlet weak var inboxBtn: UIButton!
     @IBOutlet weak var friendsBadge: UILabel!
     
     @IBAction func switchCameraBtnPressed(_ sender: Any) {
@@ -40,10 +47,12 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     }
     
     @IBAction func inboxBtnPressed(_ sender: Any) {
+        AppDelegate.AppUtility.lockOrientation(.allButUpsideDown)
         performSegue(withIdentifier: "toInboxVC", sender: nil)
     }
     
     @IBAction func settingsPressed(_ sender: Any) {
+        AppDelegate.AppUtility.lockOrientation(.allButUpsideDown)
         performSegue(withIdentifier: "toSettingsVC", sender: nil)
     }
     
@@ -57,17 +66,27 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         }
     }
     
+    override var prefersStatusBarHidden: Bool {
+        return false
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        buttonsArray = [switchCameraBtn, flashBtn, inboxBtn]
+        shouldUseDeviceOrientation = true
+        allowAutoRotate = true
+        originalRotation = inboxBadge.layer.transform
+        
+        flashFrame.transform = CGAffineTransform(scaleX: -1, y: 1)
         cameraDelegate = self
         captureBtn.delegate = self
         maximumVideoDuration = 10.0
         flashEnabled = false
         flashBtn.imageView?.contentMode = .scaleAspectFit
-        let settingsMask = UIImageView(image: UIImage(named: "SettingsBtnMask"))
-        settingsMask.frame.size = settingsBtn.frame.size
-        settingsBtn.mask = settingsMask
+        settingsBtn.layer.cornerRadius = settingsBtn.frame.width / 2
+        settingsBtn.layer.masksToBounds = true
+        settingsBtn.imageView?.contentMode = .scaleAspectFill
         inboxBadge.layer.cornerRadius = inboxBadge.layer.frame.width / 2
         inboxBadge.layer.masksToBounds = true
         friendsBadge.layer.cornerRadius = friendsBadge.layer.frame.width / 2
@@ -77,8 +96,13 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
+        AppDelegate.AppUtility.lockOrientation(.portrait)
+        
         if AuthService.instance.currentUser != "" {
             let currentUser = AuthService.instance.currentUser
+            
+            NotificationCenter.default.addObserver(self, selector: #selector(deviceRotated), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
             
             customViewDidAppear()
             
@@ -136,6 +160,7 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
                 })
             }
         } else {
+            AppDelegate.AppUtility.lockOrientation(.allButUpsideDown)
             performSegue(withIdentifier: "toLoginVC", sender: nil)
         }
         
@@ -147,12 +172,40 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
             let currentUser = AuthService.instance.currentUser
             DataService.instance.usersRef.child(currentUser).child("snapsReceived").removeObserver(withHandle: inboxObserver)
             DataService.instance.usersRef.child(currentUser).child("friendRequests").removeObserver(withHandle: friendsObserver)
+            NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
+        }
+    }
+    
+    func deviceRotated() {
+        var angle: CGFloat = 0
+        if UIDevice.current.orientation == UIDeviceOrientation.landscapeLeft {
+            orientation = .landscapeRight
+            angle = .pi * 0.5
+        } else if UIDevice.current.orientation == UIDeviceOrientation.landscapeRight {
+            orientation = .landscapeLeft
+            angle = .pi * -0.5
+        } else {
+            orientation = .portrait
+        }
+        UIView.animate(withDuration: 0.15, animations: {
+            for button in self.buttonsArray {
+                button.imageView?.contentMode = .center
+                button.imageView?.clipsToBounds = false
+                button.imageView?.transform = CGAffineTransform(rotationAngle: angle)
+            }
+            self.inboxBadge.transform = CGAffineTransform(rotationAngle: angle)
+            self.friendsBadge.transform = CGAffineTransform(rotationAngle: angle)
+            self.settingsBtn.imageView?.transform = CGAffineTransform(rotationAngle: angle)
+        }) { (finished) in
+            
         }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toReviewSnapVC" {
             if let reviewSnapVC = segue.destination as? ReviewSnapVC {
+                reviewSnapVC.orientation = orientation
+                AppDelegate.AppUtility.lockOrientation(orientation!)
                 if dataType == "video" {
                     reviewSnapVC.tempVidUrl = sender as? URL
                     reviewSnapVC.dataType = "video"
@@ -180,10 +233,33 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     }
     
     func swiftyCam(_ swiftyCam: SwiftyCamViewController, didBeginRecordingVideo camera: SwiftyCamViewController.CameraSelection) {
+        let width: CGFloat = 180
+        recordingTimer = UILabel(frame: CGRect(x: view.frame.width / 2 - width / 2, y: 50, width: width, height: 60))
+        recordingTimer?.font = UIFont(name: "Avenir-Heavy", size: 50)
+        recordingTimer?.textAlignment = .center
+        recordingTimer?.textColor = .white
+        recordingTimer?.alpha = 0.9
+        recordingCount = Int(maximumVideoDuration)
+        recordingTimer?.text = "Start!"
+        view.addSubview(recordingTimer!)
+        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
         print("Started recording new video")
     }
     
+    func updateTimer() {
+        recordingCount = recordingCount! - 1
+        if recordingCount == 9 {
+            recordingTimer?.alpha = 0.1
+        }
+        recordingTimer?.alpha += 0.09
+        recordingTimer?.text = "\(recordingCount!)"
+    }
+    
     func swiftyCam(_ swiftyCam: SwiftyCamViewController, didFinishRecordingVideo camera: SwiftyCamViewController.CameraSelection) {
+        recordingTimer?.removeFromSuperview()
+        recordingTimer = nil
+        timer?.invalidate()
+        timer = nil
         print("Finished recording")
     }
     

@@ -15,6 +15,7 @@ class LoginVC: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var emailField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
+    @IBOutlet weak var backgroundImage: UIImageView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,6 +23,16 @@ class LoginVC: UIViewController, UITextFieldDelegate {
         passwordField.delegate = self
         
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing(_:))))
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        
+        if UIDevice.current.userInterfaceIdiom == .pad && view.bounds.width > view.bounds.height {
+            backgroundImage.image = UIImage(named: "SignInBgIpadLandscape")
+        } else if UIDevice.current.userInterfaceIdiom == .pad {
+            backgroundImage.image = UIImage(named: "SignInBgIpad")
+        }
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {

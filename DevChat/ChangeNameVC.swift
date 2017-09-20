@@ -12,8 +12,8 @@ import FirebaseDatabase
 
 class ChangeNameVC: UIViewController {
 
-    @IBOutlet weak var newUsername: UITextField!
-    
+    @IBOutlet weak var newUsername: UITextField?
+
     var delegate: ChangeNameDelegate?
     
     override func viewDidLoad() {
@@ -22,7 +22,7 @@ class ChangeNameVC: UIViewController {
     }
 
     @IBAction func savePressed(_ sender: Any) {
-        if let username = newUsername.text, let currentUser = Auth.auth().currentUser?.uid {
+        if let username = newUsername?.text, let currentUser = Auth.auth().currentUser?.uid {
             if username.characters.count > 0 {
                 DataService.instance.profilesRef.child(currentUser).updateChildValues(["name":username])
                 delegate?.changeNameDismiss()

@@ -9,37 +9,46 @@
 import UIKit
 import AVFoundation
 import AVKit
-import QuartzCore
 
 class ReviewSnapVC: UIViewController, SendSnapDelegate {
 
     @IBOutlet weak var bottomBar: UIImageView!
+    @IBOutlet weak var bottomBarTab: UIImageView!
     @IBOutlet weak var topBar: UIImageView!
+    @IBOutlet weak var topBarTab: UIImageView!
     @IBOutlet weak var sendBtn: UIButton!
     @IBOutlet weak var backBtn: UIButton!
     @IBOutlet weak var captionBtn: UIButton!
     @IBOutlet var tapRecognizer: UITapGestureRecognizer!
     
-    let snapViewer = SnapViewer()
+    var snapViewer: SnapViewer!
     
     var tempVidUrl: URL?
     var tempPhoto: UIImage?
     var tempPhotoData: Data?
     
-    var dataType: String = ""
+    var dataType = ""
     
     var currentView = "preview"
     var sendSnapVC: SendSnapVC?
     
     var navBarVisible = true
     var btnAlphaTarget: CGFloat = 1
-    var barAlphaTarget: CGFloat = 0.25
+    var barAlphaTarget: CGFloat = 1
     var animatable = true
     
     var newViewStartFrame: CGRect!
     
+    var orientation: UIInterfaceOrientationMask?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        snapViewer = SnapViewer()
+        addChildViewController(snapViewer)
+        view.insertSubview(snapViewer.view, belowSubview: captionBtn)
+        
+        bottomBarTab.transform = CGAffineTransform(scaleX: -1, y: -1)
         
         newViewStartFrame = CGRect(origin: CGPoint(x: view.frame.origin.x + view.frame.width, y: view.frame.origin.y), size: view.frame.size)
         
@@ -49,22 +58,21 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
             snapViewer.imageView.image = tempPhoto
             tempPhotoData = UIImageJPEGRepresentation(tempPhoto!, 0.2)
         }
-        
-        addChildViewController(snapViewer)
-        view.insertSubview(snapViewer.view, belowSubview: captionBtn)
-        
     }
     
     @IBAction func tapGesture(_ sender: Any) {
         if animatable {
             animatable = false
             btnAlphaTarget = abs(btnAlphaTarget - 1)
-            barAlphaTarget = abs(barAlphaTarget - 0.25)
+            barAlphaTarget = abs(barAlphaTarget - 1)
             UIView.animate(withDuration: 0.2, animations: {
                 self.topBar.alpha = self.barAlphaTarget
+                self.topBarTab.alpha = self.barAlphaTarget
                 self.backBtn.alpha = self.btnAlphaTarget
                 self.bottomBar.alpha = self.barAlphaTarget
+                self.bottomBarTab.alpha = self.barAlphaTarget
                 self.sendBtn.alpha = self.btnAlphaTarget
+                self.captionBtn.alpha = self.btnAlphaTarget
             }) { (finished) in
                 self.animatable = true
             }
@@ -77,6 +85,7 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
     
     @IBAction func sendToUsersBtnPressed(_ sender: Any) {
         if currentView == "preview" {
+            AppDelegate.AppUtility.lockOrientation(.allButUpsideDown)
             tapRecognizer.isEnabled = false
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             sendSnapVC = storyboard.instantiateViewController(withIdentifier: "SendSnapVC") as? SendSnapVC
@@ -91,14 +100,16 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
             addChildViewController(sendSnapVC!)
             sendSnapVC!.view.frame = newViewStartFrame
             view.insertSubview(sendSnapVC!.view, belowSubview: bottomBar)
-            UIView.animate(withDuration: 0.3, animations: { 
+            bottomBar.image = UIImage(named: "BarGrey")
+            bottomBarTab.image = UIImage(named: "TabGrey")
+            sendBtn.setImage(UIImage(named: "SendBtnWhite"), for: .normal)
+            UIView.animate(withDuration: 0.3, animations: {
                 self.sendSnapVC!.view.frame = self.view.frame
                 self.topBar.alpha = 1
                 self.bottomBar.alpha = 1
             }, completion: { (finished) in
                 if finished {
                     self.currentView = "send"
-                    self.sendBtn.setImage(UIImage(named: "SendBtnGrey"), for: .normal)
                 }
             })
         } else if currentView == "send" && sendSnapVC != nil {
@@ -127,6 +138,7 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
                     print("Could not delete temp video: \(error)")
                 }
             }
+            AppDelegate.AppUtility.lockOrientation(.portrait)
             self.dismiss(animated: true, completion: nil)
         } else if currentView == "send" {
             sendSnapVC?.searchBar.endEditing(true)
@@ -135,15 +147,29 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
     }
     
     func removeSendSnapVC() {
-        bottomBar.image = UIImage(named: "BottomBarGrey")
-        sendBtn.setImage(UIImage(named: "SendBtnGreen"), for: .normal)
+        
+        var value = UIInterfaceOrientation.portrait
+        switch orientation! {
+        case UIInterfaceOrientationMask.landscapeLeft:
+            value = UIInterfaceOrientation.landscapeLeft
+        case UIInterfaceOrientationMask.landscapeRight:
+            value = UIInterfaceOrientation.landscapeRight
+        default:
+            break
+        }
+        AppDelegate.AppUtility.lockOrientation(orientation!, andRotateTo: value)
+        bottomBar.image = UIImage(named: "BarGreen")
+        bottomBarTab.image = UIImage(named: "TabGreen")
+        sendBtn.setImage(UIImage(named: "SendBtnDark"), for: .normal)
         UIView.animate(withDuration: 0.3, animations: {
             self.sendSnapVC!.view.frame = self.newViewStartFrame
-            self.bottomBar.alpha = 0.25
-            self.topBar.alpha = 0.25
+            self.bottomBar.alpha = 1
+            self.topBar.alpha = 1
         }, completion: { (finished) in
             if finished {
-                self.sendSnapVC!.removeFromParentViewController()
+                self.sendSnapVC?.view.removeFromSuperview()
+                self.sendSnapVC?.removeFromParentViewController()
+                self.sendSnapVC = nil
                 self.currentView = "preview"
                 self.tapRecognizer.isEnabled = true
             }
@@ -152,11 +178,13 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
     
     func rowsAreSelected(selected: Bool) {
         if selected {
-            bottomBar.image = UIImage(named: "BottomBarGreen")
-            sendBtn.imageView?.image = UIImage(named: "SendBtnGreen")
+            bottomBar.image = UIImage(named: "BarGreen")
+            bottomBarTab.image = UIImage(named: "TabGreen")
+            sendBtn.setImage(UIImage(named: "SendBtnDark"), for: .normal)
         } else {
-            bottomBar.image = UIImage(named: "BottomBarGrey")
-            sendBtn.imageView?.image = UIImage(named: "SendBtnGrey")
+            bottomBar.image = UIImage(named: "BarGrey")
+            bottomBarTab.image = UIImage(named: "TabGrey")
+            sendBtn.setImage(UIImage(named: "SendBtnWhite"), for: .normal)
         }
     }
 
