@@ -49,7 +49,6 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
     }
     
     @IBAction func closePressed(_ sender: Any) {
-        deleteSnaps()
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -60,8 +59,8 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
             guard let currentIndex = (self.pageVC.viewControllers?.first as? SnapViewer)?.index else { return }
             if currentIndex > self.viewedSnaps {
                 self.viewedSnaps = currentIndex
+                self.deleteSnap(index: currentIndex)
             }
-            print(self.viewedSnaps)
         }
     }
     
@@ -96,6 +95,8 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
         }
 
         snapsArray.sort(by: snapsArraySorter)
+        
+        deleteSnap(index: 0)
         
         var count = 0
         for snap in snapsArray {
@@ -174,27 +175,35 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
         guard let currentIndex = (pageVC.viewControllers?.first as? SnapViewer)?.index else { return }
         if currentIndex > viewedSnaps && completed {
             viewedSnaps = currentIndex
+            deleteSnap(index: currentIndex)
         }
-        print(viewedSnaps)
+        
 
     }
     
-    func deleteSnaps() {
-        for index in 0...viewedSnaps {
-            if let storageName = snapsArray[index]["storageName"] as? String, let snapUid = snapsArray[index]["snapUid"] as? String {
-                let currentUser = AuthService.instance.currentUser
-                DataService.instance.mediaStorageRef.child(storageName).delete(completion: { (error) in
-                    if error != nil {
-                        print("Error deleting media from storage: \(error!)")
-                    } else {
-                        DataService.instance.usersRef.child(currentUser).child("snapsReceived").child(self.senderUid).child("snaps").child(snapUid).removeValue(completionBlock: { (error, ref) in
+    func deleteSnap(index: Int) {
+        let currentUser = AuthService.instance.currentUser
+        if let storageName = snapsArray[index]["storageName"] as? String, let snapUid = snapsArray[index]["snapUid"] as? String {
+            DataService.instance.usersRef.child(currentUser).child("snapsReceived").child(senderUid).child("snaps").child(snapUid).removeValue(completionBlock: { (error, ref) in
+                if error != nil {
+                    print("Error deleting snap from database: \(error!)")
+                }
+            })
+            DataService.instance.mainRef.child("viewCounts").child(storageName).observeSingleEvent(of: .value, with: { (snapshot) in
+                if let viewCount = snapshot.value as? Int {
+                    print("Snap View Count: \(viewCount)")
+                    if viewCount == 1 {
+                        DataService.instance.mediaStorageRef.child(storageName).delete(completion: { (error) in
                             if error != nil {
-                                print("Error deleting snap from database: \(error!)")
+                                print("Error deleting media from storage: \(error!)")
                             }
                         })
+                        DataService.instance.mainRef.child("viewCounts").child(storageName).removeValue()
+                    } else if viewCount > 1 {
+                        DataService.instance.mainRef.child("viewCounts").child(storageName).setValue(viewCount - 1)
                     }
-                })
-            }
+                }
+            })
         }
     }
 

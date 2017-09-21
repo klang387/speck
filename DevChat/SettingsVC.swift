@@ -102,7 +102,6 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        print("layoutSubviews")
         
         profilePic.layer.cornerRadius = profilePic.frame.width / 2
         newViewStartFrame = CGRect(origin: CGPoint(x: view.frame.origin.x + view.frame.width, y: view.frame.origin.y), size: view.frame.size)
@@ -168,8 +167,7 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     }
 
     func animateButtonsIn(controller: UIViewController) {
-        addChildViewController(controller)
-        view.addSubview(controller.view)
+        
         controller.view.translatesAutoresizingMaskIntoConstraints = false
         constraintLeading = controller.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: self.view.frame.width)
         constraintLeading?.isActive = true
@@ -215,8 +213,10 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         currentView = "name"
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         changeNameVC = (storyboard.instantiateViewController(withIdentifier: "ChangeNameVC") as! ChangeNameVC)
+        addChildViewController(changeNameVC!)
+        view.addSubview(changeNameVC!.view!)
         changeNameVC?.delegate = self
-        changeNameVC?.newUsername?.delegate = self
+        changeNameVC?.newUsername.delegate = self
         animateButtonsIn(controller: changeNameVC!)
     }
     
@@ -225,10 +225,12 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
             currentView = "password"
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             changePasswordVC = (storyboard.instantiateViewController(withIdentifier: "ChangePasswordVC") as! ChangePasswordVC)
+            addChildViewController(changePasswordVC!)
+            view.addSubview(changePasswordVC!.view!)
             changePasswordVC?.delegate = self
-            changePasswordVC?.oldPassword?.delegate = self
-            changePasswordVC?.newPassword?.delegate = self
-            changePasswordVC?.repeatNewPassword?.delegate = self
+            changePasswordVC?.oldPassword.delegate = self
+            changePasswordVC?.newPassword.delegate = self
+            changePasswordVC?.repeatNewPassword.delegate = self
             animateButtonsIn(controller: changePasswordVC!)
         } else {
             print("User logged in with Facebook")
@@ -242,8 +244,13 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         addChildViewController(friendsVC!)
         friendsVC?.view.frame = newViewStartFrame
         view.insertSubview(friendsVC!.view, belowSubview: topBar)
+        let distance = view.frame.width > view.frame.height ? view.frame.width : view.frame.height
+        view.layoutIfNeeded()
         UIView.animate(withDuration: 0.3, animations: {
+            self.buttonsViewLeading.constant -= distance
+            self.buttonsViewTrailing.constant += distance
             self.friendsVC?.view.frame = self.view.frame
+            self.view.layoutIfNeeded()
         }, completion: { (finished) in
             if finished {
                 self.currentView = "friends"
@@ -254,12 +261,12 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     @IBAction func backPressed(_ sender: Any) {
         switch currentView {
         case "settings":
-            AppDelegate.AppUtility.lockOrientation(.portrait)
+            AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
             self.dismiss(animated: true, completion: nil)
         case "name":
-            animateButtonsOut(controller: changeNameVC!)
+            changeNameDismiss()
         case "password":
-            animateButtonsOut(controller: changePasswordVC!)
+            changePasswordDismiss()
         case "friends":
             friendsDismiss()
         default: break
@@ -315,31 +322,21 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     }
     
     func changePasswordDismiss() {
-        UIView.animate(withDuration: 0.2, animations: {
-            self.buttonsView.frame.origin.x += self.view.frame.width
-            self.changePasswordVC?.view.frame.origin.x += self.view.frame.width
-        }) { (finished) in
-            self.changePasswordVC?.view.removeFromSuperview()
-            self.changePasswordVC?.removeFromParentViewController()
-        }
-        currentView = "settings"
+        animateButtonsOut(controller: changePasswordVC!)
     }
     
     func changeNameDismiss() {
-        UIView.animate(withDuration: 0.2, animations: {
-            self.buttonsView.frame.origin.x += self.view.frame.width
-            self.changeNameVC?.view.frame.origin.x += self.view.frame.width
-        }) { (finished) in
-            self.changeNameVC?.view.removeFromSuperview()
-            self.changeNameVC?.removeFromParentViewController()
-        }
-        currentView = "settings"
+        animateButtonsOut(controller: changeNameVC!)
     }
     
     func friendsDismiss() {
         friendsVC?.searchBar.endEditing(true)
+        view.layoutIfNeeded()
         UIView.animate(withDuration: 0.2, animations: {
+            self.buttonsViewLeading.constant = 0
+            self.buttonsViewTrailing.constant = 0
             self.friendsVC?.view.frame.origin.x += self.view.frame.width
+            self.view.layoutIfNeeded()
         }) { (finished) in
             self.friendsVC?.view.removeFromSuperview()
             self.friendsVC?.removeFromParentViewController()

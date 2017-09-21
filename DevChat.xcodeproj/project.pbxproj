@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A0F731F1F7336A60062866C /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0F731E1F7336A60062866C /* ImageCache.swift */; };
 		0A13BD9A1F4E17780002D934 /* FriendsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A13BD991F4E17780002D934 /* FriendsVC.swift */; };
 		0A18E30E1F67449900BF0FCC /* CustomSearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A18E30D1F67449900BF0FCC /* CustomSearchBar.swift */; };
 		0A27CBA91F32B5B100F8AA60 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A27CBA81F32B5B100F8AA60 /* AuthService.swift */; };
@@ -39,6 +40,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0A0F731E1F7336A60062866C /* ImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		0A13BD991F4E17780002D934 /* FriendsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FriendsVC.swift; sourceTree = "<group>"; };
 		0A18E30D1F67449900BF0FCC /* CustomSearchBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomSearchBar.swift; sourceTree = "<group>"; };
 		0A27CBA81F32B5B100F8AA60 /* AuthService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
@@ -92,6 +94,7 @@
 			children = (
 				0A27CBA81F32B5B100F8AA60 /* AuthService.swift */,
 				0A27CBAB1F337E5B00F8AA60 /* DataService.swift */,
+				0A0F731E1F7336A60062866C /* ImageCache.swift */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -340,6 +343,7 @@
 				0A4268F11F326101000E9694 /* RoundButton.swift in Sources */,
 				0A27CBAE1F3390FB00F8AA60 /* SendSnapVC.swift in Sources */,
 				0A4E4A431F20E6E10039EF05 /* CameraVC.swift in Sources */,
+				0A0F731F1F7336A60062866C /* ImageCache.swift in Sources */,
 				0A27CBB01F3392A800F8AA60 /* UserCell.swift in Sources */,
 				0A27CBA91F32B5B100F8AA60 /* AuthService.swift in Sources */,
 				0A18E30E1F67449900BF0FCC /* CustomSearchBar.swift in Sources */,

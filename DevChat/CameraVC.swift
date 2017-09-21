@@ -22,7 +22,7 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
     var inboxObserver: UInt!
     var friendsObserver: UInt!
-    var friendRequests = 0
+    var friendRequestsCount = 0
     
     var recordingTimer: UILabel?
     var recordingCount: Int?
@@ -73,6 +73,7 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        orientation = checkOrientation()
         buttonsArray = [switchCameraBtn, flashBtn, inboxBtn]
         shouldUseDeviceOrientation = true
         allowAutoRotate = true
@@ -108,7 +109,7 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
             
             friendsObserver = DataService.instance.usersRef.child(currentUser).child("friendRequests").observe(.value, with: { (snapshot) in
                 if let friendRequests = snapshot.value as? [String:Any] {
-                    self.friendRequests = friendRequests.count
+                    self.friendRequestsCount = friendRequests.count
                     self.friendsBadge.text = String(friendRequests.count)
                     self.friendsBadge.isHidden = false
                 } else {
@@ -121,8 +122,8 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
                 if let snapsReceived = snapshot.value as? [String:Any] {
                     for (_,value) in snapsReceived {
                         if let contents = value as? [String:Any] {
-                            if let snaps = contents["snaps"] as? [String:Any] {
-                                count += snaps.count
+                            if let _ = contents["snaps"] as? [String:Any] {
+                                count += 1
                             }
                         }
                     }
@@ -176,16 +177,27 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         }
     }
     
+    func checkOrientation() -> UIInterfaceOrientationMask {
+        switch UIDevice.current.orientation {
+        case .landscapeLeft:
+            return .landscapeRight
+        case .landscapeRight:
+            return .landscapeLeft
+        default:
+            return .portrait
+        }
+    }
+    
     func deviceRotated() {
         var angle: CGFloat = 0
-        if UIDevice.current.orientation == UIDeviceOrientation.landscapeLeft {
-            orientation = .landscapeRight
+        orientation = checkOrientation()
+        switch UIDevice.current.orientation {
+        case .landscapeLeft:
             angle = .pi * 0.5
-        } else if UIDevice.current.orientation == UIDeviceOrientation.landscapeRight {
-            orientation = .landscapeLeft
+        case .landscapeRight:
             angle = .pi * -0.5
-        } else {
-            orientation = .portrait
+        default:
+            break
         }
         UIView.animate(withDuration: 0.15, animations: {
             for button in self.buttonsArray {
@@ -205,6 +217,7 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         if segue.identifier == "toReviewSnapVC" {
             if let reviewSnapVC = segue.destination as? ReviewSnapVC {
                 reviewSnapVC.orientation = orientation
+                
                 AppDelegate.AppUtility.lockOrientation(orientation!)
                 if dataType == "video" {
                     reviewSnapVC.tempVidUrl = sender as? URL
@@ -219,7 +232,7 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         if segue.identifier == "toSettingsVC" {
             if let settingsVC = segue.destination as? SettingsVC, let image = profilePic {
                 settingsVC.image = image
-                settingsVC.requestCount = friendRequests
+                settingsVC.requestCount = friendRequestsCount
             }
         }
     }

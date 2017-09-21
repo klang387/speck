@@ -13,14 +13,9 @@ import FirebaseStorage
 
 class DataService {
     private static let _instance = DataService()
-    var _users = [User]()
     
     static var instance: DataService {
         return _instance
-    }
-    
-    var users: [User] {
-        return _users
     }
     
     var mainRef: DatabaseReference {
@@ -161,15 +156,16 @@ class DataService {
         return userArray
     }
     
-    func uploadMedia(tempVidUrl: URL?, tempPhotoData: Data?, caption: [String:Any]?, recipients: [String:Bool], completion: () -> Void){
-        let storageName = NSUUID().uuidString
+    func uploadMedia(storageName: String, tempVidUrl: URL?, tempPhotoData: Data?, caption: [String:Any]?, recipients: [String:Bool], completion: @escaping (String?) -> Void){
         let ref = mediaStorageRef.child(storageName)
         if let url = tempVidUrl {
             ref.putFile(from: url, metadata: nil, completion: { (meta: StorageMetadata?, err: Error?) in
                 if err != nil {
                     print("Error uploading video: \(err!.localizedDescription)")
+                    return
                 } else {
                     if let downloadURL = meta?.downloadURL()?.absoluteString {
+                        completion(downloadURL)
                         self.sendSnap(storageName: storageName, databaseUrl: downloadURL, mediaType: "video", caption: caption, recipients: recipients)
                     }
                 }
@@ -179,15 +175,16 @@ class DataService {
             ref.putData(photo, metadata: nil, completion: { (meta: StorageMetadata?, err: Error?) in
                 if err != nil {
                     print("Error uploading photo: \(err!.localizedDescription)")
+                    return
                 } else {
                     if let downloadURL = meta?.downloadURL()?.absoluteString {
+                        completion(downloadURL)
                         self.sendSnap(storageName: storageName, databaseUrl: downloadURL, mediaType: "photo", caption: caption, recipients: recipients)
                     }
                 }
             })
         }
         
-        completion()
     }
     
     func sendSnap(storageName: String, databaseUrl: String, mediaType: String, caption: [String:Any]?, recipients: [String:Bool]) {
@@ -217,6 +214,14 @@ class DataService {
                 }
             }
         }
+        
+        mainRef.child("viewCounts").child(storageName).observeSingleEvent(of: .value, with: { (snapshot) in
+            var viewCount = recipients.count
+            if let existingCount = snapshot.value as? Int {
+                viewCount += existingCount
+            }
+            self.mainRef.child("viewCounts").child(storageName).setValue(viewCount)
+        })
     }
     
     func saveLocalProfilePic(imageData: Data) {

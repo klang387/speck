@@ -37,7 +37,11 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
         password.delegate = self
         passwordConfirm.delegate = self
         
-        
+        firstName.attributedPlaceholder = NSAttributedString(string: "First Name", attributes: [NSForegroundColorAttributeName: UIColor.white])
+        lastName.attributedPlaceholder = NSAttributedString(string: "Last Name", attributes: [NSForegroundColorAttributeName: UIColor.white])
+        email.attributedPlaceholder = NSAttributedString(string: "Email", attributes: [NSForegroundColorAttributeName: UIColor.white])
+        password.attributedPlaceholder = NSAttributedString(string: "Password", attributes: [NSForegroundColorAttributeName: UIColor.white])
+        passwordConfirm.attributedPlaceholder = NSAttributedString(string: "Re-Enter Password", attributes: [NSForegroundColorAttributeName: UIColor.white])
         
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing(_:))))
         

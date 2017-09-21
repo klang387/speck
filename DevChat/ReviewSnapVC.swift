@@ -41,6 +41,10 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
     
     var orientation: UIInterfaceOrientationMask?
     
+    let storageName = NSUUID().uuidString
+    var alreadyUploaded = false
+    var storageUrl: String?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -119,9 +123,18 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
                 if let text = snapViewer.captionField?.text, let position = snapViewer.captionField?.center.y {
                     caption = ["text":text, "yPos":position]
                 }
-                DataService.instance.uploadMedia(tempVidUrl: sendSnapVC!.tempVidUrl, tempPhotoData: sendSnapVC!.tempPhotoData, caption: caption, recipients: sendSnapVC!.selectedUsers, completion: {
-                    removeSendSnapVC()
-                })
+                if !alreadyUploaded {
+                    DataService.instance.uploadMedia(storageName: storageName, tempVidUrl: sendSnapVC!.tempVidUrl, tempPhotoData: sendSnapVC!.tempPhotoData, caption: caption, recipients: sendSnapVC!.selectedUsers, completion: { completedUrl in
+                        self.alreadyUploaded = true
+                        self.storageUrl = completedUrl
+                        self.removeSendSnapVC()
+                    })
+                } else {
+                    if let url = storageUrl, let recipients = sendSnapVC?.selectedUsers {
+                        DataService.instance.sendSnap(storageName: storageName, databaseUrl: url, mediaType: dataType, caption: caption, recipients: recipients)
+                        removeSendSnapVC()
+                    }
+                }
             }
         }
     }
@@ -138,7 +151,7 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
                     print("Could not delete temp video: \(error)")
                 }
             }
-            AppDelegate.AppUtility.lockOrientation(.portrait)
+            AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
             self.dismiss(animated: true, completion: nil)
         } else if currentView == "send" {
             sendSnapVC?.searchBar.endEditing(true)
@@ -147,7 +160,6 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
     }
     
     func removeSendSnapVC() {
-        
         var value = UIInterfaceOrientation.portrait
         switch orientation! {
         case UIInterfaceOrientationMask.landscapeLeft:

@@ -12,17 +12,18 @@ import FirebaseDatabase
 
 class ChangeNameVC: UIViewController {
 
-    @IBOutlet weak var newUsername: UITextField?
+    @IBOutlet weak var newUsername: UITextField!
 
     var delegate: ChangeNameDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        newUsername.attributedPlaceholder = NSAttributedString(string: "Enter New Username", attributes: [NSForegroundColorAttributeName: UIColor.white])
     }
 
     @IBAction func savePressed(_ sender: Any) {
-        if let username = newUsername?.text, let currentUser = Auth.auth().currentUser?.uid {
+        if let username = newUsername.text, let currentUser = Auth.auth().currentUser?.uid {
             if username.characters.count > 0 {
                 DataService.instance.profilesRef.child(currentUser).updateChildValues(["name":username])
                 delegate?.changeNameDismiss()

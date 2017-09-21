@@ -22,6 +22,9 @@ class LoginVC: UIViewController, UITextFieldDelegate {
         emailField.delegate = self
         passwordField.delegate = self
         
+        emailField.attributedPlaceholder = NSAttributedString(string: "Enter email", attributes: [NSForegroundColorAttributeName: UIColor.white])
+        passwordField.attributedPlaceholder = NSAttributedString(string: "Enter password", attributes: [NSForegroundColorAttributeName: UIColor.white])
+        
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing(_:))))
     }
     

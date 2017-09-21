@@ -102,7 +102,6 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         if cell.nameLbl == nil {
             cell.frame = CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 70)
             cell.setupCell()
-            //cell.addStyleSquare(alignment: "left")
         }
         let user = _filteredUsers[indexPath.row]
         cell.updateUI(user: user)
