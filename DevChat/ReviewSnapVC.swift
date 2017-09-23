@@ -119,6 +119,7 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
         } else if currentView == "send" && sendSnapVC != nil {
             if let count = sendSnapVC?.selectedUsers.count {
                 guard count > 0 else { return }
+                removeSendSnapVC()
                 var caption: [String:Any]?
                 if let text = snapViewer.captionField?.text, let position = snapViewer.captionField?.center.y {
                     caption = ["text":text, "yPos":position]
@@ -127,12 +128,10 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
                     DataService.instance.uploadMedia(storageName: storageName, tempVidUrl: sendSnapVC!.tempVidUrl, tempPhotoData: sendSnapVC!.tempPhotoData, caption: caption, recipients: sendSnapVC!.selectedUsers, completion: { completedUrl in
                         self.alreadyUploaded = true
                         self.storageUrl = completedUrl
-                        self.removeSendSnapVC()
                     })
                 } else {
                     if let url = storageUrl, let recipients = sendSnapVC?.selectedUsers {
                         DataService.instance.sendSnap(storageName: storageName, databaseUrl: url, mediaType: dataType, caption: caption, recipients: recipients)
-                        removeSendSnapVC()
                     }
                 }
             }

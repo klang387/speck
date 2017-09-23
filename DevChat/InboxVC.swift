@@ -24,14 +24,10 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
     var snapsReceived = [[String:Any]]()
     var filteredSnaps = [[String:Any]]()
     
-    var profilePicCache: NSCache<NSString,UIImage>!
-    
     var inboxObserver: UInt!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        profilePicCache = NSCache()
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -108,9 +104,14 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
         if cell.nameLbl == nil {
             cell.setupCell()
             cell.addSnapCount()
+            cell.snapCount?.translatesAutoresizingMaskIntoConstraints = false
+            cell.snapCount?.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: 0).isActive = true
+            cell.snapCount?.topAnchor.constraint(equalTo: cell.topAnchor, constant: 0).isActive = true
+            cell.snapCount?.bottomAnchor.constraint(equalTo: cell.bottomAnchor, constant: 0).isActive = true
+            cell.snapCount?.widthAnchor.constraint(equalToConstant: cell.frame.height).isActive = true
         }
         cell.nameLbl.text = user.name
-        getProfileImage(user: user, completion: { image in
+        ImageCache.instance.getProfileImage(user: user, completion: { image in
             cell.profPic.image = image
         })
         cell.profPic.alpha = 1
@@ -150,29 +151,6 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
             viewSnapsVC.snaps = sender as! [String:Any]
             viewSnapsVC.senderUid = viewSnapsVC.snaps["senderUid"] as! String
         }
-    }
-    
-    func getProfileImage(user: User, completion: @escaping (UIImage) -> Void) {
-        if let image = profilePicCache.object(forKey: user.uid as NSString) {
-            print("Image from cache")
-            completion(image)
-        } else {
-            print("Image from net")
-            URLSession.shared.dataTask(with: NSURL(string: user.profPicUrl)! as URL, completionHandler: { (data, response, error) -> Void in
-                if error != nil {
-                    print(error!)
-                    return
-                }
-                DispatchQueue.main.async(execute: { () -> Void in
-                    if let image = UIImage(data: data!) {
-                        self.profilePicCache.setObject(image, forKey: user.uid as NSString)
-                        completion(image)
-                        
-                    }
-                })
-            }).resume()
-        }
-        
     }
 
 }

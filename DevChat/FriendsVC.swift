@@ -37,8 +37,6 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     var section1Hidden = false
     var section2Hidden = false
     
-    var profilePicCache: NSCache<NSString,UIImage>!
-   
     var allUsersHaveLoaded = false
     var numberOfUsersToLoad: UInt = 5
     
@@ -46,9 +44,7 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        profilePicCache = NSCache()
-        
+                
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UserCell.self as AnyClass, forCellReuseIdentifier: "UserCell")
@@ -117,13 +113,23 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     func loadMoreUsers() {
         DataService.instance.profilesRef.queryLimited(toFirst: numberOfUsersToLoad).observeSingleEvent(of: .value, with: { (snapshot) in
             self.observersLoading[2] = true
-            self.allUsersArray = DataService.instance.loadAllUsers(snapshot: snapshot)
+            self.allUsersArray = DataService.instance.loadAllUsers(snapshot: snapshot).filter({ (user) -> Bool in
+                for friend in self.friendsArray {
+                    if user.uid == friend.uid {
+                        return false
+                    }
+                }
+                if user.uid == AuthService.instance.currentUser {
+                    return false
+                }
+                return true
+            })
             self.filteredAllUsers = self.searchBar.text == nil || self.searchBar.text == "" ? self.allUsersArray : self.allUsersArray.filter({ (user) -> Bool in
                 return user.name.range(of: self.searchBar.text!, options: .caseInsensitive, range: nil, locale: nil) != nil
             })
-            if self.allUsersArray.count < Int(self.numberOfUsersToLoad) {
-                self.allUsersHaveLoaded = true
-            }
+//            if self.allUsersArray.count < Int(self.numberOfUsersToLoad) {
+//                self.allUsersHaveLoaded = true
+//            }
             self.observersLoading[2] = false
             if !self.loading() {
                 self.tableView.reloadData()
@@ -218,7 +224,7 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         switch section {
         case 0: return section0Hidden ? 0 : filteredFriendRequests.count
         case 1: return section1Hidden ? 0 : filteredFriends.count
-        case 2: return section2Hidden ? 0 : allUsersHaveLoaded ? filteredAllUsers.count : filteredAllUsers.count + 1
+        case 2: return section2Hidden ? 0 : allUsersHaveLoaded && !searching ? filteredAllUsers.count : filteredAllUsers.count + 1
         default: return 0
         }
     }
@@ -250,13 +256,13 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         case 0:
             let user = filteredFriendRequests[indexPath.row]
             cell.nameLbl.text = user.name
-            getProfileImage(user: user, completion: { image in
+            ImageCache.instance.getProfileImage(user: user, completion: { image in
                 cell.profPic.image = image
             })
         case 1:
             let user = filteredFriends[indexPath.row]
             cell.nameLbl.text = user.name
-            getProfileImage(user: user, completion: { image in
+            ImageCache.instance.getProfileImage(user: user, completion: { image in
                 cell.profPic.image = image
             })
         case 2:
@@ -275,7 +281,7 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             }
             let user = filteredAllUsers[indexPath.row]
             cell.nameLbl.text = user.name
-            getProfileImage(user: user, completion: { image in
+            ImageCache.instance.getProfileImage(user: user, completion: { image in
                 cell.profPic.image = image
             })
             if checkRequestStatus(user: user) {
@@ -386,28 +392,28 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         }
     }
 
-    func getProfileImage(user: User, completion: @escaping (UIImage) -> Void) {
-        if let image = profilePicCache.object(forKey: user.uid as NSString) {
-            print("Image from cache")
-            completion(image)
-        } else {
-            print("Image from net")
-            URLSession.shared.dataTask(with: NSURL(string: user.profPicUrl)! as URL, completionHandler: { (data, response, error) -> Void in
-                if error != nil {
-                    print(error!)
-                    return
-                }
-                DispatchQueue.main.async(execute: { () -> Void in
-                    if let image = UIImage(data: data!) {
-                        self.profilePicCache.setObject(image, forKey: user.uid as NSString)
-                        completion(image)
-                        
-                    }
-                })
-            }).resume()
-        }
-
-    }
+//    func getProfileImage(user: User, completion: @escaping (UIImage) -> Void) {
+//        if let image = profilePicCache.object(forKey: user.uid as NSString) {
+//            print("Image from cache")
+//            completion(image)
+//        } else {
+//            print("Image from net")
+//            URLSession.shared.dataTask(with: NSURL(string: user.profPicUrl)! as URL, completionHandler: { (data, response, error) -> Void in
+//                if error != nil {
+//                    print(error!)
+//                    return
+//                }
+//                DispatchQueue.main.async(execute: { () -> Void in
+//                    if let image = UIImage(data: data!) {
+//                        self.profilePicCache.setObject(image, forKey: user.uid as NSString)
+//                        completion(image)
+//                        
+//                    }
+//                })
+//            }).resume()
+//        }
+//
+//    }
     
     
 }

@@ -45,22 +45,6 @@ class UserCell: UITableViewCell {
         addSubview(nameLbl)
     }
     
-    func updateUI(user: User) {
-        nameLbl.text = user.name
-        profPic.imageFromServerURL(urlString: user.profPicUrl, completion: nil)
-    }
-    
-//    func addStyleSquare(alignment: String) {
-//        var rect = CGRect(x: 0, y: 0, width: frame.height, height: frame.height)
-//        if alignment == "right" {
-//            rect = CGRect(x: frame.width - frame.height, y: 0, width: frame.height, height: frame.height)
-//        }
-//        styleSquare = UIView(frame: rect)
-//        styleSquare?.backgroundColor = UIColor.black
-//        styleSquare?.alpha = 0.1
-//        insertSubview(styleSquare!, belowSubview: profPic)
-//    }
-    
     func addSnapCount() {
         snapCount = UILabel(frame: CGRect(x: frame.width - frame.height, y: 0, width: frame.height, height: frame.height))
         snapCount?.font = UIFont(name: "Avenir", size: 16)
@@ -70,7 +54,7 @@ class UserCell: UITableViewCell {
     }
     
     func toggleWaitingIcon() {
-    if requestSent {
+        if requestSent {
             iconView = UIImageView(frame: CGRect(x: frame.width - frame.height, y: 0, width: frame.height, height: frame.height))
             iconView?.image = UIImage(named: "RequestWaiting")
             iconView?.contentMode = .center

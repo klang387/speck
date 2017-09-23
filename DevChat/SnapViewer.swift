@@ -30,6 +30,7 @@ class SnapViewer: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .black
         
         avPlayerLayer = AVPlayerLayer(player: avPlayer)
         avPlayerLayer?.videoGravity = AVLayerVideoGravityResizeAspectFill
@@ -43,6 +44,7 @@ class SnapViewer: UIViewController, UITextFieldDelegate {
         
         avPlayerLayer?.player = avQueuePlayer
         
+        imageView.contentMode = .scaleAspectFit
         imageView.frame = view.frame
         view.addSubview(imageView)
 

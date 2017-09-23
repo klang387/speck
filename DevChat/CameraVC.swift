@@ -95,18 +95,19 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         
     }
     
+    
+   
     override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
 
-        AppDelegate.AppUtility.lockOrientation(.portrait)
+        AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
         
         if AuthService.instance.currentUser != "" {
+            super.viewDidAppear(animated)
+            
             let currentUser = AuthService.instance.currentUser
             
             NotificationCenter.default.addObserver(self, selector: #selector(deviceRotated), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
-            
-            customViewDidAppear()
-            
+                        
             friendsObserver = DataService.instance.usersRef.child(currentUser).child("friendRequests").observe(.value, with: { (snapshot) in
                 if let friendRequests = snapshot.value as? [String:Any] {
                     self.friendRequestsCount = friendRequests.count

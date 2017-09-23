@@ -260,37 +260,17 @@ open class SwiftyCamViewController: UIViewController {
         view.addSubview(previewLayer)
         previewLayer.superview?.sendSubview(toBack: previewLayer)
 
+        sessionQueue.async { [unowned self] in
+            self.configureSession()
+        }
+        
 		// Add Gesture Recognizers
         
         addGestureRecognizers()
 
 		previewLayer.session = session
 
-		// Test authorization status for Camera and Micophone
-
-		switch AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo){
-		case .authorized:
-
-			// already authorized
-			break
-		case .notDetermined:
-
-			// not yet determined
-			sessionQueue.suspend()
-			AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo, completionHandler: { [unowned self] granted in
-				if !granted {
-					self.setupResult = .notAuthorized
-				}
-				self.sessionQueue.resume()
-			})
-		default:
-
-			// already been asked. Denied access
-			setupResult = .notAuthorized
-		}
-		sessionQueue.async { [unowned self] in
-			self.configureSession()
-		}
+		
 	}
 
     // MARK: ViewDidLayoutSubviews
@@ -348,10 +328,32 @@ open class SwiftyCamViewController: UIViewController {
 	/// ViewDidAppear(_ animated:) Implementation
 
 
-	//override open func viewDidAppear(_ animated: Bool) {
-    public func customViewDidAppear() {
+	override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
-
+        
+        // Test authorization status for Camera and Micophone
+        
+        switch AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo){
+        case .authorized:
+            
+            // already authorized
+            break
+        case .notDetermined:
+            
+            // not yet determined
+            sessionQueue.suspend()
+            AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo, completionHandler: { [unowned self] granted in
+                if !granted {
+                    self.setupResult = .notAuthorized
+                }
+                self.sessionQueue.resume()
+            })
+        default:
+            
+            // already been asked. Denied access
+            setupResult = .notAuthorized
+        }
+        
 		// Subscribe to device rotation notifications
 
 		if shouldUseDeviceOrientation {
@@ -380,7 +382,7 @@ open class SwiftyCamViewController: UIViewController {
 			case .configurationFailed:
 				// Unknown Error
 				DispatchQueue.main.async(execute: { [unowned self] in
-					let message = NSLocalizedString("Unable to capture media", comment: "Alert message when something goes wrong during capture session configuration")
+					let message = NSLocalizedString("Unable to capture media", comment: "Something wrong during capture session configuration")
 					let alertController = UIAlertController(title: "AVCam", message: message, preferredStyle: .alert)
 					alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Alert OK button"), style: .cancel, handler: nil))
 					self.present(alertController, animated: true, completion: nil)

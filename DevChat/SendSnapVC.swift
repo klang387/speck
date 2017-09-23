@@ -104,7 +104,10 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             cell.setupCell()
         }
         let user = _filteredUsers[indexPath.row]
-        cell.updateUI(user: user)
+        cell.nameLbl.text = user.name
+        ImageCache.instance.getProfileImage(user: user, completion: { image in
+            cell.profPic.image = image
+        })
         return cell
     }
     

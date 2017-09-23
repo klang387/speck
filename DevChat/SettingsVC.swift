@@ -16,9 +16,13 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     @IBOutlet weak var buttonsView: UIView!
     @IBOutlet weak var friendsBadge: UILabel!
     @IBOutlet weak var topBar: UIImageView!
+    @IBOutlet weak var buttonsStack: UIStackView!
     
-    @IBOutlet weak var buttonsViewLeading: NSLayoutConstraint!
-    @IBOutlet weak var buttonsViewTrailing: NSLayoutConstraint!
+    @IBOutlet weak var buttonsLeading: NSLayoutConstraint!
+    @IBOutlet weak var buttonsTrailing: NSLayoutConstraint!
+    @IBOutlet weak var buttonsLeadingLandscape: NSLayoutConstraint!
+    @IBOutlet weak var buttonsTrailingLandscape: NSLayoutConstraint!
+    
     
     var image: UIImage?
     var imagePicker: UIImagePickerController!
@@ -41,6 +45,7 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     
     var constraintLeading: NSLayoutConstraint?
     var constraintTrailing: NSLayoutConstraint?
+    var constraintLeadingLandscape: NSLayoutConstraint?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,7 +70,6 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         self.view.addGestureRecognizer(tapGesture)
         
         currentView = "settings"
-        
     }
     
     override var prefersStatusBarHidden: Bool {
@@ -91,20 +95,11 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         DataService.instance.usersRef.child(currentUser).child("friendRequests").removeObserver(withHandle: friendsObserver)
     }
     
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        
-        if currentView == "name" && buttonsViewTrailing.constant != 0 {
-            buttonsViewLeading.constant = -view.frame.width
-            buttonsViewTrailing.constant = view.frame.width
-        }
-    }
-    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
         profilePic.layer.cornerRadius = profilePic.frame.width / 2
-        newViewStartFrame = CGRect(origin: CGPoint(x: view.frame.origin.x + view.frame.width, y: view.frame.origin.y), size: view.frame.size)
+        newViewStartFrame = CGRect(x: view.frame.width, y: 0, width: view.frame.width, height: view.frame.height)
     }
     
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
@@ -163,42 +158,62 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     }
     
     @IBAction func changePhotoPressed(_ sender: Any) {
+        AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
         present(imagePicker, animated: true, completion: nil)
+    }
+    
+    override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
+        if constraintLeading != nil {
+            let compact = newCollection.verticalSizeClass == .compact ? true : false
+            constraintLeading?.isActive = !compact
+            constraintLeadingLandscape?.isActive = compact
+        }
     }
 
     func animateButtonsIn(controller: UIViewController) {
-        
         controller.view.translatesAutoresizingMaskIntoConstraints = false
-        constraintLeading = controller.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: self.view.frame.width)
-        constraintLeading?.isActive = true
-        constraintTrailing = controller.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -self.view.frame.width)
+        controller.view.topAnchor.constraint(equalTo: self.buttonsView.topAnchor, constant: 0).isActive = true
+        controller.view.bottomAnchor.constraint(equalTo: self.buttonsView.bottomAnchor, constant: 0).isActive = true
+        constraintLeading = controller.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.frame.width)
+        constraintLeadingLandscape = controller.view.leadingAnchor.constraint(equalTo: profilePic.trailingAnchor, constant: view.frame.width)
+        constraintTrailing = controller.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: view.frame.width)
+        let compact = view.traitCollection.verticalSizeClass == .compact ? true : false
+        constraintLeading?.isActive = !compact
+        constraintLeadingLandscape?.isActive = compact
         constraintTrailing?.isActive = true
-        controller.view.topAnchor.constraint(equalTo: buttonsView.topAnchor, constant: 0).isActive = true
-        controller.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40).isActive = true
-        let distance = view.frame.width > view.frame.height ? view.frame.width : view.frame.height
         view.layoutIfNeeded()
         UIView.animate(withDuration: 0.2, animations: {
-            self.buttonsViewLeading.constant -= distance
-            self.buttonsViewTrailing.constant += distance
-            self.constraintLeading?.constant = 0
-            self.constraintTrailing?.constant = 0
+            let height = self.view.frame.height
+            let width = self.view.frame.width
+            let greaterDimension = height > width ? height : width
+            let smallerDimension = height > width ? width : height
+            self.buttonsLeading.constant += smallerDimension
+            self.buttonsTrailing.constant -= smallerDimension
+            self.buttonsLeadingLandscape.constant += greaterDimension
+            self.buttonsTrailingLandscape.constant -= greaterDimension
             self.view.layoutIfNeeded()
         }) { (finished) in
-
+            UIView.animate(withDuration: 0.2, animations: {
+                self.constraintLeading?.constant = 0
+                self.constraintLeadingLandscape?.constant = 40
+                self.constraintTrailing?.constant = 0
+                self.view.layoutIfNeeded()
+            })
         }
     }
     
     func animateButtonsOut(controller: UIViewController) {
         view.layoutIfNeeded()
-        UIView.animate(withDuration: 0.2, animations: { 
-            self.buttonsViewLeading.constant = 0
-            self.buttonsViewTrailing.constant = 0
+        UIView.animate(withDuration: 0.2, animations: {
             self.constraintLeading?.constant = self.view.frame.width
-            self.constraintTrailing?.constant = -self.view.frame.width
+            self.constraintLeadingLandscape?.constant = self.view.frame.width
+            self.constraintTrailing?.constant = self.view.frame.width
+            self.buttonsLeading.constant = self.view.frame.width
+            self.buttonsLeadingLandscape.constant = self.view.frame.width
             self.view.layoutIfNeeded()
         }) { (finished) in
-            self.currentView = "settings"
             self.constraintLeading = nil
+            self.constraintLeadingLandscape = nil
             self.constraintTrailing = nil
             self.changeNameVC?.view.removeFromSuperview()
             self.changeNameVC?.removeFromParentViewController()
@@ -206,6 +221,15 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
             self.changePasswordVC?.view.removeFromSuperview()
             self.changePasswordVC?.removeFromParentViewController()
             self.changePasswordVC = nil
+            UIView.animate(withDuration: 0.2, animations: {
+                self.buttonsLeading.constant = 0
+                self.buttonsTrailing.constant = 0
+                self.buttonsLeadingLandscape.constant = 40
+                self.buttonsTrailingLandscape.constant = 0
+                self.view.layoutIfNeeded()
+            }) { (finished) in
+                
+            }
         }
     }
     
@@ -244,11 +268,8 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         addChildViewController(friendsVC!)
         friendsVC?.view.frame = newViewStartFrame
         view.insertSubview(friendsVC!.view, belowSubview: topBar)
-        let distance = view.frame.width > view.frame.height ? view.frame.width : view.frame.height
         view.layoutIfNeeded()
         UIView.animate(withDuration: 0.3, animations: {
-            self.buttonsViewLeading.constant -= distance
-            self.buttonsViewTrailing.constant += distance
             self.friendsVC?.view.frame = self.view.frame
             self.view.layoutIfNeeded()
         }, completion: { (finished) in
@@ -264,10 +285,13 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
             AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
             self.dismiss(animated: true, completion: nil)
         case "name":
+            currentView = "settings"
             changeNameDismiss()
         case "password":
+            currentView = "settings"
             changePasswordDismiss()
         case "friends":
+            currentView = "settings"
             friendsDismiss()
         default: break
         }
@@ -319,6 +343,12 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
             print("Failed to select valid image")
         }
         imagePicker.dismiss(animated: true, completion: nil)
+        AppDelegate.AppUtility.lockOrientation(.allButUpsideDown)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        imagePicker.dismiss(animated: true, completion: nil)
+        AppDelegate.AppUtility.lockOrientation(.allButUpsideDown)
     }
     
     func changePasswordDismiss() {
@@ -333,8 +363,6 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         friendsVC?.searchBar.endEditing(true)
         view.layoutIfNeeded()
         UIView.animate(withDuration: 0.2, animations: {
-            self.buttonsViewLeading.constant = 0
-            self.buttonsViewTrailing.constant = 0
             self.friendsVC?.view.frame.origin.x += self.view.frame.width
             self.view.layoutIfNeeded()
         }) { (finished) in
@@ -342,7 +370,6 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
             self.friendsVC?.removeFromParentViewController()
             self.friendsVC = nil
         }
-        currentView = "settings"
         tapGesture.isEnabled = true
     }
     

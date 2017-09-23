@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0A0F731F1F7336A60062866C /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0F731E1F7336A60062866C /* ImageCache.swift */; };
+		0A0F73211F75A41F0062866C /* CustomImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0F73201F75A41F0062866C /* CustomImagePicker.swift */; };
 		0A13BD9A1F4E17780002D934 /* FriendsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A13BD991F4E17780002D934 /* FriendsVC.swift */; };
 		0A18E30E1F67449900BF0FCC /* CustomSearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A18E30D1F67449900BF0FCC /* CustomSearchBar.swift */; };
 		0A27CBA91F32B5B100F8AA60 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A27CBA81F32B5B100F8AA60 /* AuthService.swift */; };
@@ -41,6 +42,7 @@
 
 /* Begin PBXFileReference section */
 		0A0F731E1F7336A60062866C /* ImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
+		0A0F73201F75A41F0062866C /* CustomImagePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomImagePicker.swift; sourceTree = "<group>"; };
 		0A13BD991F4E17780002D934 /* FriendsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FriendsVC.swift; sourceTree = "<group>"; };
 		0A18E30D1F67449900BF0FCC /* CustomSearchBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomSearchBar.swift; sourceTree = "<group>"; };
 		0A27CBA81F32B5B100F8AA60 /* AuthService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 				0A4268F01F326101000E9694 /* RoundButton.swift */,
 				0A27CBAF1F3392A800F8AA60 /* UserCell.swift */,
 				0A18E30D1F67449900BF0FCC /* CustomSearchBar.swift */,
+				0A0F73201F75A41F0062866C /* CustomImagePicker.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -355,6 +358,7 @@
 				0A8820511F3FA82400257B23 /* ViewSnapsVC.swift in Sources */,
 				0A482AEA1F4D0602005205E1 /* SnapViewer.swift in Sources */,
 				0A88204F1F3FA49800257B23 /* InboxVC.swift in Sources */,
+				0A0F73211F75A41F0062866C /* CustomImagePicker.swift in Sources */,
 				0A27CBB21F33B22000F8AA60 /* User.swift in Sources */,
 				0A7E34691F3253C5007F84D4 /* LoginVC.swift in Sources */,
 				0A5CEE571F4633E600C7ECC3 /* SettingsVC.swift in Sources */,
@@ -486,6 +490,7 @@
 				CODE_SIGN_ENTITLEMENTS = DevChat/DevChat.entitlements;
 				DEVELOPMENT_TEAM = K2UE6W99P6;
 				INFOPLIST_FILE = DevChat/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.kevin.DevChat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -502,6 +507,7 @@
 				CODE_SIGN_ENTITLEMENTS = DevChat/DevChat.entitlements;
 				DEVELOPMENT_TEAM = K2UE6W99P6;
 				INFOPLIST_FILE = DevChat/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.kevin.DevChat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
