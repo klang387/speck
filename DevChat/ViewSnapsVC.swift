@@ -49,6 +49,7 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
     }
     
     @IBAction func closePressed(_ sender: Any) {
+        deleteSnapFromStorage()
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -59,7 +60,7 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
             guard let currentIndex = (self.pageVC.viewControllers?.first as? SnapViewer)?.index else { return }
             if currentIndex > self.viewedSnaps {
                 self.viewedSnaps = currentIndex
-                self.deleteSnap(index: currentIndex)
+                self.deleteSnapFromDatabase(index: currentIndex)
             }
         }
     }
@@ -96,18 +97,18 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
 
         snapsArray.sort(by: snapsArraySorter)
         
-        deleteSnap(index: 0)
-        
         var count = 0
         for snap in snapsArray {
             let snapView = SnapViewer()
             snapView.index = count
             if let mediaType = snap["mediaType"] as? String, let databaseUrl = snap["databaseUrl"] as? String {
                 if mediaType == "photo" {
-                    snapView.imageView.imageFromServerURL(urlString: databaseUrl, completion: nil)
+                    snapView.addPhoto()
+                    snapView.imageView?.imageFromServerURL(urlString: databaseUrl, completion: nil)
                 } else if mediaType == "video" {
                     if let url = URL(string: databaseUrl) {
                         snapView.playerItem = AVPlayerItem(url: url)
+                        snapView.addVideo()
                     } else {
                         print("Invalid url")
                     }
@@ -115,7 +116,8 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
                 if let captionText = snap["captionText"] as? String, let captionPosY = snap["captionPosY"] as? CGFloat {
                     snapView.addCaption(editingEnabled: false)
                     snapView.captionField?.text = captionText
-                    snapView.captionField?.center.y = captionPosY
+                    snapView.captionPosY = captionPosY
+                    snapView.captionField?.center.y = snapView.view.frame.height * captionPosY
                     snapView.panRecognizer = nil
                 }
                 if var timestamp = snap["timestamp"] as? Double {
@@ -135,6 +137,8 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
             }
             count += 1
         }
+        
+        deleteSnapFromDatabase(index: 0)
         
         if let firstVC = snapViewControllers.first {
             pageVC.setViewControllers([firstVC], direction: .forward, animated: true, completion: nil)
@@ -175,35 +179,42 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
         guard let currentIndex = (pageVC.viewControllers?.first as? SnapViewer)?.index else { return }
         if currentIndex > viewedSnaps && completed {
             viewedSnaps = currentIndex
-            deleteSnap(index: currentIndex)
+            deleteSnapFromDatabase(index: currentIndex)
         }
         
 
     }
     
-    func deleteSnap(index: Int) {
+    func deleteSnapFromDatabase(index: Int) {
         let currentUser = AuthService.instance.currentUser
-        if let storageName = snapsArray[index]["storageName"] as? String, let snapUid = snapsArray[index]["snapUid"] as? String {
+        if let snapUid = snapsArray[index]["snapUid"] as? String {
             DataService.instance.usersRef.child(currentUser).child("snapsReceived").child(senderUid).child("snaps").child(snapUid).removeValue(completionBlock: { (error, ref) in
                 if error != nil {
                     print("Error deleting snap from database: \(error!)")
                 }
             })
-            DataService.instance.mainRef.child("viewCounts").child(storageName).observeSingleEvent(of: .value, with: { (snapshot) in
-                if let viewCount = snapshot.value as? Int {
-                    print("Snap View Count: \(viewCount)")
-                    if viewCount == 1 {
-                        DataService.instance.mediaStorageRef.child(storageName).delete(completion: { (error) in
-                            if error != nil {
-                                print("Error deleting media from storage: \(error!)")
-                            }
-                        })
-                        DataService.instance.mainRef.child("viewCounts").child(storageName).removeValue()
-                    } else if viewCount > 1 {
-                        DataService.instance.mainRef.child("viewCounts").child(storageName).setValue(viewCount - 1)
+        }
+    }
+    
+    func deleteSnapFromStorage() {
+        for index in 0...viewedSnaps {
+            if let storageName = snapsArray[index]["storageName"] as? String{
+                DataService.instance.mainRef.child("viewCounts").child(storageName).observeSingleEvent(of: .value, with: { (snapshot) in
+                    if let viewCount = snapshot.value as? Int {
+                        print("Snap View Count: \(viewCount)")
+                        if viewCount == 1 {
+                            DataService.instance.mediaStorageRef.child(storageName).delete(completion: { (error) in
+                                if error != nil {
+                                    print("Error deleting media from storage: \(error!)")
+                                }
+                            })
+                            DataService.instance.mainRef.child("viewCounts").child(storageName).removeValue()
+                        } else if viewCount > 1 {
+                            DataService.instance.mainRef.child("viewCounts").child(storageName).setValue(viewCount - 1)
+                        }
                     }
-                }
-            })
+                })
+            }
         }
     }
 

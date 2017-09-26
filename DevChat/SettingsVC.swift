@@ -245,7 +245,7 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     }
     
     @IBAction func changePasswordPressed(_ sender: Any) {
-        if Auth.auth().currentUser?.email != nil {
+        if UserDefaults.standard.bool(forKey: "facebookLogin") != true {
             currentView = "password"
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             changePasswordVC = (storyboard.instantiateViewController(withIdentifier: "ChangePasswordVC") as! ChangePasswordVC)
@@ -302,6 +302,8 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
             DataService.instance.removeToken()
             try Auth.auth().signOut()
             weak var cameraVC = self.presentingViewController
+            AppDelegate.AppUtility.lockOrientation(.allButUpsideDown)
+            UserDefaults.standard.removeObject(forKey: "facebookLogin")
             self.dismiss(animated: true) {
                 cameraVC?.performSegue(withIdentifier: "toLoginVC", sender: nil)
             }
@@ -314,7 +316,9 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         if let image = info[UIImagePickerControllerEditedImage] as? UIImage {
             profilePic.image = image
             if let imageData = UIImageJPEGRepresentation(image, 0.2) {
+                let imageName = NSUUID().uuidString
                 DataService.instance.usersRef.child(currentUser).child("profPicStorageRef").observeSingleEvent(of: .value, with: { (snapshot) in
+                    DataService.instance.usersRef.child(self.currentUser).child("profPicStorageRef").setValue(imageName)
                     if let profPicStorageRef = snapshot.value as? String {
                         DataService.instance.profPicStorageRef.child(profPicStorageRef).delete(completion: { (error) in
                             if error != nil {
@@ -325,7 +329,6 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
                         print("Failed to get profPicStorageRef")
                     }
                 })
-                let imageName = NSUUID().uuidString
                 DataService.instance.profPicStorageRef.child(imageName).putData(imageData, metadata: StorageMetadata(), completion: { (metadata, error) in
                     if let downloadURL = metadata?.downloadURL()?.absoluteString {
                         DataService.instance.profilesRef.child(self.currentUser).updateChildValues(["profPicUrl":downloadURL])
@@ -335,7 +338,6 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
                         print("Failed to get downloadUrl")
                     }
                 })
-                
             } else {
                 print("Failed to create JPEG")
             }

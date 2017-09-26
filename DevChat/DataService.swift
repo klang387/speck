@@ -225,6 +225,7 @@ class DataService {
     }
     
     func saveLocalProfilePic(imageData: Data) {
+        
         let fileURL = documentsUrl.appendingPathComponent("profilePic")
         if FileManager.default.fileExists(atPath: fileURL.absoluteString) {
             try? FileManager.default.removeItem(at: fileURL)
@@ -241,6 +242,13 @@ class DataService {
             print("Error loading image: \(error)")
         }
         return nil
+    }
+    
+    func removeLocalProfilePic() {
+        let fileURL = documentsUrl.appendingPathComponent("profilePic")
+        if FileManager.default.fileExists(atPath: fileURL.absoluteString) {
+            try? FileManager.default.removeItem(at: fileURL)
+        }
     }
     
     

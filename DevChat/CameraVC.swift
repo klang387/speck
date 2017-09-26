@@ -73,6 +73,7 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
         orientation = checkOrientation()
         buttonsArray = [switchCameraBtn, flashBtn, inboxBtn]
         shouldUseDeviceOrientation = true
@@ -98,8 +99,6 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
    
     override func viewDidAppear(_ animated: Bool) {
-
-        AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
         
         if AuthService.instance.currentUser != "" {
             super.viewDidAppear(animated)
@@ -239,8 +238,6 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     }
     
     func swiftyCam(_ swiftyCam: SwiftyCamViewController, didTake photo: UIImage) {
-        print("Took a photo")
-        
         tempPhoto = photo
         dataType = "photo"
         performSegue(withIdentifier: "toReviewSnapVC", sender: tempPhoto)
@@ -254,10 +251,9 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         recordingTimer?.textColor = .white
         recordingTimer?.alpha = 0.9
         recordingCount = Int(maximumVideoDuration)
-        recordingTimer?.text = "Start!"
+        recordingTimer?.text = "10"
         view.addSubview(recordingTimer!)
         timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
-        print("Started recording new video")
     }
     
     func updateTimer() {
@@ -274,13 +270,10 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         recordingTimer = nil
         timer?.invalidate()
         timer = nil
-        print("Finished recording")
     }
     
     func swiftyCam(_ swiftyCam: SwiftyCamViewController, didFinishProcessVideoAt url: URL) {
-        print("Finished processing video")
-        
-        tempVidUrl = url        
+        tempVidUrl = url
         dataType = "video"
         performSegue(withIdentifier: "toReviewSnapVC", sender: tempVidUrl)
         

@@ -42,8 +42,9 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
     var orientation: UIInterfaceOrientationMask?
     
     let storageName = NSUUID().uuidString
-    var alreadyUploaded = false
     var storageUrl: String?
+    
+    var captionPosY: CGFloat?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,8 +59,10 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
         
         if dataType == "video" {
             snapViewer.playerItem = AVPlayerItem(url: tempVidUrl!)
+            snapViewer.addVideo()
         } else if dataType == "photo" {
-            snapViewer.imageView.image = tempPhoto
+            snapViewer.addPhoto()
+            snapViewer.imageView?.image = tempPhoto
             tempPhotoData = UIImageJPEGRepresentation(tempPhoto!, 0.2)
         }
     }
@@ -84,11 +87,19 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
     }
     
     @IBAction func captionPressed(_ sender: Any) {
-        snapViewer.addCaption(editingEnabled: true)
+        if snapViewer.captionField == nil {
+            snapViewer.addCaption(editingEnabled: true)
+        } else {
+            snapViewer.captionField?.removeFromSuperview()
+            snapViewer.captionField = nil
+        }
     }
     
     @IBAction func sendToUsersBtnPressed(_ sender: Any) {
         if currentView == "preview" {
+            if let position = snapViewer.captionField?.center.y {
+                captionPosY = position / snapViewer.view.frame.height
+            }
             AppDelegate.AppUtility.lockOrientation(.allButUpsideDown)
             tapRecognizer.isEnabled = false
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -119,21 +130,39 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
         } else if currentView == "send" && sendSnapVC != nil {
             if let count = sendSnapVC?.selectedUsers.count {
                 guard count > 0 else { return }
-                removeSendSnapVC()
+                let loadingView = LoadingView()
+                view.addSubview(loadingView)
+                loadingView.frame = view.frame
+                loadingView.text(text: "Uploading Media")
                 var caption: [String:Any]?
-                if let text = snapViewer.captionField?.text, let position = snapViewer.captionField?.center.y {
+                if let text = snapViewer.captionField?.text, let position = captionPosY {
                     caption = ["text":text, "yPos":position]
                 }
-                if !alreadyUploaded {
-                    DataService.instance.uploadMedia(storageName: storageName, tempVidUrl: sendSnapVC!.tempVidUrl, tempPhotoData: sendSnapVC!.tempPhotoData, caption: caption, recipients: sendSnapVC!.selectedUsers, completion: { completedUrl in
-                        self.alreadyUploaded = true
-                        self.storageUrl = completedUrl
-                    })
-                } else {
-                    if let url = storageUrl, let recipients = sendSnapVC?.selectedUsers {
-                        DataService.instance.sendSnap(storageName: storageName, databaseUrl: url, mediaType: dataType, caption: caption, recipients: recipients)
+                DataService.instance.mainRef.child("viewCounts").child(storageName).observeSingleEvent(of: .value, with: { (snapshot) in
+                    if let _ = snapshot.value as? Int {
+                        if let url = self.storageUrl, let recipients = self.sendSnapVC?.selectedUsers {
+                            DataService.instance.sendSnap(storageName: self.storageName, databaseUrl: url, mediaType: self.dataType, caption: caption, recipients: recipients)
+                            self.fadeOutView(view: loadingView)
+                            self.removeSendSnapVC()
+                        }
+                    } else {
+                        DataService.instance.uploadMedia(storageName: self.storageName, tempVidUrl: self.sendSnapVC!.tempVidUrl, tempPhotoData: self.sendSnapVC!.tempPhotoData, caption: caption, recipients: self.sendSnapVC!.selectedUsers, completion: { completedUrl in
+                            self.storageUrl = completedUrl
+                            self.fadeOutView(view: loadingView)
+                            self.removeSendSnapVC()
+                        })
                     }
-                }
+                })
+            }
+        }
+    }
+    
+    func fadeOutView(view: UIView) {
+        UIView.animate(withDuration: 0.2, animations: { 
+            view.alpha = 0
+        }) { (finished) in
+            if finished {
+                view.removeFromSuperview()
             }
         }
     }

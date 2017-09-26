@@ -25,6 +25,10 @@ class ChangeNameVC: UIViewController {
     @IBAction func savePressed(_ sender: Any) {
         if let username = newUsername.text, let currentUser = Auth.auth().currentUser?.uid {
             if username.characters.count > 0 {
+                guard !username.contains("@") else {
+                    print("Name cannot contain '@'")
+                    return
+                }
                 DataService.instance.profilesRef.child(currentUser).updateChildValues(["name":username])
                 delegate?.changeNameDismiss()
             }

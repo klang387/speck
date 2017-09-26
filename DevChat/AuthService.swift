@@ -92,7 +92,7 @@ class AuthService {
                         print("Successful sign in with Firebase")
                         DataService.instance.addToken()
                         DataService.instance.profilesRef.child(user!.uid).observeSingleEvent(of: .value, with: { (snapshot) in
-                            if let _ = snapshot.value as? String  {
+                            if snapshot.hasChildren()  {
                                 print("User already exists \(user!.uid)")
                                 completion()
                             } else {

@@ -11,49 +11,27 @@ import AVFoundation
 
 class SnapViewer: UIViewController, UITextFieldDelegate {
     
-    let avPlayer = AVPlayer()
+    var avPlayer: AVPlayer?
     var avPlayerLayer: AVPlayerLayer?
     var playerItem: AVPlayerItem?
-    
     var avQueuePlayer: AVQueuePlayer?
     var looper: AVPlayerLooper?
-    
-    var imageView = UIImageView()
-    
+    var imageView: UIImageView?
     var index: Int?
-    
     var captionField: UITextField?
     var lastLocation: CGPoint?
     var panRecognizer: UIPanGestureRecognizer?
-    
+    var captionPosY: CGFloat?
     var timestampLbl: UILabel?
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .black
-        
-        avPlayerLayer = AVPlayerLayer(player: avPlayer)
-        avPlayerLayer?.videoGravity = AVLayerVideoGravityResizeAspectFill
-        avPlayerLayer?.frame = view.frame
-        view.layer.addSublayer(avPlayerLayer!)
-        
-        if playerItem != nil {
-            avQueuePlayer = AVQueuePlayer(playerItem: playerItem!)
-            looper = AVPlayerLooper(player: avQueuePlayer!, templateItem: playerItem!)
-        }
-        
-        avPlayerLayer?.player = avQueuePlayer
-        
-        imageView.contentMode = .scaleAspectFit
-        imageView.frame = view.frame
-        view.addSubview(imageView)
-
-    }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         
-        imageView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
+        avPlayerLayer?.frame = view.frame
+        imageView?.frame = view.frame
+        guard let position = captionPosY else { return }
+        captionField?.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 40)
+        captionField?.center.y = view.frame.height * position
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -68,13 +46,40 @@ class SnapViewer: UIViewController, UITextFieldDelegate {
         }
     }
     
+    func addPhoto() {
+        imageView = UIImageView()
+        imageView?.contentMode = .scaleAspectFit
+        imageView?.frame = view.frame
+        view.addSubview(imageView!)
+    }
+    
+    func addVideo() {
+        avPlayer = AVPlayer()
+        avPlayerLayer = AVPlayerLayer(player: avPlayer)
+        avPlayerLayer?.videoGravity = AVLayerVideoGravityResizeAspect
+        avPlayerLayer?.frame = view.frame
+        view.layer.addSublayer(avPlayerLayer!)
+
+        if playerItem != nil {
+            avQueuePlayer = AVQueuePlayer(playerItem: playerItem!)
+            looper = AVPlayerLooper(player: avQueuePlayer!, templateItem: playerItem!)
+        }
+                
+        avPlayerLayer?.player = avQueuePlayer
+    }
+    
     func addTimestamp() {
-        timestampLbl = UILabel(frame: CGRect(x: 80, y: 80, width: view.frame.width - 80, height: 40))
+        timestampLbl = UILabel()
         timestampLbl?.font = UIFont(name: "Avenir", size: 14)
         timestampLbl?.textColor = .white
         timestampLbl?.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
         timestampLbl?.textAlignment = .center
         view.addSubview(timestampLbl!)
+        timestampLbl?.translatesAutoresizingMaskIntoConstraints = false
+        timestampLbl?.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        timestampLbl?.topAnchor.constraint(equalTo: view.topAnchor, constant: 20).isActive = true
+        timestampLbl?.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        timestampLbl?.widthAnchor.constraint(equalToConstant: 170).isActive = true
     }
     
     func addCaption(editingEnabled: Bool) {
@@ -102,7 +107,7 @@ class SnapViewer: UIViewController, UITextFieldDelegate {
         switch recognizer.state {
         case .changed:
             if let view = recognizer.view {
-                view.center = CGPoint(x: view.center.x, y: (view.center.y + translation.y > 50 && view.center.y + translation.y < self.view.frame.height - 50) ? view.center.y + translation.y : view.center.y)
+                view.center = CGPoint(x: view.center.x, y: (view.center.y + translation.y > 100 && view.center.y + translation.y < self.view.frame.height - 50) ? view.center.y + translation.y : view.center.y)
                 }
             recognizer.setTranslation(CGPoint.zero, in: self.view)
         default:

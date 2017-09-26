@@ -55,9 +55,26 @@ class LoginVC: UIViewController, UITextFieldDelegate {
         return true
     }
 
+    @IBAction func forgotPasswordPressed(_ sender: Any) {
+        let passwordReset = UIAlertController(title: "Forgot Your Password?", message: "No problem.  Enter your email and we'll help you reset it.", preferredStyle: .alert)
+        passwordReset.addTextField()
+        let submitAction = UIAlertAction(title: "Submit", style: .default) { [unowned passwordReset] _ in
+            if let email = passwordReset.textFields![0].text {
+                Auth.auth().sendPasswordReset(withEmail: email, completion: nil)
+                passwordReset.dismiss(animated: true, completion: nil)
+            }
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        passwordReset.addAction(submitAction)
+        passwordReset.addAction(cancelAction)
+        present(passwordReset, animated: true, completion: nil)
+    }
+    
     @IBAction func facebookLoginPressed(_ sender: Any) {
         AuthService.instance.facebookLogin(completion: { completion in
             self.dismiss(animated: true, completion: nil)
+            UserDefaults.standard.set(true, forKey: "facebookLogin")
+            AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
         })
     }
     
@@ -71,12 +88,12 @@ class LoginVC: UIViewController, UITextFieldDelegate {
                     self.present(alert, animated: true, completion: nil)
                     return
                 }
+                AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
                 self.dismiss(animated: true, completion: nil)
             })
             
         } else {
-            let alert = UIAlertController(title: "Username and Password Required", message: "You must enter both a username and a password", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+            let alert = ErrorAlert(title: "Username and Password Required", message: "You must enter both a username and a password", preferredStyle: .alert)
             present(alert, animated: true, completion: nil)
         }
     }

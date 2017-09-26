@@ -16,10 +16,10 @@ class ImageCache {
         return _instance
     }
     
-    var profilePicCache: NSCache<NSString,UIImage> = NSCache()
+    private var _profilePicCache: NSCache<NSString,UIImage> = NSCache()
     
-    func getProfileImage(user: User, completion: @escaping (UIImage) -> Void) {
-        if let image = profilePicCache.object(forKey: user.uid as NSString) {
+    public func getProfileImage(user: User, completion: @escaping (UIImage) -> Void) {
+        if let image = _profilePicCache.object(forKey: user.uid as NSString) {
             print("Image from cache")
             completion(image)
         } else {
@@ -31,7 +31,7 @@ class ImageCache {
                 }
                 DispatchQueue.main.async(execute: { () -> Void in
                     if let image = UIImage(data: data!) {
-                        self.profilePicCache.setObject(image, forKey: user.uid as NSString)
+                        self._profilePicCache.setObject(image, forKey: user.uid as NSString)
                         completion(image)
                         
                     }
@@ -39,5 +39,9 @@ class ImageCache {
             }).resume()
         }
         
+    }
+    
+    public func purgeCache() {
+        _profilePicCache.removeAllObjects()
     }
 }
