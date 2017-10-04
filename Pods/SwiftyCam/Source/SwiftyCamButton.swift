@@ -54,6 +54,10 @@ open class SwiftyCamButton: UIButton {
     
     public weak var delegate: SwiftyCamButtonDelegate?
     
+    // Sets whether button is enabled
+    
+    public var buttonEnabled = true
+    
     /// Maximum duration variable
     
     fileprivate var timer : Timer?
@@ -76,17 +80,24 @@ open class SwiftyCamButton: UIButton {
     /// UITapGestureRecognizer Function
     
     @objc fileprivate func Tap() {
+        guard buttonEnabled == true else {
+            return
+        }
+        
        delegate?.buttonWasTapped()
     }
     
     /// UILongPressGestureRecognizer Function
-
     @objc fileprivate func LongPress(_ sender:UILongPressGestureRecognizer!)  {
+        guard buttonEnabled == true else {
+            return
+        }
+        
         switch sender.state {
         case .began:
             delegate?.buttonDidBeginLongPress()
             startTimer()
-        case .cancelled, .ended, .failed:
+        case .ended:
             invalidateTimer()
             delegate?.buttonDidEndLongPress()
         default:

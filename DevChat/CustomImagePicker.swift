@@ -1,6 +1,6 @@
 //
 //  CustomImagePicker.swift
-//  DevChat
+//  Speck
 //
 //  Created by Kevin Langelier on 9/22/17.
 //  Copyright © 2017 Kevin Langelier. All rights reserved.

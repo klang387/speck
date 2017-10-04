@@ -1,21 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina4_0" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <array key="Avenir.ttc">
+            <string>Avenir-Black</string>
+            <string>Avenir-Book</string>
+        </array>
+        <array key="TimesNewRoman.ttf">
+            <string>TimesNewRomanPSMT</string>
+        </array>
+    </customFonts>
     <scenes>
         <!--CameraVC-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="CameraVC" customModule="DevChat" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="CameraVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -194,7 +203,7 @@
         <!--LoginVC-->
         <scene sceneID="icA-eV-561">
             <objects>
-                <viewController id="AYo-Rp-cQ0" customClass="LoginVC" customModule="DevChat" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="AYo-Rp-cQ0" customClass="LoginVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Irs-oi-t1S"/>
                         <viewControllerLayoutGuide type="bottom" id="oxO-dX-aba"/>
@@ -467,7 +476,7 @@
         <!--SignUpVC-->
         <scene sceneID="eXl-h3-e0s">
             <objects>
-                <viewController id="8wo-J8-AUm" userLabel="SignUpVC" customClass="SignUpVC" customModule="DevChat" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="8wo-J8-AUm" userLabel="SignUpVC" customClass="SignUpVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="oL2-Ky-Ukx"/>
                         <viewControllerLayoutGuide type="bottom" id="DH4-OH-goI"/>
@@ -686,7 +695,7 @@
         <!--FriendsVC-->
         <scene sceneID="WCs-Hg-dmO">
             <objects>
-                <viewController storyboardIdentifier="FriendsVC" id="xTd-WS-Uet" customClass="FriendsVC" customModule="DevChat" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="FriendsVC" id="xTd-WS-Uet" customClass="FriendsVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Nhd-8g-ZXS"/>
                         <viewControllerLayoutGuide type="bottom" id="u7V-rU-fGK"/>
@@ -699,8 +708,8 @@
                                 <rect key="frame" x="142" y="266" width="37" height="37"/>
                                 <color key="color" red="0.28977388143539429" green="0.31697943806648254" blue="0.34643536806106567" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </activityIndicatorView>
-                            <searchBar contentMode="redraw" searchBarStyle="prominent" placeholder="Search" translatesAutoresizingMaskIntoConstraints="NO" id="27i-Fl-uHy" customClass="CustomSearchBar" customModule="DevChat" customModuleProvider="target">
-                                <rect key="frame" x="66" y="28" width="254" height="44"/>
+                            <searchBar contentMode="redraw" searchBarStyle="prominent" placeholder="Search" translatesAutoresizingMaskIntoConstraints="NO" id="27i-Fl-uHy" customClass="CustomSearchBar" customModule="Speck" customModuleProvider="target">
+                                <rect key="frame" x="66" y="24" width="254" height="44"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="hog-lu-SaJ"/>
                                 </constraints>
@@ -708,7 +717,7 @@
                                 <textInputTraits key="textInputTraits" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
                             </searchBar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="70" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="yEk-h4-g6C">
-                                <rect key="frame" x="0.0" y="72" width="320" height="496"/>
+                                <rect key="frame" x="0.0" y="68" width="320" height="500"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <color key="separatorColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
@@ -723,7 +732,7 @@
                             <constraint firstItem="G2K-QN-JHg" firstAttribute="centerY" secondItem="sn9-mn-PWT" secondAttribute="centerY" id="Q6H-zr-v39"/>
                             <constraint firstAttribute="trailing" secondItem="27i-Fl-uHy" secondAttribute="trailing" id="c7q-mK-QIQ"/>
                             <constraint firstAttribute="trailing" secondItem="yEk-h4-g6C" secondAttribute="trailing" id="f1D-Fg-pkV"/>
-                            <constraint firstItem="27i-Fl-uHy" firstAttribute="top" secondItem="Nhd-8g-ZXS" secondAttribute="bottom" constant="8" id="lOY-Mu-eup"/>
+                            <constraint firstItem="27i-Fl-uHy" firstAttribute="top" secondItem="Nhd-8g-ZXS" secondAttribute="bottom" constant="4" id="lOY-Mu-eup"/>
                             <constraint firstItem="yEk-h4-g6C" firstAttribute="top" secondItem="27i-Fl-uHy" secondAttribute="bottom" id="uCt-Ny-5wy"/>
                         </constraints>
                     </view>
@@ -749,7 +758,7 @@
         <!--Change NameVC-->
         <scene sceneID="UlS-z4-5Q0">
             <objects>
-                <viewController storyboardIdentifier="ChangeNameVC" id="DGU-ld-Byb" customClass="ChangeNameVC" customModule="DevChat" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChangeNameVC" id="DGU-ld-Byb" customClass="ChangeNameVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Ock-v2-mjM"/>
                         <viewControllerLayoutGuide type="bottom" id="P4r-lT-ZVy"/>
@@ -819,7 +828,7 @@
         <!--SettingsVC-->
         <scene sceneID="dEw-S2-OOK">
             <objects>
-                <viewController id="Cbu-dt-dES" customClass="SettingsVC" customModule="DevChat" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="Cbu-dt-dES" customClass="SettingsVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="SeH-Jx-TIn"/>
                         <viewControllerLayoutGuide type="bottom" id="vC8-bM-Vcq"/>
@@ -1074,7 +1083,7 @@
         <!--ReviewSnapVC-->
         <scene sceneID="9uG-qG-bEL">
             <objects>
-                <viewController id="ju6-W3-mZ3" userLabel="ReviewSnapVC" customClass="ReviewSnapVC" customModule="DevChat" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="ju6-W3-mZ3" userLabel="ReviewSnapVC" customClass="ReviewSnapVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="cvs-eM-im1"/>
                         <viewControllerLayoutGuide type="bottom" id="LFR-5e-aej"/>
@@ -1201,7 +1210,7 @@
         <!--SendSnapVC-->
         <scene sceneID="SIX-xy-bvk">
             <objects>
-                <viewController storyboardIdentifier="SendSnapVC" id="jev-eN-UJH" userLabel="SendSnapVC" customClass="SendSnapVC" customModule="DevChat" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SendSnapVC" id="jev-eN-UJH" userLabel="SendSnapVC" customClass="SendSnapVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="f3t-SJ-j8r"/>
                         <viewControllerLayoutGuide type="bottom" id="LHm-Eg-dmT"/>
@@ -1211,13 +1220,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsMultipleSelection="YES" rowHeight="70" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="5aB-6L-xeD">
-                                <rect key="frame" x="0.0" y="72" width="320" height="496"/>
+                                <rect key="frame" x="0.0" y="68" width="320" height="500"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <color key="separatorColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                             </tableView>
-                            <searchBar contentMode="redraw" searchBarStyle="prominent" placeholder="Search" translatesAutoresizingMaskIntoConstraints="NO" id="sa0-7i-lTp" customClass="CustomSearchBar" customModule="DevChat" customModuleProvider="target">
-                                <rect key="frame" x="66" y="28" width="254" height="44"/>
+                            <searchBar contentMode="redraw" searchBarStyle="prominent" placeholder="Search" translatesAutoresizingMaskIntoConstraints="NO" id="sa0-7i-lTp" customClass="CustomSearchBar" customModule="Speck" customModuleProvider="target">
+                                <rect key="frame" x="66" y="24" width="254" height="44"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="2FV-5w-IGW"/>
                                 </constraints>
@@ -1233,7 +1242,7 @@
                             <constraint firstAttribute="trailing" secondItem="5aB-6L-xeD" secondAttribute="trailing" id="au6-CF-jOd"/>
                             <constraint firstItem="sa0-7i-lTp" firstAttribute="leading" secondItem="atg-e0-cvc" secondAttribute="leading" constant="66" id="cwC-oK-g9t"/>
                             <constraint firstItem="5aB-6L-xeD" firstAttribute="leading" secondItem="atg-e0-cvc" secondAttribute="leading" id="jr4-mP-kXA"/>
-                            <constraint firstItem="sa0-7i-lTp" firstAttribute="top" secondItem="f3t-SJ-j8r" secondAttribute="bottom" constant="8" id="mcs-IY-Vno"/>
+                            <constraint firstItem="sa0-7i-lTp" firstAttribute="top" secondItem="f3t-SJ-j8r" secondAttribute="bottom" constant="4" id="mcs-IY-Vno"/>
                         </constraints>
                     </view>
                     <connections>
@@ -1248,7 +1257,7 @@
         <!--InboxVC-->
         <scene sceneID="Qlb-ha-yNc">
             <objects>
-                <viewController id="ctK-C7-7lg" customClass="InboxVC" customModule="DevChat" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="ctK-C7-7lg" customClass="InboxVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="gU4-B9-ej8"/>
                         <viewControllerLayoutGuide type="bottom" id="uT1-0y-FjA"/>
@@ -1287,8 +1296,8 @@
                                     <action selector="backBtn:" destination="ctK-C7-7lg" eventType="touchUpInside" id="fxB-li-hcY"/>
                                 </connections>
                             </button>
-                            <searchBar contentMode="redraw" searchBarStyle="prominent" placeholder="Search" translatesAutoresizingMaskIntoConstraints="NO" id="Q4P-MN-ybe" customClass="CustomSearchBar" customModule="DevChat" customModuleProvider="target">
-                                <rect key="frame" x="82" y="24" width="238" height="44"/>
+                            <searchBar contentMode="redraw" searchBarStyle="prominent" placeholder="Search" translatesAutoresizingMaskIntoConstraints="NO" id="Q4P-MN-ybe" customClass="CustomSearchBar" customModule="Speck" customModuleProvider="target">
+                                <rect key="frame" x="82" y="26" width="238" height="44"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="kHV-qh-fyU"/>
                                 </constraints>
@@ -1300,7 +1309,7 @@
                         <constraints>
                             <constraint firstItem="rO7-Qy-aro" firstAttribute="leading" secondItem="FnV-PM-zY4" secondAttribute="leading" id="0Kh-Eu-8lL"/>
                             <constraint firstAttribute="trailing" secondItem="Q4P-MN-ybe" secondAttribute="trailing" id="7aW-lZ-RV0"/>
-                            <constraint firstItem="Q4P-MN-ybe" firstAttribute="top" secondItem="SI7-ij-wcL" secondAttribute="bottom" id="M6T-FL-fp5"/>
+                            <constraint firstItem="Q4P-MN-ybe" firstAttribute="top" secondItem="SI7-ij-wcL" secondAttribute="bottom" constant="2" id="M6T-FL-fp5"/>
                             <constraint firstAttribute="trailing" secondItem="SI7-ij-wcL" secondAttribute="trailing" id="XV6-a8-kO1"/>
                             <constraint firstItem="n1r-Fb-Taz" firstAttribute="leading" secondItem="FnV-PM-zY4" secondAttribute="leading" id="ZFt-ro-6ay"/>
                             <constraint firstAttribute="trailing" secondItem="n1r-Fb-Taz" secondAttribute="trailing" id="aUF-j2-KGC"/>
@@ -1327,7 +1336,7 @@
         <!--View SnapsVC-->
         <scene sceneID="M4e-sI-4Rd">
             <objects>
-                <viewController id="AJ6-6C-0NX" customClass="ViewSnapsVC" customModule="DevChat" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="AJ6-6C-0NX" customClass="ViewSnapsVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="u0f-b3-3Ph"/>
                         <viewControllerLayoutGuide type="bottom" id="taL-Wc-lOU"/>
@@ -1409,7 +1418,7 @@
         <!--Change PasswordVC-->
         <scene sceneID="2um-QN-C7M">
             <objects>
-                <viewController storyboardIdentifier="ChangePasswordVC" id="x7R-fy-eF3" customClass="ChangePasswordVC" customModule="DevChat" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChangePasswordVC" id="x7R-fy-eF3" customClass="ChangePasswordVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="zBP-Hn-6nO"/>
                         <viewControllerLayoutGuide type="bottom" id="IvR-Pw-Iwt"/>

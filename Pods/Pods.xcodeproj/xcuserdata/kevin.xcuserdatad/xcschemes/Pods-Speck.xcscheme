@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "6254F877459C7C8A269C1BEA54912881"
-               BuildableName = "SwiftyCam.framework"
-               BlueprintName = "SwiftyCam"
+               BlueprintIdentifier = "300D1D73191290BF953BC0498A41678E"
+               BuildableName = "Pods_Speck.framework"
+               BlueprintName = "Pods-Speck"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,9 +47,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "6254F877459C7C8A269C1BEA54912881"
-            BuildableName = "SwiftyCam.framework"
-            BlueprintName = "SwiftyCam"
+            BlueprintIdentifier = "300D1D73191290BF953BC0498A41678E"
+            BuildableName = "Pods_Speck.framework"
+            BlueprintName = "Pods-Speck"
             ReferencedContainer = "container:Pods.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

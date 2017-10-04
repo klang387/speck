@@ -1,6 +1,6 @@
 //
 //  ErrorAlert.swift
-//  DevChat
+//  Speck
 //
 //  Created by Kevin Langelier on 9/25/17.
 //  Copyright © 2017 Kevin Langelier. All rights reserved.

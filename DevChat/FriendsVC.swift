@@ -1,6 +1,6 @@
 //
 //  FriendsVC.swift
-//  DevChat
+//  Speck
 //
 //  Created by Kevin Langelier on 8/23/17.
 //  Copyright © 2017 Kevin Langelier. All rights reserved.
