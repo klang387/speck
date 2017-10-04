@@ -260,17 +260,38 @@ open class SwiftyCamViewController: UIViewController {
         view.addSubview(previewLayer)
         previewLayer.superview?.sendSubview(toBack: previewLayer)
 
+        // Add Gesture Recognizers
+        
+        addGestureRecognizers()
+        
+        previewLayer.session = session
+        
+        // Test authorization status for Camera and Micophone
+        
+        switch AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo){
+        case .authorized:
+            
+            // already authorized
+            break
+        case .notDetermined:
+            
+            // not yet determined
+            sessionQueue.suspend()
+            AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo, completionHandler: { [unowned self] granted in
+                if !granted {
+                    self.setupResult = .notAuthorized
+                }
+                self.sessionQueue.resume()
+            })
+        default:
+            
+            // already been asked. Denied access
+            setupResult = .notAuthorized
+        }
+        
         sessionQueue.async { [unowned self] in
             self.configureSession()
         }
-        
-		// Add Gesture Recognizers
-        
-        addGestureRecognizers()
-
-		previewLayer.session = session
-
-		
 	}
 
     // MARK: ViewDidLayoutSubviews
@@ -330,29 +351,6 @@ open class SwiftyCamViewController: UIViewController {
 
 	override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
-        
-        // Test authorization status for Camera and Micophone
-        
-        switch AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo){
-        case .authorized:
-            
-            // already authorized
-            break
-        case .notDetermined:
-            
-            // not yet determined
-            sessionQueue.suspend()
-            AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo, completionHandler: { [unowned self] granted in
-                if !granted {
-                    self.setupResult = .notAuthorized
-                }
-                self.sessionQueue.resume()
-            })
-        default:
-            
-            // already been asked. Denied access
-            setupResult = .notAuthorized
-        }
         
 		// Subscribe to device rotation notifications
 

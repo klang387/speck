@@ -17,32 +17,24 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     @IBOutlet weak var friendsBadge: UILabel!
     @IBOutlet weak var topBar: UIImageView!
     @IBOutlet weak var buttonsStack: UIStackView!
-    
     @IBOutlet weak var buttonsLeading: NSLayoutConstraint!
     @IBOutlet weak var buttonsTrailing: NSLayoutConstraint!
     @IBOutlet weak var buttonsLeadingLandscape: NSLayoutConstraint!
     @IBOutlet weak var buttonsTrailingLandscape: NSLayoutConstraint!
     
-    
     var image: UIImage?
     var imagePicker: UIImagePickerController!
-    private var editLayer: CAShapeLayer!
-    private var label: UILabel!
-    
+    var editLayer: CAShapeLayer!
+    var label: UILabel!
     var changeNameVC: ChangeNameVC?
     var changePasswordVC: ChangePasswordVC?
-    
     var currentView: String!
     var newViewStartFrame: CGRect!
-    
     var friendsObserver: UInt!
     var requestCount: Int!
     var currentUser: String!
-    
     var friendsVC: FriendsVC?
-    
     var tapGesture: UITapGestureRecognizer!
-    
     var constraintLeading: NSLayoutConstraint?
     var constraintTrailing: NSLayoutConstraint?
     var constraintLeadingLandscape: NSLayoutConstraint?
@@ -72,10 +64,6 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         currentView = "settings"
     }
     
-    override var prefersStatusBarHidden: Bool {
-        return false
-    }
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -102,64 +90,90 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         newViewStartFrame = CGRect(x: view.frame.width, y: 0, width: view.frame.width, height: view.frame.height)
     }
     
-    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
-        if let imageVC = NSClassFromString("PUUIImageViewController")
-        {
-            if viewController.isKind(of: imageVC) {
-                addRoundedEditLayer(to: viewController, forCamera: false)
-            }
-        }
-    }
-    
-    private func addRoundedEditLayer(to viewController: UIViewController, forCamera: Bool) {
-        hideDefaultEditOverlay(view: viewController.view)
-        
-        // Circle in edit layer - y position
-        let bottomBarHeight: CGFloat = 72.0
-        let position = (forCamera) ? viewController.view.center.y - viewController.view.center.x - bottomBarHeight/2 : viewController.view.center.y - viewController.view.center.x
-        
-        let viewWidth = viewController.view.frame.width
-        let viewHeight = viewController.view.frame.height
-        
-        let emptyShapePath = UIBezierPath(ovalIn: CGRect(x: 0, y: position, width: viewWidth, height: viewWidth))
-        emptyShapePath.usesEvenOddFillRule = true
-        
-        let filledShapePath = UIBezierPath(roundedRect: CGRect(x: 0, y: 0, width: viewWidth, height: viewHeight - bottomBarHeight), cornerRadius: 0)
-        filledShapePath.append(emptyShapePath)
-        filledShapePath.usesEvenOddFillRule = true
-        
-        editLayer = CAShapeLayer()
-        editLayer.path = filledShapePath.cgPath
-        editLayer.fillRule = kCAFillRuleEvenOdd
-        editLayer.fillColor = UIColor.black.cgColor
-        editLayer.opacity = 0.8
-        viewController.view.layer.addSublayer(editLayer)
-        
-        // Move and Scale label
-        label = UILabel(frame: CGRect(x: 0, y: 10, width: viewWidth, height: 50))
-        label.text = "Move and Scale"
-        label.textAlignment = .center
-        label.textColor = UIColor.white
-        viewController.view.addSubview(label)
-    }
-    
-    
-    private func hideDefaultEditOverlay(view: UIView) {
-        for subview in view.subviews {
-            if let cropOverlay = NSClassFromString("PLCropOverlayCropView") {
-                if subview.isKind(of: cropOverlay) {
-                    subview.isHidden = true
-                    break
-                } else {
-                    hideDefaultEditOverlay(view: subview)
-                }
-            }
-        }
-    }
-    
     @IBAction func changePhotoPressed(_ sender: Any) {
         AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
         present(imagePicker, animated: true, completion: nil)
+    }
+    
+    @IBAction func changeNamePressed(_ sender: Any) {
+        currentView = "name"
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        changeNameVC = (storyboard.instantiateViewController(withIdentifier: "ChangeNameVC") as! ChangeNameVC)
+        addChildViewController(changeNameVC!)
+        view.addSubview(changeNameVC!.view!)
+        changeNameVC?.delegate = self
+        changeNameVC?.newUsername.delegate = self
+        animateButtonsIn(controller: changeNameVC!)
+    }
+    
+    @IBAction func changePasswordPressed(_ sender: Any) {
+        if UserDefaults.standard.bool(forKey: "facebookLogin") != true {
+            currentView = "password"
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            changePasswordVC = (storyboard.instantiateViewController(withIdentifier: "ChangePasswordVC") as! ChangePasswordVC)
+            addChildViewController(changePasswordVC!)
+            view.addSubview(changePasswordVC!.view!)
+            changePasswordVC?.delegate = self
+            changePasswordVC?.oldPassword.delegate = self
+            changePasswordVC?.newPassword.delegate = self
+            changePasswordVC?.repeatNewPassword.delegate = self
+            animateButtonsIn(controller: changePasswordVC!)
+        } else {
+            let alert = ErrorAlert(title: "Facebook Login", message: "Looks like you're logged in via Facebook, and there's no password to change.", preferredStyle: .alert)
+            present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    @IBAction func friendsPressed(_ sender: Any) {
+        tapGesture.isEnabled = false
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        friendsVC = storyboard.instantiateViewController(withIdentifier: "FriendsVC") as? FriendsVC
+        addChildViewController(friendsVC!)
+        friendsVC?.view.frame = newViewStartFrame
+        view.insertSubview(friendsVC!.view, belowSubview: topBar)
+        view.layoutIfNeeded()
+        UIView.animate(withDuration: 0.3, animations: {
+            self.friendsVC?.view.frame = self.view.frame
+            self.view.layoutIfNeeded()
+        }, completion: { (finished) in
+            if finished {
+                self.currentView = "friends"
+            }
+        })
+    }
+
+    @IBAction func backPressed(_ sender: Any) {
+        switch currentView {
+        case "settings":
+            AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
+            self.dismiss(animated: true, completion: nil)
+        case "name":
+            currentView = "settings"
+            changeNameDismiss()
+        case "password":
+            currentView = "settings"
+            changePasswordDismiss()
+        case "friends":
+            currentView = "settings"
+            friendsDismiss()
+        default: break
+        }
+    }
+    
+    @IBAction func signOutPressed(_ sender: Any) {
+        do {
+            DataService.instance.removeToken()
+            try Auth.auth().signOut()
+            weak var cameraVC = self.presentingViewController
+            AppDelegate.AppUtility.lockOrientation(.allButUpsideDown)
+            UserDefaults.standard.removeObject(forKey: "facebookLogin")
+            self.dismiss(animated: true) {
+                cameraVC?.performSegue(withIdentifier: "toLoginVC", sender: nil)
+            }
+        } catch {
+            let alert = ErrorAlert(title: "Uh Oh", message: "Unable to sign out.  Please check your internet connection and try again!", preferredStyle: .alert)
+            present(alert, animated: true, completion: nil)
+        }
     }
     
     override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -169,7 +183,7 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
             constraintLeadingLandscape?.isActive = compact
         }
     }
-
+    
     func animateButtonsIn(controller: UIViewController) {
         controller.view.translatesAutoresizingMaskIntoConstraints = false
         controller.view.topAnchor.constraint(equalTo: self.buttonsView.topAnchor, constant: 0).isActive = true
@@ -233,82 +247,12 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         }
     }
     
-    @IBAction func changeNamePressed(_ sender: Any) {
-        currentView = "name"
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        changeNameVC = (storyboard.instantiateViewController(withIdentifier: "ChangeNameVC") as! ChangeNameVC)
-        addChildViewController(changeNameVC!)
-        view.addSubview(changeNameVC!.view!)
-        changeNameVC?.delegate = self
-        changeNameVC?.newUsername.delegate = self
-        animateButtonsIn(controller: changeNameVC!)
-    }
-    
-    @IBAction func changePasswordPressed(_ sender: Any) {
-        if UserDefaults.standard.bool(forKey: "facebookLogin") != true {
-            currentView = "password"
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            changePasswordVC = (storyboard.instantiateViewController(withIdentifier: "ChangePasswordVC") as! ChangePasswordVC)
-            addChildViewController(changePasswordVC!)
-            view.addSubview(changePasswordVC!.view!)
-            changePasswordVC?.delegate = self
-            changePasswordVC?.oldPassword.delegate = self
-            changePasswordVC?.newPassword.delegate = self
-            changePasswordVC?.repeatNewPassword.delegate = self
-            animateButtonsIn(controller: changePasswordVC!)
-        } else {
-            print("User logged in with Facebook")
-        }
-    }
-    
-    @IBAction func friendsPressed(_ sender: Any) {
-        tapGesture.isEnabled = false
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        friendsVC = storyboard.instantiateViewController(withIdentifier: "FriendsVC") as? FriendsVC
-        addChildViewController(friendsVC!)
-        friendsVC?.view.frame = newViewStartFrame
-        view.insertSubview(friendsVC!.view, belowSubview: topBar)
-        view.layoutIfNeeded()
-        UIView.animate(withDuration: 0.3, animations: {
-            self.friendsVC?.view.frame = self.view.frame
-            self.view.layoutIfNeeded()
-        }, completion: { (finished) in
-            if finished {
-                self.currentView = "friends"
+    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+        if let imageVC = NSClassFromString("PUUIImageViewController")
+        {
+            if viewController.isKind(of: imageVC) {
+                addRoundedEditLayer(to: viewController, forCamera: false)
             }
-        })
-    }
-
-    @IBAction func backPressed(_ sender: Any) {
-        switch currentView {
-        case "settings":
-            AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
-            self.dismiss(animated: true, completion: nil)
-        case "name":
-            currentView = "settings"
-            changeNameDismiss()
-        case "password":
-            currentView = "settings"
-            changePasswordDismiss()
-        case "friends":
-            currentView = "settings"
-            friendsDismiss()
-        default: break
-        }
-    }
-    
-    @IBAction func signOutPressed(_ sender: Any) {
-        do {
-            DataService.instance.removeToken()
-            try Auth.auth().signOut()
-            weak var cameraVC = self.presentingViewController
-            AppDelegate.AppUtility.lockOrientation(.allButUpsideDown)
-            UserDefaults.standard.removeObject(forKey: "facebookLogin")
-            self.dismiss(animated: true) {
-                cameraVC?.performSegue(withIdentifier: "toLoginVC", sender: nil)
-            }
-        } catch {
-            print("Sign out failed")
         }
     }
     
@@ -320,29 +264,25 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
                 DataService.instance.usersRef.child(currentUser).child("profPicStorageRef").observeSingleEvent(of: .value, with: { (snapshot) in
                     DataService.instance.usersRef.child(self.currentUser).child("profPicStorageRef").setValue(imageName)
                     if let profPicStorageRef = snapshot.value as? String {
-                        DataService.instance.profPicStorageRef.child(profPicStorageRef).delete(completion: { (error) in
-                            if error != nil {
-                                print("Error deleting profile pic: \(error!)")
-                            }
-                        })
-                    } else {
-                        print("Failed to get profPicStorageRef")
+                        DataService.instance.profPicStorageRef.child(profPicStorageRef).delete()
                     }
                 })
                 DataService.instance.profPicStorageRef.child(imageName).putData(imageData, metadata: StorageMetadata(), completion: { (metadata, error) in
                     if let downloadURL = metadata?.downloadURL()?.absoluteString {
                         DataService.instance.profilesRef.child(self.currentUser).updateChildValues(["profPicUrl":downloadURL])
                         DataService.instance.saveLocalProfilePic(imageData: imageData)
-                        print("Successfully changed image")
                     } else {
-                        print("Failed to get downloadUrl")
+                        let alert = ErrorAlert(title: "Uh Oh", message: "Couldn't finish changing profile picture.  Please check your internet connection and try again!", preferredStyle: .alert)
+                        self.present(alert, animated: true, completion: nil)
                     }
                 })
             } else {
-                print("Failed to create JPEG")
+                let alert = ErrorAlert(title: "Uh Oh", message: "Couldn't finish changing profile picture.  Please check your internet connection and try again!", preferredStyle: .alert)
+                present(alert, animated: true, completion: nil)
             }
         } else {
-            print("Failed to select valid image")
+            let alert = ErrorAlert(title: "Uh Oh", message: "Invalid image selected.  Please try again.", preferredStyle: .alert)
+            present(alert, animated: true, completion: nil)
         }
         imagePicker.dismiss(animated: true, completion: nil)
         AppDelegate.AppUtility.lockOrientation(.allButUpsideDown)
@@ -351,6 +291,49 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         imagePicker.dismiss(animated: true, completion: nil)
         AppDelegate.AppUtility.lockOrientation(.allButUpsideDown)
+    }
+    
+    func addRoundedEditLayer(to viewController: UIViewController, forCamera: Bool) {
+        hideDefaultEditOverlay(view: viewController.view)
+        
+        let bottomBarHeight: CGFloat = 72.0
+        let position = (forCamera) ? viewController.view.center.y - viewController.view.center.x - bottomBarHeight/2 : viewController.view.center.y - viewController.view.center.x
+        
+        let viewWidth = viewController.view.frame.width
+        let viewHeight = viewController.view.frame.height
+        
+        let emptyShapePath = UIBezierPath(ovalIn: CGRect(x: 0, y: position, width: viewWidth, height: viewWidth))
+        emptyShapePath.usesEvenOddFillRule = true
+        
+        let filledShapePath = UIBezierPath(roundedRect: CGRect(x: 0, y: 0, width: viewWidth, height: viewHeight - bottomBarHeight), cornerRadius: 0)
+        filledShapePath.append(emptyShapePath)
+        filledShapePath.usesEvenOddFillRule = true
+        
+        editLayer = CAShapeLayer()
+        editLayer.path = filledShapePath.cgPath
+        editLayer.fillRule = kCAFillRuleEvenOdd
+        editLayer.fillColor = UIColor.black.cgColor
+        editLayer.opacity = 0.8
+        viewController.view.layer.addSublayer(editLayer)
+        
+        label = UILabel(frame: CGRect(x: 0, y: 10, width: viewWidth, height: 50))
+        label.text = "Move and Scale"
+        label.textAlignment = .center
+        label.textColor = UIColor.white
+        viewController.view.addSubview(label)
+    }
+    
+    func hideDefaultEditOverlay(view: UIView) {
+        for subview in view.subviews {
+            if let cropOverlay = NSClassFromString("PLCropOverlayCropView") {
+                if subview.isKind(of: cropOverlay) {
+                    subview.isHidden = true
+                    break
+                } else {
+                    hideDefaultEditOverlay(view: subview)
+                }
+            }
+        }
     }
     
     func changePasswordDismiss() {
@@ -390,6 +373,10 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
         return true
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return false
     }
 
     

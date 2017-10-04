@@ -18,7 +18,7 @@ class ImageCache {
     
     private var _profilePicCache: NSCache<NSString,UIImage> = NSCache()
     
-    public func getProfileImage(user: User, completion: @escaping (UIImage) -> Void) {
+    func getProfileImage(user: User, completion: @escaping (UIImage) -> Void) {
         if let image = _profilePicCache.object(forKey: user.uid as NSString) {
             print("Image from cache")
             completion(image)
@@ -26,7 +26,6 @@ class ImageCache {
             print("Image from net")
             URLSession.shared.dataTask(with: NSURL(string: user.profPicUrl)! as URL, completionHandler: { (data, response, error) -> Void in
                 if error != nil {
-                    print(error!)
                     return
                 }
                 DispatchQueue.main.async(execute: { () -> Void in
@@ -41,7 +40,7 @@ class ImageCache {
         
     }
     
-    public func purgeCache() {
+    func purgeCache() {
         _profilePicCache.removeAllObjects()
     }
 }

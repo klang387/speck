@@ -15,34 +15,26 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     @IBOutlet weak var activitySpinner: UIActivityIndicatorView!
     
     let sectionHeaders = ["Friend Requests", "Friends", "All Users"]
-    
     var friendRequestsArray = [User]()
     var friendsArray = [User]()
     var allUsersArray = [User]()
     var outgoingRequests = [String:Bool]()
-    
     var filteredFriendRequests = [User]()
     var filteredFriends = [User]()
     var filteredAllUsers = [User]()
-    
     var friendsObserver: UInt!
     var friendRequestsObserver: UInt!
     var outgoingRequestsObserver: UInt!
-    
     var observersLoading = [true,true,false,true]
-    
     var currentUser: String!
     var user: User?
-    
     var section0Hidden = false
     var section1Hidden = false
     var section2Hidden = false
-    
     var allUsersHaveLoaded = false
     var numberOfUsersToLoad: UInt = 5
     var allUsersFilterCount: UInt = 0
     var tempCounter: UInt = 0
-    
     var searching = false
     
     override func viewDidLoad() {
@@ -56,7 +48,6 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         searchBar.delegate = self
         
         currentUser = AuthService.instance.currentUser
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -112,7 +103,21 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
                 self.tableView.reloadData()
             }
         })
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
         
+        DataService.instance.friendsRef.removeObserver(withHandle: friendsObserver)
+        DataService.instance.friendRequestsRef.removeObserver(withHandle: friendRequestsObserver)
+        DataService.instance.outgoingRequestsRef.removeObserver(withHandle: outgoingRequestsObserver)
+        
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        tableView.reloadData()
     }
     
     func loading() -> Bool {
@@ -163,46 +168,12 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
                 return user.name.range(of: self.searchBar.text!, options: .caseInsensitive, range: nil, locale: nil) != nil
             })
             self.observersLoading[2] = false
-            print(self.observersLoading)
             if !self.loading() {
                 self.tableView.isHidden = false
                 self.activitySpinner.stopAnimating()
                 self.tableView.reloadData()
             }
         })
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        
-        DataService.instance.friendsRef.removeObserver(withHandle: friendsObserver)
-        DataService.instance.friendRequestsRef.removeObserver(withHandle: friendRequestsObserver)
-        DataService.instance.outgoingRequestsRef.removeObserver(withHandle: outgoingRequestsObserver)
-        
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        tableView.reloadData()
-    }
-    
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.endEditing(true)
-    }
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        searching = !searchText.isEmpty
-        filteredFriendRequests = searchText.isEmpty ? friendRequestsArray : friendRequestsArray.filter({ (user) -> Bool in
-            return user.name.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
-        })
-        filteredFriends = searchText.isEmpty ? friendsArray : friendsArray.filter({ (user) -> Bool in
-            return user.name.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
-        })
-        filteredAllUsers = searchText.isEmpty ? allUsersArray : allUsersArray.filter({ (user) -> Bool in
-            return user.name.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
-        })
-        tableView.reloadData()
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -439,6 +410,24 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             DataService.instance.usersRef.child(user).child("friendRequests").child(currentUser).removeValue()
             DataService.instance.usersRef.child(currentUser).child("outgoingRequests").child(user).removeValue()
         }
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.endEditing(true)
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        searching = !searchText.isEmpty
+        filteredFriendRequests = searchText.isEmpty ? friendRequestsArray : friendRequestsArray.filter({ (user) -> Bool in
+            return user.name.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
+        })
+        filteredFriends = searchText.isEmpty ? friendsArray : friendsArray.filter({ (user) -> Bool in
+            return user.name.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
+        })
+        filteredAllUsers = searchText.isEmpty ? allUsersArray : allUsersArray.filter({ (user) -> Bool in
+            return user.name.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
+        })
+        tableView.reloadData()
     }
     
 }

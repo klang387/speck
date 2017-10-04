@@ -19,14 +19,75 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
     let pageVC = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     var snapViewControllers = [SnapViewer]()
     var senderUid = String()
-    
     var snaps = [String:Any]()
     var snapsArray = [[String:Any]]()
     var viewedSnaps = 0
-    
     var animatable = true
     var btnAlphaTarget: CGFloat = 1
     var currentVC: SnapViewer?
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        addChildViewController(pageVC)
+        view.insertSubview(pageVC.view, belowSubview: closeBtn)
+        pageVC.dataSource = self
+        pageVC.delegate = self
+        
+        for (key,value) in snaps {
+            if var snapDict = value as? [String:Any]{
+                snapDict["snapUid"] = key
+                snapsArray.append(snapDict)
+            }
+        }
+
+        snapsArray.sort(by: snapsArraySorter)
+        
+        var count = 0
+        for snap in snapsArray {
+            let snapView = SnapViewer()
+            snapView.index = count
+            if let mediaType = snap["mediaType"] as? String, let databaseUrl = snap["databaseUrl"] as? String {
+                if mediaType == "photo" {
+                    snapView.addPhoto()
+                    snapView.imageView?.imageFromServerURL(urlString: databaseUrl, completion: nil)
+                } else if mediaType == "video" {
+                    if let url = URL(string: databaseUrl) {
+                        snapView.playerItem = AVPlayerItem(url: url)
+                        snapView.addVideo()
+                    } else {
+                    }
+                }
+                if let captionText = snap["captionText"] as? String, let captionPosY = snap["captionPosY"] as? CGFloat {
+                    snapView.addCaption(editingEnabled: false)
+                    snapView.captionField?.text = captionText
+                    snapView.captionPosY = captionPosY
+                    snapView.captionField?.center.y = snapView.view.frame.height * captionPosY
+                    snapView.panRecognizer = nil
+                }
+                if var timestamp = snap["timestamp"] as? Double {
+                    timestamp = floor(timestamp/1000)
+                    let date = NSDate(timeIntervalSince1970: timestamp)
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.timeStyle = DateFormatter.Style.medium
+                    dateFormatter.dateStyle = DateFormatter.Style.medium
+                    dateFormatter.timeZone = TimeZone.current
+                    let localTimestamp = dateFormatter.string(from: date as Date)
+                    snapView.addTimestamp()
+                    snapView.timestampLbl?.text = localTimestamp
+                }
+                snapViewControllers.append(snapView)
+            }
+            count += 1
+        }
+        
+        deleteSnapFromDatabase(index: 0)
+        
+        if let firstVC = snapViewControllers.first {
+            pageVC.setViewControllers([firstVC], direction: .forward, animated: true, completion: nil)
+        }
+        
+    }
     
     @IBAction func tapGesture(_ sender: Any) {
         if animatable {
@@ -73,79 +134,6 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
         }
     }
     
-    func snapsArraySorter(first: [String:Any], second: [String:Any]) -> Bool {
-        if let timestamp1 = first["timestamp"] as? Double, let timestamp2 = second["timestamp"] as? Double {
-            return timestamp1 < timestamp2
-        }
-        return false
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        addChildViewController(pageVC)
-        view.insertSubview(pageVC.view, belowSubview: closeBtn)
-        pageVC.dataSource = self
-        pageVC.delegate = self
-        
-        for (key,value) in snaps {
-            if var snapDict = value as? [String:Any]{
-                snapDict["snapUid"] = key
-                snapsArray.append(snapDict)
-            }
-        }
-
-        snapsArray.sort(by: snapsArraySorter)
-        
-        var count = 0
-        for snap in snapsArray {
-            let snapView = SnapViewer()
-            snapView.index = count
-            if let mediaType = snap["mediaType"] as? String, let databaseUrl = snap["databaseUrl"] as? String {
-                if mediaType == "photo" {
-                    snapView.addPhoto()
-                    snapView.imageView?.imageFromServerURL(urlString: databaseUrl, completion: nil)
-                } else if mediaType == "video" {
-                    if let url = URL(string: databaseUrl) {
-                        snapView.playerItem = AVPlayerItem(url: url)
-                        snapView.addVideo()
-                    } else {
-                        print("Invalid url")
-                    }
-                }
-                if let captionText = snap["captionText"] as? String, let captionPosY = snap["captionPosY"] as? CGFloat {
-                    snapView.addCaption(editingEnabled: false)
-                    snapView.captionField?.text = captionText
-                    snapView.captionPosY = captionPosY
-                    snapView.captionField?.center.y = snapView.view.frame.height * captionPosY
-                    snapView.panRecognizer = nil
-                }
-                if var timestamp = snap["timestamp"] as? Double {
-                    timestamp = floor(timestamp/1000)
-                    let date = NSDate(timeIntervalSince1970: timestamp)
-                    let dateFormatter = DateFormatter()
-                    dateFormatter.timeStyle = DateFormatter.Style.medium
-                    dateFormatter.dateStyle = DateFormatter.Style.medium
-                    dateFormatter.timeZone = TimeZone.current
-                    let localTimestamp = dateFormatter.string(from: date as Date)
-                    snapView.addTimestamp()
-                    snapView.timestampLbl?.text = localTimestamp
-                }
-                snapViewControllers.append(snapView)
-            } else {
-                print("Error adding snapView to PVC array")
-            }
-            count += 1
-        }
-        
-        deleteSnapFromDatabase(index: 0)
-        
-        if let firstVC = snapViewControllers.first {
-            pageVC.setViewControllers([firstVC], direction: .forward, animated: true, completion: nil)
-        }
-        
-    }
-    
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let vcIndex = snapViewControllers.index(of: viewController as! SnapViewer) else {
             return nil
@@ -185,14 +173,17 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
 
     }
     
+    func snapsArraySorter(first: [String:Any], second: [String:Any]) -> Bool {
+        if let timestamp1 = first["timestamp"] as? Double, let timestamp2 = second["timestamp"] as? Double {
+            return timestamp1 < timestamp2
+        }
+        return false
+    }
+    
     func deleteSnapFromDatabase(index: Int) {
         let currentUser = AuthService.instance.currentUser
         if let snapUid = snapsArray[index]["snapUid"] as? String {
-            DataService.instance.usersRef.child(currentUser).child("snapsReceived").child(senderUid).child("snaps").child(snapUid).removeValue(completionBlock: { (error, ref) in
-                if error != nil {
-                    print("Error deleting snap from database: \(error!)")
-                }
-            })
+            DataService.instance.usersRef.child(currentUser).child("snapsReceived").child(senderUid).child("snaps").child(snapUid).removeValue()
         }
     }
     
@@ -201,13 +192,8 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
             if let storageName = snapsArray[index]["storageName"] as? String{
                 DataService.instance.mainRef.child("viewCounts").child(storageName).observeSingleEvent(of: .value, with: { (snapshot) in
                     if let viewCount = snapshot.value as? Int {
-                        print("Snap View Count: \(viewCount)")
                         if viewCount == 1 {
-                            DataService.instance.mediaStorageRef.child(storageName).delete(completion: { (error) in
-                                if error != nil {
-                                    print("Error deleting media from storage: \(error!)")
-                                }
-                            })
+                            DataService.instance.mediaStorageRef.child(storageName).delete()
                             DataService.instance.mainRef.child("viewCounts").child(storageName).removeValue()
                         } else if viewCount > 1 {
                             DataService.instance.mainRef.child("viewCounts").child(storageName).setValue(viewCount - 1)

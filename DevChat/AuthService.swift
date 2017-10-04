@@ -73,28 +73,28 @@ class AuthService {
         })
     }
     
-    func facebookLogin(completion: @escaping () -> Void) {
+    func facebookLogin(completion: @escaping (ErrorAlert?) -> Void) {
         let loginManager = LoginManager()
         var firstName = String()
         var lastName = String()
         var profPicUrl = String()
         loginManager.logIn([.publicProfile, .email]) { (loginResult) in
             switch loginResult {
-            case .failed(let error): print("Facebook login failed: \(error)")
-            case .cancelled: print("User cancelled Facebook login.")
-            case .success(let grantedPermissions, _, let accessToken):
-                print("Logged into Facebook with permissions: \(grantedPermissions)")
+            case .failed:
+                let alert = ErrorAlert(title: "Uh Oh", message: "Unable to login.  Please check your internet connection and try again!", preferredStyle: .alert)
+                completion(alert)
+            case .cancelled: break
+            case .success(_, _, let accessToken):
                 let credential = FacebookAuthProvider.credential(withAccessToken: accessToken.authenticationToken)
                 Auth.auth().signIn(with: credential, completion: { (user, error) in
                     if error != nil {
-                        print("Unable to sign in with Firebase: \(error!)")
+                        let alert = ErrorAlert(title: "Uh Oh", message: "Unable to login.  Please check your internet connection and try again!", preferredStyle: .alert)
+                        completion(alert)
                     } else {
-                        print("Successful sign in with Firebase")
                         DataService.instance.addToken()
                         DataService.instance.profilesRef.child(user!.uid).observeSingleEvent(of: .value, with: { (snapshot) in
                             if snapshot.hasChildren()  {
-                                print("User already exists \(user!.uid)")
-                                completion()
+                                completion(nil)
                             } else {
                                 let request = GraphRequest(graphPath: "me", parameters: ["fields" : "first_name, last_name, picture.type(large)"])
                                 request.start({ (response, result) in
@@ -110,15 +110,16 @@ class AuthService {
                                                     profPicUrl = picUrl
                                                     if let email = user?.email {
                                                         DataService.instance.saveUserToDatabase(uid: user!.uid, firstName: firstName, lastName: lastName, profPicUrl: profPicUrl, email: email)
-                                                        completion()
+                                                        completion(nil)
                                                     } else {
                                                         // REQUEST EMAIL FROM USER - FB UNABLE TO PROVIDE
                                                     }
                                                 }
                                             }
                                         }
-                                    case .failed(let error):
-                                        print("Facebook Graph Request Failed: \(error)")
+                                    case .failed:
+                                        let alert = ErrorAlert(title: "Uh Oh", message: "Trouble logging in.  Please check your internet connection and try again!", preferredStyle: .alert)
+                                        completion(alert)
                                     }
                                 })
                             }
@@ -130,8 +131,3 @@ class AuthService {
     }
     
 }
-
-
-
-
-

@@ -24,20 +24,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         FirebaseApp.configure()
         AppEventsLogger.activate(application)
         
-        if #available(iOS 10.0, *) {
-            // For iOS 10 display notification (sent via APNS)
-            UNUserNotificationCenter.current().delegate = self
-            
-            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-            UNUserNotificationCenter.current().requestAuthorization(
-                options: authOptions,
-                completionHandler: {_, _ in })
-        } else {
-            let settings: UIUserNotificationSettings =
-                UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
-            application.registerUserNotificationSettings(settings)
-        }
-        
         application.registerForRemoteNotifications()
         
         if UserDefaults.standard.integer(forKey: "firstRun") != 1 {
@@ -46,9 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
                 UserDefaults.standard.removeObject(forKey: "facebookLogin")
                 UserDefaults.standard.set(1, forKey: "firstRun")
                 UserDefaults.standard.synchronize()
-            } catch {
-                print("Sign out failed: \(error)")
-            }
+            } catch {}
         }
         
         return true
@@ -85,21 +69,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
         
-        print("didEnterBackground")
         ImageCache.instance.purgeCache()
         URLCache.shared.removeAllCachedResponses()
-        
-        do {
-            let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
-            let contents = try FileManager.default.contentsOfDirectory(atPath: path)
-            for filePath in contents {
-                print(filePath)
-            }
-        } catch {
-            print(error)
-        }
-       
-        
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {

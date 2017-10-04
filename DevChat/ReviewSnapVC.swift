@@ -22,28 +22,20 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
     @IBOutlet var tapRecognizer: UITapGestureRecognizer!
     
     var snapViewer: SnapViewer!
-    
     var tempVidUrl: URL?
     var tempPhoto: UIImage?
     var tempPhotoData: Data?
-    
     var dataType = ""
-    
     var currentView = "preview"
     var sendSnapVC: SendSnapVC?
-    
     var navBarVisible = true
     var btnAlphaTarget: CGFloat = 1
     var barAlphaTarget: CGFloat = 1
     var animatable = true
-    
     var newViewStartFrame: CGRect!
-    
     var orientation: UIInterfaceOrientationMask?
-    
     let storageName = NSUUID().uuidString
     var storageUrl: String?
-    
     var captionPosY: CGFloat?
     
     override func viewDidLoad() {
@@ -141,28 +133,26 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
                 DataService.instance.mainRef.child("viewCounts").child(storageName).observeSingleEvent(of: .value, with: { (snapshot) in
                     if let _ = snapshot.value as? Int {
                         if let url = self.storageUrl, let recipients = self.sendSnapVC?.selectedUsers {
-                            DataService.instance.sendSnap(storageName: self.storageName, databaseUrl: url, mediaType: self.dataType, caption: caption, recipients: recipients)
+                            DataService.instance.sendSnap(storageName: self.storageName, databaseUrl: url, mediaType: self.dataType, caption: caption, recipients: recipients, completion: { errorAlert in
+                                if let alert = errorAlert {
+                                    self.present(alert, animated: true, completion: nil)
+                                }
+                            })
                             self.fadeOutView(view: loadingView)
                             self.removeSendSnapVC()
                         }
                     } else {
-                        DataService.instance.uploadMedia(storageName: self.storageName, tempVidUrl: self.sendSnapVC!.tempVidUrl, tempPhotoData: self.sendSnapVC!.tempPhotoData, caption: caption, recipients: self.sendSnapVC!.selectedUsers, completion: { completedUrl in
-                            self.storageUrl = completedUrl
-                            self.fadeOutView(view: loadingView)
-                            self.removeSendSnapVC()
+                        DataService.instance.uploadMedia(storageName: self.storageName, tempVidUrl: self.sendSnapVC!.tempVidUrl, tempPhotoData: self.sendSnapVC!.tempPhotoData, caption: caption, recipients: self.sendSnapVC!.selectedUsers, completion: { completedUrl, errorAlert in
+                            if let alert = errorAlert {
+                                self.present(alert, animated: true, completion: nil)
+                            } else {
+                                self.storageUrl = completedUrl
+                                self.fadeOutView(view: loadingView)
+                                self.removeSendSnapVC()
+                            }
                         })
                     }
                 })
-            }
-        }
-    }
-    
-    func fadeOutView(view: UIView) {
-        UIView.animate(withDuration: 0.2, animations: { 
-            view.alpha = 0
-        }) { (finished) in
-            if finished {
-                view.removeFromSuperview()
             }
         }
     }
@@ -174,16 +164,23 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
                 let fileManager = FileManager.default
                 do {
                     try fileManager.removeItem(at: tempVidUrl!)
-                    print("Successfully deleted temp video")
-                } catch {
-                    print("Could not delete temp video: \(error)")
-                }
+                } catch {}
             }
             AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
             self.dismiss(animated: true, completion: nil)
         } else if currentView == "send" {
             sendSnapVC?.searchBar.endEditing(true)
             removeSendSnapVC()
+        }
+    }
+    
+    func fadeOutView(view: UIView) {
+        UIView.animate(withDuration: 0.2, animations: {
+            view.alpha = 0
+        }) { (finished) in
+            if finished {
+                view.removeFromSuperview()
+            }
         }
     }
     

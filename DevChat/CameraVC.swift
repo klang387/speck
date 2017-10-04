@@ -10,27 +10,22 @@ import UIKit
 import AVFoundation
 import AVKit
 import SwiftyCam
+import UserNotifications
 
 class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
     var profilePic: UIImage?
-    
     var tempVidUrl: URL?
     var tempPhoto: UIImage?
-    
     var dataType: String = ""
-    
     var inboxObserver: UInt!
     var friendsObserver: UInt!
     var friendRequestsCount = 0
-    
     var recordingTimer: UILabel?
     var recordingCount: Int?
     var timer: Timer?
-    
     var buttonsArray: [UIButton]!
     var originalRotation: CATransform3D?
-    
     var orientation: UIInterfaceOrientationMask?
     
     @IBOutlet weak var captureBtn: SwiftyCamButton!
@@ -42,34 +37,6 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     @IBOutlet weak var inboxBtn: UIButton!
     @IBOutlet weak var friendsBadge: UILabel!
     
-    @IBAction func switchCameraBtnPressed(_ sender: Any) {
-        switchCamera()
-    }
-    
-    @IBAction func inboxBtnPressed(_ sender: Any) {
-        AppDelegate.AppUtility.lockOrientation(.allButUpsideDown)
-        performSegue(withIdentifier: "toInboxVC", sender: nil)
-    }
-    
-    @IBAction func settingsPressed(_ sender: Any) {
-        AppDelegate.AppUtility.lockOrientation(.allButUpsideDown)
-        performSegue(withIdentifier: "toSettingsVC", sender: nil)
-    }
-    
-    @IBAction func flashPressed(_ sender: Any) {
-        if flashEnabled {
-            flashEnabled = false
-            flashBtn.setImage(UIImage(named: "FlashOff"), for: .normal)
-        } else {
-            flashEnabled = true
-            flashBtn.setImage(UIImage(named: "FlashOn"), for: .normal)
-        }
-    }
-    
-    override var prefersStatusBarHidden: Bool {
-        return false
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -79,7 +46,6 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         shouldUseDeviceOrientation = true
         allowAutoRotate = true
         originalRotation = inboxBadge.layer.transform
-        
         flashFrame.transform = CGAffineTransform(scaleX: -1, y: 1)
         cameraDelegate = self
         captureBtn.delegate = self
@@ -93,15 +59,23 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         inboxBadge.layer.masksToBounds = true
         friendsBadge.layer.cornerRadius = friendsBadge.layer.frame.width / 2
         friendsBadge.layer.masksToBounds = true
-        
     }
-    
-    
    
     override func viewDidAppear(_ animated: Bool) {
-        
         if AuthService.instance.currentUser != "" {
             super.viewDidAppear(animated)
+            
+            if #available(iOS 10.0, *) {
+                // For iOS 10 display notification (sent via APNS)
+                let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+                UNUserNotificationCenter.current().requestAuthorization(
+                    options: authOptions,
+                    completionHandler: {_, _ in })
+            } else {
+                let settings: UIUserNotificationSettings =
+                    UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
+                UIApplication.shared.registerUserNotificationSettings(settings)
+            }
             
             let currentUser = AuthService.instance.currentUser
             
@@ -145,7 +119,6 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
                         if let profPicUrl = profile["profPicUrl"] as? String {
                             URLSession.shared.dataTask(with: NSURL(string: profPicUrl)! as URL, completionHandler: { (data, response, error) -> Void in
                                 if error != nil {
-                                    print(error!)
                                     return
                                 }
                                 DispatchQueue.main.async(execute: { () -> Void in
@@ -177,39 +150,27 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         }
     }
     
-    func checkOrientation() -> UIInterfaceOrientationMask {
-        switch UIDevice.current.orientation {
-        case .landscapeLeft:
-            return .landscapeRight
-        case .landscapeRight:
-            return .landscapeLeft
-        default:
-            return .portrait
-        }
+    @IBAction func switchCameraBtnPressed(_ sender: Any) {
+        switchCamera()
     }
     
-    @objc func deviceRotated() {
-        var angle: CGFloat = 0
-        orientation = checkOrientation()
-        switch UIDevice.current.orientation {
-        case .landscapeLeft:
-            angle = .pi * 0.5
-        case .landscapeRight:
-            angle = .pi * -0.5
-        default:
-            break
-        }
-        UIView.animate(withDuration: 0.15, animations: {
-            for button in self.buttonsArray {
-                button.imageView?.contentMode = .center
-                button.imageView?.clipsToBounds = false
-                button.imageView?.transform = CGAffineTransform(rotationAngle: angle)
-            }
-            self.inboxBadge.transform = CGAffineTransform(rotationAngle: angle)
-            self.friendsBadge.transform = CGAffineTransform(rotationAngle: angle)
-            self.settingsBtn.imageView?.transform = CGAffineTransform(rotationAngle: angle)
-        }) { (finished) in
-            
+    @IBAction func inboxBtnPressed(_ sender: Any) {
+        AppDelegate.AppUtility.lockOrientation(.allButUpsideDown)
+        performSegue(withIdentifier: "toInboxVC", sender: nil)
+    }
+    
+    @IBAction func settingsPressed(_ sender: Any) {
+        AppDelegate.AppUtility.lockOrientation(.allButUpsideDown)
+        performSegue(withIdentifier: "toSettingsVC", sender: nil)
+    }
+    
+    @IBAction func flashPressed(_ sender: Any) {
+        if flashEnabled {
+            flashEnabled = false
+            flashBtn.setImage(UIImage(named: "FlashOff"), for: .normal)
+        } else {
+            flashEnabled = true
+            flashBtn.setImage(UIImage(named: "FlashOn"), for: .normal)
         }
     }
     
@@ -256,15 +217,6 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
     }
     
-    @objc func updateTimer() {
-        recordingCount = recordingCount! - 1
-        if recordingCount == 9 {
-            recordingTimer?.alpha = 0.1
-        }
-        recordingTimer?.alpha += 0.09
-        recordingTimer?.text = "\(recordingCount!)"
-    }
-    
     func swiftyCam(_ swiftyCam: SwiftyCamViewController, didFinishRecordingVideo camera: SwiftyCamViewController.CameraSelection) {
         recordingTimer?.removeFromSuperview()
         recordingTimer = nil
@@ -279,6 +231,54 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         
     }
     
+    @objc func updateTimer() {
+        recordingCount = recordingCount! - 1
+        if recordingCount == 9 {
+            recordingTimer?.alpha = 0.1
+        }
+        recordingTimer?.alpha += 0.09
+        recordingTimer?.text = "\(recordingCount!)"
+    }
+    
+    func checkOrientation() -> UIInterfaceOrientationMask {
+        switch UIDevice.current.orientation {
+        case .landscapeLeft:
+            return .landscapeRight
+        case .landscapeRight:
+            return .landscapeLeft
+        default:
+            return .portrait
+        }
+    }
+    
+    @objc func deviceRotated() {
+        var angle: CGFloat = 0
+        orientation = checkOrientation()
+        switch UIDevice.current.orientation {
+        case .landscapeLeft:
+            angle = .pi * 0.5
+        case .landscapeRight:
+            angle = .pi * -0.5
+        default:
+            break
+        }
+        UIView.animate(withDuration: 0.15, animations: {
+            for button in self.buttonsArray {
+                button.imageView?.contentMode = .center
+                button.imageView?.clipsToBounds = false
+                button.imageView?.transform = CGAffineTransform(rotationAngle: angle)
+            }
+            self.inboxBadge.transform = CGAffineTransform(rotationAngle: angle)
+            self.friendsBadge.transform = CGAffineTransform(rotationAngle: angle)
+            self.settingsBtn.imageView?.transform = CGAffineTransform(rotationAngle: angle)
+        }) { (finished) in
+            
+        }
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return false
+    }
 
 }
 

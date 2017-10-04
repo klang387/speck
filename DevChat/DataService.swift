@@ -6,7 +6,6 @@
 //  Copyright © 2017 Kevin Langelier. All rights reserved.
 //
 
-import Foundation
 import AVKit
 import FirebaseDatabase
 import FirebaseStorage
@@ -105,14 +104,8 @@ class DataService {
     func searchDatabaseForUser(searchTerm: String, completion: @escaping ([User]) -> Void) {
         let url = URL(string: "https://us-central1-devchat-9ca73.cloudfunctions.net/findUser?name=" + searchTerm)
         let task = URLSession.shared.dataTask(with: url!) {data, response, error in
-            guard error == nil else {
-                print(error!)
-                return
-            }
-            guard let data = data else {
-                print("Data is empty")
-                return
-            }
+            guard error == nil else { return }
+            guard let data = data else { return }
             let json = try! JSONSerialization.jsonObject(with: data, options: [])
             let uidArray = json as! [String]
             var userArray: [User] = []
@@ -156,17 +149,22 @@ class DataService {
         return userArray
     }
     
-    func uploadMedia(storageName: String, tempVidUrl: URL?, tempPhotoData: Data?, caption: [String:Any]?, recipients: [String:Bool], completion: @escaping (String?) -> Void){
+    func uploadMedia(storageName: String, tempVidUrl: URL?, tempPhotoData: Data?, caption: [String:Any]?, recipients: [String:Bool], completion: @escaping (String?, ErrorAlert?) -> Void){
         let ref = mediaStorageRef.child(storageName)
         if let url = tempVidUrl {
             ref.putFile(from: url, metadata: nil, completion: { (meta: StorageMetadata?, err: Error?) in
                 if err != nil {
-                    print("Error uploading video: \(err!.localizedDescription)")
+                    let alert = ErrorAlert(title: "Uh Oh", message: "Trouble uploading video.  Please check your internet connection and try again!", preferredStyle: .alert)
+                    completion(nil, alert)
                     return
                 } else {
                     if let downloadURL = meta?.downloadURL()?.absoluteString {
-                        completion(downloadURL)
-                        self.sendSnap(storageName: storageName, databaseUrl: downloadURL, mediaType: "video", caption: caption, recipients: recipients)
+                        completion(downloadURL, nil)
+                        self.sendSnap(storageName: storageName, databaseUrl: downloadURL, mediaType: "video", caption: caption, recipients: recipients, completion: { errorAlert in
+                            if let alert = errorAlert {
+                                completion(nil, alert)
+                            }
+                        })
                     }
                 }
             })
@@ -174,20 +172,24 @@ class DataService {
         } else if let photo = tempPhotoData {
             ref.putData(photo, metadata: nil, completion: { (meta: StorageMetadata?, err: Error?) in
                 if err != nil {
-                    print("Error uploading photo: \(err!.localizedDescription)")
+                    let alert = ErrorAlert(title: "Uh Oh", message: "Trouble uploading video.  Please check your internet connection and try again!", preferredStyle: .alert)
+                    completion(nil, alert)
                     return
                 } else {
                     if let downloadURL = meta?.downloadURL()?.absoluteString {
-                        completion(downloadURL)
-                        self.sendSnap(storageName: storageName, databaseUrl: downloadURL, mediaType: "photo", caption: caption, recipients: recipients)
+                        completion(downloadURL, nil)
+                        self.sendSnap(storageName: storageName, databaseUrl: downloadURL, mediaType: "photo", caption: caption, recipients: recipients, completion: { errorAlert in
+                            if let alert = errorAlert {
+                                completion(nil,alert)
+                            }
+                        })
                     }
                 }
             })
         }
-        
     }
     
-    func sendSnap(storageName: String, databaseUrl: String, mediaType: String, caption: [String:Any]?, recipients: [String:Bool]) {
+    func sendSnap(storageName: String, databaseUrl: String, mediaType: String, caption: [String:Any]?, recipients: [String:Bool], completion: @escaping (ErrorAlert?) -> Void) {
         var snapDict = [String:Any]()
         let currentUser = AuthService.instance.currentUser
         
@@ -203,13 +205,15 @@ class DataService {
         for (key,_) in recipients {
             self.usersRef.child(key).child("snapsReceived").child(currentUser).child("snaps").childByAutoId().setValue(snapDict) { (err, ref) in
                 if err != nil {
-                    print("Error posting to database: \(err!.localizedDescription)")
+                    let alert = ErrorAlert(title: "Uh Oh", message: "Trouble sending media.  Please check your internet connection and try again!", preferredStyle: .alert)
+                    completion(alert)
                     return
                 }
             }
             self.usersRef.child(key).child("snapsReceived").child(currentUser).child("mostRecent").setValue(ServerValue.timestamp()) { (err,ref) in
                 if err != nil {
-                    print("Error posting to database: \(err!.localizedDescription)")
+                    let alert = ErrorAlert(title: "Uh Oh", message: "Trouble sending media.  Please check your internet connection and try again!", preferredStyle: .alert)
+                    completion(alert)
                     return
                 }
             }
@@ -225,7 +229,6 @@ class DataService {
     }
     
     func saveLocalProfilePic(imageData: Data) {
-        
         let fileURL = documentsUrl.appendingPathComponent("profilePic")
         if FileManager.default.fileExists(atPath: fileURL.absoluteString) {
             try? FileManager.default.removeItem(at: fileURL)
@@ -239,9 +242,8 @@ class DataService {
             let imageData = try Data(contentsOf: fileURL)
             return UIImage(data: imageData)
         } catch {
-            print("Error loading image: \(error)")
+            return nil
         }
-        return nil
     }
     
     func removeLocalProfilePic() {

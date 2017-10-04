@@ -34,11 +34,13 @@ class ChangePasswordVC: UIViewController {
                 let credential = EmailAuthProvider.credential(withEmail: email, password: oldPassword)
                 Auth.auth().currentUser?.reauthenticate(with: credential, completion: { (error) in
                     if error != nil {
-                        print("Incorrect old password")
+                        let alert = ErrorAlert(title: "Uh Oh", message: "Incorrect old password.  Please try again.", preferredStyle: .alert)
+                        self.present(alert, animated: true, completion: nil)
                     } else {
                         Auth.auth().currentUser?.updatePassword(to: self.newPassword.text!, completion: { (error) in
                             if error != nil {
-                                print("Error updating password: \(error!)")
+                                let alert = ErrorAlert(title: "Uh Oh", message: "Couldn't change password.  Please check your internet connection and try again!", preferredStyle: .alert)
+                                self.present(alert, animated: true, completion: nil)
                             } else {
                                 self.delegate?.changePasswordDismiss()
                             }

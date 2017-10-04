@@ -37,23 +37,6 @@ class LoginVC: UIViewController, UITextFieldDelegate {
             backgroundImage.image = UIImage(named: "SignInBgIpad")
         }
     }
-    
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        textField.animateViewMoving(up: true, moveValue: 150, view: self.view)
-    }
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        textField.animateViewMoving(up: false, moveValue: 150, view: self.view)
-    }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
-    }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        self.view.endEditing(true)
-        return true
-    }
 
     @IBAction func forgotPasswordPressed(_ sender: Any) {
         let passwordReset = UIAlertController(title: "Forgot Your Password?", message: "No problem.  Enter your email and we'll help you reset it.", preferredStyle: .alert)
@@ -71,10 +54,14 @@ class LoginVC: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func facebookLoginPressed(_ sender: Any) {
-        AuthService.instance.facebookLogin(completion: {
-            self.dismiss(animated: true, completion: nil)
-            UserDefaults.standard.set(true, forKey: "facebookLogin")
-            AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
+        AuthService.instance.facebookLogin(completion: { errorAlert in
+            if let alert = errorAlert {
+                self.present(alert, animated: true, completion: nil)
+            } else {
+                self.dismiss(animated: true, completion: nil)
+                UserDefaults.standard.set(true, forKey: "facebookLogin")
+                AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
+            }
         })
     }
     
@@ -101,4 +88,22 @@ class LoginVC: UIViewController, UITextFieldDelegate {
     @IBAction func createAccountPressed(_ sender: Any) {
         performSegue(withIdentifier: "toSignUpVC", sender: nil)
     }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.animateViewMoving(up: true, moveValue: 150, view: self.view)
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        textField.animateViewMoving(up: false, moveValue: 150, view: self.view)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return true
+    }
+    
 }

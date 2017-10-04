@@ -17,7 +17,6 @@
 		0A27CBB01F3392A800F8AA60 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A27CBAF1F3392A800F8AA60 /* UserCell.swift */; };
 		0A27CBB21F33B22000F8AA60 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A27CBB11F33B22000F8AA60 /* User.swift */; };
 		0A27CBB51F33BABD00F8AA60 /* TextFieldExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A27CBB41F33BABD00F8AA60 /* TextFieldExt.swift */; };
-		0A4268F11F326101000E9694 /* RoundButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4268F01F326101000E9694 /* RoundButton.swift */; };
 		0A482AEA1F4D0602005205E1 /* SnapViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A482AE91F4D0602005205E1 /* SnapViewer.swift */; };
 		0A4CF7691F45F6DE001A1B65 /* SignUpVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4CF7681F45F6DE001A1B65 /* SignUpVC.swift */; };
 		0A4E4A411F20E6E10039EF05 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4E4A401F20E6E10039EF05 /* AppDelegate.swift */; };
@@ -37,7 +36,6 @@
 		0AF05E8A1F607F5F00CF927F /* UIViewExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF05E891F607F5F00CF927F /* UIViewExt.swift */; };
 		0AF05E8C1F643ECD00CF927F /* ChangeNameVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF05E8B1F643ECD00CF927F /* ChangeNameVC.swift */; };
 		0AF05E8E1F643EE600CF927F /* ChangePasswordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF05E8D1F643EE600CF927F /* ChangePasswordVC.swift */; };
-		0AFA17991F325A3400C54076 /* RoundTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFA17981F325A3400C54076 /* RoundTextField.swift */; };
 		2FFFD730D11A6C12B1494DC2 /* Pods_DevChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B53457DF130A64E0329B207 /* Pods_DevChat.framework */; };
 /* End PBXBuildFile section */
 
@@ -52,7 +50,6 @@
 		0A27CBAF1F3392A800F8AA60 /* UserCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
 		0A27CBB11F33B22000F8AA60 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		0A27CBB41F33BABD00F8AA60 /* TextFieldExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFieldExt.swift; sourceTree = "<group>"; };
-		0A4268F01F326101000E9694 /* RoundButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundButton.swift; sourceTree = "<group>"; };
 		0A482AE91F4D0602005205E1 /* SnapViewer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapViewer.swift; sourceTree = "<group>"; };
 		0A4CF7681F45F6DE001A1B65 /* SignUpVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpVC.swift; sourceTree = "<group>"; };
 		0A4E4A3D1F20E6E10039EF05 /* DevChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DevChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -75,7 +72,6 @@
 		0AF05E891F607F5F00CF927F /* UIViewExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewExt.swift; sourceTree = "<group>"; };
 		0AF05E8B1F643ECD00CF927F /* ChangeNameVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangeNameVC.swift; sourceTree = "<group>"; };
 		0AF05E8D1F643EE600CF927F /* ChangePasswordVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangePasswordVC.swift; sourceTree = "<group>"; };
-		0AFA17981F325A3400C54076 /* RoundTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundTextField.swift; sourceTree = "<group>"; };
 		7B53457DF130A64E0329B207 /* Pods_DevChat.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DevChat.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8DB5A84C3A76FBE261DFEB87 /* Pods-DevChat.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DevChat.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DevChat/Pods-DevChat.debug.xcconfig"; sourceTree = "<group>"; };
 		E3C456F6FE8CBA3805717BE8 /* Pods-DevChat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DevChat.release.xcconfig"; path = "Pods/Target Support Files/Pods-DevChat/Pods-DevChat.release.xcconfig"; sourceTree = "<group>"; };
@@ -172,8 +168,6 @@
 		0A7E34661F32539A007F84D4 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				0AFA17981F325A3400C54076 /* RoundTextField.swift */,
-				0A4268F01F326101000E9694 /* RoundButton.swift */,
 				0A27CBAF1F3392A800F8AA60 /* UserCell.swift */,
 				0A18E30D1F67449900BF0FCC /* CustomSearchBar.swift */,
 				0A0F73201F75A41F0062866C /* CustomImagePicker.swift */,
@@ -342,10 +336,8 @@
 				0A4CF7691F45F6DE001A1B65 /* SignUpVC.swift in Sources */,
 				0AF05E8A1F607F5F00CF927F /* UIViewExt.swift in Sources */,
 				0A13BD9A1F4E17780002D934 /* FriendsVC.swift in Sources */,
-				0AFA17991F325A3400C54076 /* RoundTextField.swift in Sources */,
 				0A27CBAC1F337E5B00F8AA60 /* DataService.swift in Sources */,
 				0A27CBB51F33BABD00F8AA60 /* TextFieldExt.swift in Sources */,
-				0A4268F11F326101000E9694 /* RoundButton.swift in Sources */,
 				0ADA56E41F79838E00FDC980 /* LoadingView.swift in Sources */,
 				0A27CBAE1F3390FB00F8AA60 /* SendSnapVC.swift in Sources */,
 				0A4E4A431F20E6E10039EF05 /* CameraVC.swift in Sources */,

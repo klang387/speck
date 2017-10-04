@@ -15,15 +15,8 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: CustomSearchBar!
     
-    @IBAction func backBtn(_ sender: Any) {
-        searchBar.endEditing(true)
-        AppDelegate.AppUtility.lockOrientation(.portrait)
-        self.dismiss(animated: true, completion: nil)
-    }
-    
     var snapsReceived = [[String:Any]]()
     var filteredSnaps = [[String:Any]]()
-    
     var inboxObserver: UInt!
     
     override func viewDidLoad() {
@@ -79,16 +72,10 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
         tableView.reloadData()
     }
     
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    @IBAction func backBtn(_ sender: Any) {
         searchBar.endEditing(true)
-    }
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        filteredSnaps = searchText.isEmpty ? snapsReceived : snapsReceived.filter({ (snap) -> Bool in
-            guard let name = snap["name"] as? String else { return false }
-            return name.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
-        })
-        tableView.reloadData()
+        AppDelegate.AppUtility.lockOrientation(.portrait)
+        self.dismiss(animated: true, completion: nil)
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -151,6 +138,18 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
             viewSnapsVC.snaps = sender as! [String:Any]
             viewSnapsVC.senderUid = viewSnapsVC.snaps["senderUid"] as! String
         }
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.endEditing(true)
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        filteredSnaps = searchText.isEmpty ? snapsReceived : snapsReceived.filter({ (snap) -> Bool in
+            guard let name = snap["name"] as? String else { return false }
+            return name.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
+        })
+        tableView.reloadData()
     }
 
 }

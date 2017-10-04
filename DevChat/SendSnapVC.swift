@@ -15,40 +15,14 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: CustomSearchBar!
     
+    var users = [User]()
+    var filteredUsers = [User]()
+    var selectedUsers = [String:Bool]()
+    var tempVidUrl: URL?
+    var tempPhotoData: Data?
+    var friendsObserver: UInt!
+    
     var delegate: SendSnapDelegate?
-    
-    private var _users = [User]()
-    private var _filteredUsers = [User]()
-    private var _selectedUsers = [String:Bool]()
-    
-    private var _tempVidUrl: URL?
-    private var _tempPhotoData: Data?
-    
-    private var _friendsObserver: UInt!
-    
-    var tempPhotoData: Data? {
-        set {
-            _tempPhotoData = newValue
-        } get {
-            return _tempPhotoData
-        }
-    }
-    
-    var tempVidUrl: URL? {
-        set {
-            _tempVidUrl = newValue
-        } get {
-            return _tempVidUrl
-        }
-    }
-    
-    var selectedUsers: [String:Bool] {
-        set {
-            _selectedUsers = newValue
-        } get {
-            return _selectedUsers
-        }
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,10 +37,10 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        _friendsObserver = DataService.instance.friendsRef.observe(.value, with: { (snapshot) in
+        friendsObserver = DataService.instance.friendsRef.observe(.value, with: { (snapshot) in
             DataService.instance.loadUsersFromSnapshot(snapshot: snapshot, completion: { userArray in
-                self._users = userArray
-                self._filteredUsers = self._users
+                self.users = userArray
+                self.filteredUsers = self.users
                 self.tableView.reloadData()
             })
         })
@@ -75,23 +49,12 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
-        DataService.instance.friendsRef.removeObserver(withHandle: _friendsObserver)
+        DataService.instance.friendsRef.removeObserver(withHandle: friendsObserver)
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        tableView.reloadData()
-    }
-    
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.endEditing(true)
-    }
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        _filteredUsers = searchText.isEmpty ? _users : _users.filter({ (user) -> Bool in
-            return user.name.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
-        })
         tableView.reloadData()
     }
     
@@ -103,7 +66,7 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             cell.frame = CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 70)
             cell.setupCell()
         }
-        let user = _filteredUsers[indexPath.row]
+        let user = filteredUsers[indexPath.row]
         cell.nameLbl.text = user.name
         ImageCache.instance.getProfileImage(user: user, completion: { image in
             cell.profPic.image = image
@@ -115,8 +78,8 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         let cell = tableView.cellForRow(at: indexPath) as! UserCell
         cell.bgView.backgroundColor = view.UIColorFromHex(rgbValue: 0xE1EC80)
         cell.backgroundColor = .white
-        let user = _filteredUsers[indexPath.row]
-        _selectedUsers[user.uid] = true
+        let user = filteredUsers[indexPath.row]
+        selectedUsers[user.uid] = true
         delegate?.rowsAreSelected(selected: true)
     }
     
@@ -124,19 +87,30 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         let cell = tableView.cellForRow(at: indexPath) as! UserCell
         cell.bgView.backgroundColor = view.UIColorFromHex(rgbValue: 0xF7F7F7)
         cell.backgroundColor = view.UIColorFromHex(rgbValue: 0x9FA3A6)
-        let user = _filteredUsers[indexPath.row]
-        _selectedUsers[user.uid] = nil
-        if _selectedUsers.count == 0 {
+        let user = filteredUsers[indexPath.row]
+        selectedUsers[user.uid] = nil
+        if selectedUsers.count == 0 {
             delegate?.rowsAreSelected(selected: false)
         }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return _filteredUsers.count
+        return filteredUsers.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 70
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.endEditing(true)
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        filteredUsers = searchText.isEmpty ? users : users.filter({ (user) -> Bool in
+            return user.name.range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
+        })
+        tableView.reloadData()
     }
 
 }

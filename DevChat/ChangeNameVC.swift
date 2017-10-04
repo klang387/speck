@@ -26,7 +26,8 @@ class ChangeNameVC: UIViewController {
         if let username = newUsername.text, let currentUser = Auth.auth().currentUser?.uid {
             if username.characters.count > 0 {
                 guard !username.contains("@") else {
-                    print("Name cannot contain '@'")
+                    let alert = ErrorAlert(title: "Uh Oh", message: "Name cannot contain '@'.", preferredStyle: .alert)
+                    present(alert, animated: true, completion: nil)
                     return
                 }
                 DataService.instance.profilesRef.child(currentUser).updateChildValues(["name":username])

@@ -6,15 +6,12 @@
 //  Copyright © 2017 Kevin Langelier. All rights reserved.
 //
 
-import AVKit
+import UIKit
 
 extension UIImageView {
     public func imageFromServerURL(urlString: String, completion: (() -> Void)?) {
-        
         URLSession.shared.dataTask(with: NSURL(string: urlString)! as URL, completionHandler: { (data, response, error) -> Void in
-            
             if error != nil {
-                print(error!)
                 return
             }
             DispatchQueue.main.async(execute: { () -> Void in
@@ -24,7 +21,6 @@ extension UIImageView {
                     completion!()
                 }
             })
-            
         }).resume()
     }
 }
