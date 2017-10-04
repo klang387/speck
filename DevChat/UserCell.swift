@@ -145,23 +145,23 @@ class UserCell: UITableViewCell {
         }
     }
     
-    func acceptRequest(sender:UIButton) {
+    @objc func acceptRequest(sender:UIButton) {
         delegate?.acceptFriendRequest()
     }
     
-    func deleteRequest(sender:UIButton) {
+    @objc func deleteRequest(sender:UIButton) {
         delegate?.deleteFriendRequest()
     }
     
-    func deleteFriend(sender:UIButton) {
+    @objc func deleteFriend(sender:UIButton) {
         delegate?.deleteFriend()
     }
     
-    func sendRequest(sender:UIButton) {
+    @objc func sendRequest(sender:UIButton) {
         delegate?.sendFriendRequest()
     }
     
-    func cancelRequest(sender:UIButton) {
+    @objc func cancelRequest(sender:UIButton) {
         delegate?.cancelFriendRequest()
     }
 

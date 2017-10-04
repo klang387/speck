@@ -385,7 +385,7 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         
     }
     
-    func toggleSectionVisibility(sender: UIButton) {
+    @objc func toggleSectionVisibility(sender: UIButton) {
         switch sender.tag {
         case 0:
             section0Hidden = !section0Hidden

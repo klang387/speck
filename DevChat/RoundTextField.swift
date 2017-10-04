@@ -39,7 +39,7 @@ class RoundTextField: UITextField {
     @IBInspectable var placeholderColor: UIColor? {
         didSet {
             let rawString = attributedPlaceholder?.string != nil ? attributedPlaceholder!.string : ""
-            let str = NSAttributedString(string: rawString, attributes: [NSForegroundColorAttributeName: placeholderColor!])
+            let str = NSAttributedString(string: rawString, attributes: [NSAttributedStringKey.foregroundColor: placeholderColor!])
             attributedPlaceholder = str
         }
     }

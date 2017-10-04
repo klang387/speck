@@ -22,8 +22,8 @@ class LoginVC: UIViewController, UITextFieldDelegate {
         emailField.delegate = self
         passwordField.delegate = self
         
-        emailField.attributedPlaceholder = NSAttributedString(string: "Enter email", attributes: [NSForegroundColorAttributeName: UIColor.white])
-        passwordField.attributedPlaceholder = NSAttributedString(string: "Enter password", attributes: [NSForegroundColorAttributeName: UIColor.white])
+        emailField.attributedPlaceholder = NSAttributedString(string: "Enter email", attributes: [NSAttributedStringKey.foregroundColor: UIColor.white])
+        passwordField.attributedPlaceholder = NSAttributedString(string: "Enter password", attributes: [NSAttributedStringKey.foregroundColor: UIColor.white])
         
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing(_:))))
     }
@@ -71,7 +71,7 @@ class LoginVC: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func facebookLoginPressed(_ sender: Any) {
-        AuthService.instance.facebookLogin(completion: { completion in
+        AuthService.instance.facebookLogin(completion: {
             self.dismiss(animated: true, completion: nil)
             UserDefaults.standard.set(true, forKey: "facebookLogin")
             AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)

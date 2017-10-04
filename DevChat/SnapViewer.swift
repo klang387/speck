@@ -56,7 +56,7 @@ class SnapViewer: UIViewController, UITextFieldDelegate {
     func addVideo() {
         avPlayer = AVPlayer()
         avPlayerLayer = AVPlayerLayer(player: avPlayer)
-        avPlayerLayer?.videoGravity = AVLayerVideoGravityResizeAspect
+        avPlayerLayer?.videoGravity = AVLayerVideoGravity.resizeAspect
         avPlayerLayer?.frame = view.frame
         view.layer.addSublayer(avPlayerLayer!)
 
@@ -102,7 +102,7 @@ class SnapViewer: UIViewController, UITextFieldDelegate {
         }
     }
     
-    func detectPan(recognizer: UIPanGestureRecognizer) {
+    @objc func detectPan(recognizer: UIPanGestureRecognizer) {
         let translation = recognizer.translation(in: self.view)
         switch recognizer.state {
         case .changed:

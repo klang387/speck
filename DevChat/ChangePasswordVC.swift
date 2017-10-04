@@ -20,9 +20,9 @@ class ChangePasswordVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        oldPassword.attributedPlaceholder = NSAttributedString(string: "Old Password", attributes: [NSForegroundColorAttributeName: UIColor.white])
-        newPassword.attributedPlaceholder = NSAttributedString(string: "New Password", attributes: [NSForegroundColorAttributeName: UIColor.white])
-        repeatNewPassword.attributedPlaceholder = NSAttributedString(string: "Repeat New Password", attributes: [NSForegroundColorAttributeName: UIColor.white])
+        oldPassword.attributedPlaceholder = NSAttributedString(string: "Old Password", attributes: [NSAttributedStringKey.foregroundColor: UIColor.white])
+        newPassword.attributedPlaceholder = NSAttributedString(string: "New Password", attributes: [NSAttributedStringKey.foregroundColor: UIColor.white])
+        repeatNewPassword.attributedPlaceholder = NSAttributedString(string: "Repeat New Password", attributes: [NSAttributedStringKey.foregroundColor: UIColor.white])
     }
 
     @IBAction func savePressed(_ sender: Any) {

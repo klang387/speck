@@ -19,7 +19,7 @@ class ChangeNameVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        newUsername.attributedPlaceholder = NSAttributedString(string: "Enter New Username", attributes: [NSForegroundColorAttributeName: UIColor.white])
+        newUsername.attributedPlaceholder = NSAttributedString(string: "Enter New Username", attributes: [NSAttributedStringKey.foregroundColor: UIColor.white])
     }
 
     @IBAction func savePressed(_ sender: Any) {

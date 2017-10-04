@@ -188,7 +188,7 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         }
     }
     
-    func deviceRotated() {
+    @objc func deviceRotated() {
         var angle: CGFloat = 0
         orientation = checkOrientation()
         switch UIDevice.current.orientation {
@@ -256,7 +256,7 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
     }
     
-    func updateTimer() {
+    @objc func updateTimer() {
         recordingCount = recordingCount! - 1
         if recordingCount == 9 {
             recordingTimer?.alpha = 0.1
