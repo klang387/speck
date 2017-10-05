@@ -13,7 +13,7 @@ PODS:
     - FacebookCore (~> 0.2)
     - FBSDKCoreKit (~> 4.15)
     - FBSDKLoginKit (~> 4.15)
-  - FBSDKCoreKit (4.25.0):
+  - FBSDKCoreKit (4.27.0):
     - Bolts (~> 1.7)
   - FBSDKLoginKit (4.25.0):
     - FBSDKCoreKit
@@ -92,7 +92,7 @@ SPEC CHECKSUMS:
   Bolts: 8a7995239dbe724f9cba2248b766d48b7ebdd322
   FacebookCore: 2cb3f0fbff218e9d3119cec84bae983b232412de
   FacebookLogin: c9d606504735780a9e3002465a615512e0a691a5
-  FBSDKCoreKit: 53e3f4bfb64e80c5f229dd30ae33ff57fbbbd2d1
+  FBSDKCoreKit: ebc6c5f5b3f0e72396041050e2266781a38ac587
   FBSDKLoginKit: f628c09684dae9c17f071cf90b014e886f5093ea
   Firebase: 1492bf04e1b73a7353b4fb2cf5a20bac9692f341
   FirebaseAnalytics: ad41720e3e67fc63fbe3d2948d3e26932a8de311

@@ -51,7 +51,6 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         captureBtn.delegate = self
         maximumVideoDuration = 10.0
         flashEnabled = false
-        defaultCamera = .front
         flashBtn.imageView?.contentMode = .scaleAspectFit
         settingsBtn.layer.cornerRadius = settingsBtn.frame.width / 2
         settingsBtn.layer.masksToBounds = true
