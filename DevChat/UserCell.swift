@@ -20,7 +20,6 @@ class UserCell: UITableViewCell {
     var snapCount: UILabel?
     var requestSent = false
     var iconView: UIImageView?
-    var styleSquare: UIView?
     var animating = false
     
     var delegate: UserCellDelegate?

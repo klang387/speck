@@ -594,8 +594,10 @@ open class SwiftyCamViewController: UIViewController {
         
 		switch currentCamera {
 		case .front:
+            print("To Rear")
 			currentCamera = .rear
 		case .rear:
+            print("To Front")
 			currentCamera = .front
 		}
 
@@ -606,7 +608,7 @@ open class SwiftyCamViewController: UIViewController {
 			// remove and re-add inputs and outputs
 
 			for input in self.session.inputs {
-				self.session.removeInput(input )
+                self.session.removeInput(input)
 			}
 
 			self.addInputs()
@@ -678,7 +680,7 @@ open class SwiftyCamViewController: UIViewController {
 	fileprivate func addVideoInput() {
 		switch currentCamera {
 		case .front:
-			videoDevice = SwiftyCamViewController.deviceWithMediaType(AVMediaType.video.rawValue, preferringPosition: .front)
+            videoDevice = SwiftyCamViewController.deviceWithMediaType(AVMediaType.video.rawValue, preferringPosition: .front)
 		case .rear:
 			videoDevice = SwiftyCamViewController.deviceWithMediaType(AVMediaType.video.rawValue, preferringPosition: .back)
 		}

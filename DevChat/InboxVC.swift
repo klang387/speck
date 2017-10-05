@@ -18,6 +18,7 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
     var snapsReceived = [[String:Any]]()
     var filteredSnaps = [[String:Any]]()
     var inboxObserver: UInt!
+    var loading = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,29 +33,37 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.snapsReceived.removeAll()
-        self.filteredSnaps.removeAll()
+        
         inboxObserver = DataService.instance.receivedSnapsRef.queryOrdered(byChild: "mostRecent").observe(.value, with: { (snapshot) in
-            self.snapsReceived.removeAll()
-            self.filteredSnaps.removeAll()
-            let sortedArray = snapshot.children.allObjects as! [DataSnapshot]
-            for snap in sortedArray.reversed() {
-                if var snapDict = snap.value as? [String:Any] {
-                    snapDict["senderUid"] = snap.key as String
-                    DataService.instance.profilesRef.child(snap.key).observeSingleEvent(of: .value, with: { (snapshot) in
-                        if let profile = snapshot.value as? [String:String] {
-                            snapDict["name"] = profile["name"]
-                            snapDict["profPicUrl"] = profile["profPicUrl"]
-                            if let _ = snapDict["snaps"] as? [String:Any] {
-                                self.snapsReceived.insert(snapDict, at: 0)
-                                self.filteredSnaps.insert(snapDict, at: 0)
-                            } else {
-                                self.snapsReceived.append(snapDict)
-                                self.filteredSnaps.append(snapDict)
+            if !self.loading {
+                self.loading = true
+                self.snapsReceived.removeAll()
+                self.filteredSnaps.removeAll()
+                let sortedArray = snapshot.children.allObjects as! [DataSnapshot]
+                let arrayCount = sortedArray.count
+                var count = 0
+                for snap in sortedArray.reversed() {
+                    if var snapDict = snap.value as? [String:Any] {
+                        snapDict["senderUid"] = snap.key as String
+                        DataService.instance.profilesRef.child(snap.key).observeSingleEvent(of: .value, with: { (snapshot) in
+                            count += 1
+                            if let profile = snapshot.value as? [String:String] {
+                                snapDict["name"] = profile["name"]
+                                snapDict["profPicUrl"] = profile["profPicUrl"]
+                                if let _ = snapDict["snaps"] as? [String:Any] {
+                                    self.snapsReceived.insert(snapDict, at: 0)
+                                    self.filteredSnaps.insert(snapDict, at: 0)
+                                } else {
+                                    self.snapsReceived.append(snapDict)
+                                    self.filteredSnaps.append(snapDict)
+                                }
+                                if count == arrayCount {
+                                    self.loading = false
+                                    self.tableView.reloadData()
+                                }
                             }
-                            self.tableView.reloadData()
-                        }
-                    })
+                        })
+                    }
                 }
             }
         })
@@ -64,12 +73,6 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
         super.viewDidDisappear(animated)
         
         DataService.instance.receivedSnapsRef.removeObserver(withHandle: inboxObserver)
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        tableView.reloadData()
     }
     
     @IBAction func backBtn(_ sender: Any) {
@@ -87,7 +90,6 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
         let user = User(snap: fromUser)
         let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell") as! UserCell
         cell.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 70)
-        cell.bgView.frame = CGRect(x: 0, y: 0.5, width: view.frame.width, height: cell.frame.height - 1)
         if cell.nameLbl == nil {
             cell.setupCell()
             cell.addSnapCount()
@@ -96,6 +98,11 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
             cell.snapCount?.topAnchor.constraint(equalTo: cell.topAnchor, constant: 0).isActive = true
             cell.snapCount?.bottomAnchor.constraint(equalTo: cell.bottomAnchor, constant: 0).isActive = true
             cell.snapCount?.widthAnchor.constraint(equalToConstant: cell.frame.height).isActive = true
+            cell.bgView.translatesAutoresizingMaskIntoConstraints = false
+            cell.bgView.leadingAnchor.constraint(equalTo: cell.leadingAnchor).isActive = true
+            cell.bgView.trailingAnchor.constraint(equalTo: cell.trailingAnchor).isActive = true
+            cell.bgView.topAnchor.constraint(equalTo: cell.topAnchor, constant: 0.5).isActive = true
+            cell.bgView.bottomAnchor.constraint(equalTo: cell.bottomAnchor, constant: -0.5).isActive = true
         }
         cell.nameLbl.text = user.name
         ImageCache.instance.getProfileImage(user: user, completion: { image in
@@ -103,7 +110,6 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
         })
         cell.profPic.alpha = 1
         cell.nameLbl.alpha = 1
-        cell.styleSquare?.alpha = 0.1
         if let snaps = fromUser["snaps"] as? [String:Any] {
             cell.snapCount?.text = "\(snaps.count)"
             cell.bgView.backgroundColor = view.UIColorFromHex(rgbValue: 0x94C4D8)
@@ -112,7 +118,6 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
         } else {
             cell.profPic.alpha = 0.5
             cell.nameLbl.alpha = 0.5
-            cell.styleSquare?.alpha = 0.01
             cell.snapCount?.text = ""
             cell.bgView.backgroundColor = view.UIColorFromHex(rgbValue: 0xF3F3F3)
             cell.backgroundColor = view.UIColorFromHex(rgbValue: 0x9FA3A6)

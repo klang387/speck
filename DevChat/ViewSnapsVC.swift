@@ -25,6 +25,7 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
     var animatable = true
     var btnAlphaTarget: CGFloat = 1
     var currentVC: SnapViewer?
+    var deleteSnapIndex = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -169,8 +170,6 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
             viewedSnaps = currentIndex
             deleteSnapFromDatabase(index: currentIndex)
         }
-        
-
     }
     
     func snapsArraySorter(first: [String:Any], second: [String:Any]) -> Bool {
@@ -188,19 +187,25 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
     }
     
     func deleteSnapFromStorage() {
-        for index in 0...viewedSnaps {
-            if let storageName = snapsArray[index]["storageName"] as? String{
+        if deleteSnapIndex <= viewedSnaps {
+            if let storageName = snapsArray[deleteSnapIndex]["storageName"] as? String{
                 DataService.instance.mainRef.child("viewCounts").child(storageName).observeSingleEvent(of: .value, with: { (snapshot) in
                     if let viewCount = snapshot.value as? Int {
                         if viewCount == 1 {
                             DataService.instance.mediaStorageRef.child(storageName).delete()
                             DataService.instance.mainRef.child("viewCounts").child(storageName).removeValue()
+                            self.deleteSnapIndex += 1
+                            self.deleteSnapFromStorage()
                         } else if viewCount > 1 {
                             DataService.instance.mainRef.child("viewCounts").child(storageName).setValue(viewCount - 1)
+                            self.deleteSnapIndex += 1
+                            self.deleteSnapFromStorage()
                         }
                     }
                 })
             }
+        } else {
+            deleteSnapIndex = 0
         }
     }
 

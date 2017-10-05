@@ -15,7 +15,7 @@ class SnapViewer: UIViewController, UITextFieldDelegate {
     var avPlayerLayer: AVPlayerLayer?
     var playerItem: AVPlayerItem?
     var avQueuePlayer: AVQueuePlayer?
-    var looper: AVPlayerLooper?
+    var playerLooper: NSObject?
     var imageView: UIImageView?
     var index: Int?
     var captionField: UITextField?
@@ -36,13 +36,26 @@ class SnapViewer: UIViewController, UITextFieldDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         if playerItem != nil {
-            avQueuePlayer?.play()
+            if #available(iOS 10.0, *) {
+                avQueuePlayer?.play()
+            } else {
+                avPlayer?.play()
+                NotificationCenter.default.addObserver(forName: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil, queue: nil) { notification in
+                    self.avPlayer?.seek(to: kCMTimeZero)
+                    self.avPlayer?.play()
+                }
+            }
         }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         if playerItem != nil {
-            avQueuePlayer?.pause()
+            if #available(iOS 10.0, *) {
+                avQueuePlayer?.pause()
+            } else {
+                avPlayer?.pause()
+                NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil)
+            }
         }
     }
     
@@ -54,18 +67,22 @@ class SnapViewer: UIViewController, UITextFieldDelegate {
     }
     
     func addVideo() {
-        avPlayer = AVPlayer()
-        avPlayerLayer = AVPlayerLayer(player: avPlayer)
+        avPlayerLayer = AVPlayerLayer()
         avPlayerLayer?.videoGravity = AVLayerVideoGravity.resizeAspect
         avPlayerLayer?.frame = view.frame
         view.layer.addSublayer(avPlayerLayer!)
 
         if playerItem != nil {
-            avQueuePlayer = AVQueuePlayer(playerItem: playerItem!)
-            looper = AVPlayerLooper(player: avQueuePlayer!, templateItem: playerItem!)
+            if #available(iOS 10.0, *) {
+                avQueuePlayer = AVQueuePlayer(playerItem: playerItem!)
+                avPlayerLayer?.player = avQueuePlayer
+                playerLooper = AVPlayerLooper(player: avQueuePlayer!, templateItem: playerItem!)
+            } else {
+                avPlayer = AVPlayer(playerItem: playerItem!)
+                avPlayerLayer?.player = avPlayer
+                avPlayer?.play()
+            }
         }
-                
-        avPlayerLayer?.player = avQueuePlayer
     }
     
     func addTimestamp() {

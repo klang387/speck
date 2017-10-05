@@ -20,10 +20,8 @@ class ImageCache {
     
     func getProfileImage(user: User, completion: @escaping (UIImage) -> Void) {
         if let image = _profilePicCache.object(forKey: user.uid as NSString) {
-            print("Image from cache")
             completion(image)
         } else {
-            print("Image from net")
             URLSession.shared.dataTask(with: NSURL(string: user.profPicUrl)! as URL, completionHandler: { (data, response, error) -> Void in
                 if error != nil {
                     return

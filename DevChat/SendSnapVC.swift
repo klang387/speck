@@ -52,19 +52,16 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         DataService.instance.friendsRef.removeObserver(withHandle: friendsObserver)
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        tableView.reloadData()
-    }
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell") as! UserCell
         cell.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 70)
-        cell.bgView.frame = CGRect(x: 0, y: 0.5, width: view.frame.width, height: cell.frame.height - 1)
         if cell.nameLbl == nil {
-            cell.frame = CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 70)
             cell.setupCell()
+            cell.bgView.translatesAutoresizingMaskIntoConstraints = false
+            cell.bgView.leadingAnchor.constraint(equalTo: cell.leadingAnchor).isActive = true
+            cell.bgView.trailingAnchor.constraint(equalTo: cell.trailingAnchor).isActive = true
+            cell.bgView.topAnchor.constraint(equalTo: cell.topAnchor, constant: 0.5).isActive = true
+            cell.bgView.bottomAnchor.constraint(equalTo: cell.bottomAnchor, constant: -0.5).isActive = true
         }
         let user = filteredUsers[indexPath.row]
         cell.nameLbl.text = user.name

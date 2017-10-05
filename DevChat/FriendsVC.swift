@@ -114,12 +114,6 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        tableView.reloadData()
-    }
-    
     func loading() -> Bool {
         for status in observersLoading {
             if status {
@@ -151,10 +145,10 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
                         return false
                     }
                 }
-//                if user.uid == AuthService.instance.currentUser {
-//                    self.tempCounter += 1
-//                    return false
-//                }
+                if user.uid == AuthService.instance.currentUser {
+                    self.tempCounter += 1
+                    return false
+                }
                 return true
             })
             if self.tempCounter > self.allUsersFilterCount {
@@ -193,10 +187,14 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         sectionTitle.textColor = UIColor.darkGray
         headerView.addSubview(sectionTitle)
         
-        let sectionCount = UILabel(frame: CGRect(x: headerView.frame.width - 30, y: 0, width: 30, height: headerView.frame.height))
+        let sectionCount = UILabel()
         sectionCount.font = UIFont(name: "Avenir", size: 18)
         sectionCount.textColor = UIColor.darkGray
         headerView.addSubview(sectionCount)
+        sectionCount.translatesAutoresizingMaskIntoConstraints = false
+        sectionCount.trailingAnchor.constraint(equalTo: headerView.trailingAnchor).isActive = true
+        sectionCount.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        sectionCount.heightAnchor.constraint(equalTo: headerView.heightAnchor).isActive = true
         
         let sectionBtn = UIButton(frame: headerView.frame)
         sectionBtn.tag = section
@@ -242,10 +240,13 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell") as! UserCell
         cell.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 70)
-        cell.bgView.frame = CGRect(x: 0, y: 0.5, width: view.frame.width, height: cell.frame.height - 1)
         if cell.nameLbl == nil {
-            cell.frame = CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 70)
             cell.setupCell()
+            cell.bgView.translatesAutoresizingMaskIntoConstraints = false
+            cell.bgView.leadingAnchor.constraint(equalTo: cell.leadingAnchor).isActive = true
+            cell.bgView.trailingAnchor.constraint(equalTo: cell.trailingAnchor).isActive = true
+            cell.bgView.topAnchor.constraint(equalTo: cell.topAnchor, constant: 0.5).isActive = true
+            cell.bgView.bottomAnchor.constraint(equalTo: cell.bottomAnchor, constant: -0.5).isActive = true
         }
         if cell.cellSelected {
             cell.resetCellPostion()
