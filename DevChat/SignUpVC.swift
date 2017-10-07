@@ -18,10 +18,12 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
     @IBOutlet weak var password: UITextField!
     @IBOutlet weak var passwordConfirm: UITextField!
     @IBOutlet weak var selectProfilePic: UIButton!
-    
+
     var imagePicker: UIImagePickerController!
     var editLayer: CAShapeLayer!
     var label: UILabel!
+    var keyboardHeight: CGFloat?
+    var textFields: [UITextField]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,6 +37,7 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
         imagePicker.allowsEditing = true
         imagePicker.delegate = self
         
+        textFields = [firstName, lastName, email, password, passwordConfirm]
         firstName.delegate = self
         lastName.delegate = self
         email.delegate = self
@@ -48,10 +51,23 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
         passwordConfirm.attributedPlaceholder = NSAttributedString(string: "Re-Enter Password", attributes: [NSAttributedStringKey.foregroundColor: UIColor.white])
         
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing(_:))))
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
         
+        coordinator.animate(alongsideTransition: nil, completion: { _ in
+            for field in self.textFields {
+                if field.isFirstResponder {
+                    self.view.animateViewMoving(textField: field, view: self.view)
+                    return
+                }
+            }
+        })
     }
 
     @IBAction func backBtnPressed(_ sender: Any) {
+        self.view.endEditing(true)
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -61,44 +77,45 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
     }
     
     @IBAction func submitPressed(_ sender: Any) {
+        guard let rootVC = UIApplication.shared.windows.last?.rootViewController else {return}
         guard firstName.text != nil && firstName.text != "" else {
             let alert = ErrorAlert(title: "First Name Required", message: "You must complete all fields to submit", preferredStyle: .alert)
-            present(alert, animated: true, completion: nil)
+            rootVC.present(alert, animated: true, completion: nil)
             return
         }
         guard lastName.text != nil && lastName.text != "" else {
             let alert = ErrorAlert(title: "Last Name Required", message: "You must complete all fields to submit", preferredStyle: .alert)
-            present(alert, animated: true, completion: nil)
+            rootVC.present(alert, animated: true, completion: nil)
             return
         }
         guard !firstName.text!.contains("@") && !lastName.text!.contains("@") else {
             let alert = ErrorAlert(title: "Invalid Name", message: "Names cannot contain '@' symbol", preferredStyle: .alert)
-            present(alert, animated: true, completion: nil)
+            rootVC.present(alert, animated: true, completion: nil)
             return
         }
         guard email.text != nil && email.text != "" else {
             let alert = ErrorAlert(title: "Email Required", message: "You must complete all fields to submit", preferredStyle: .alert)
-            present(alert, animated: true, completion: nil)
+            rootVC.present(alert, animated: true, completion: nil)
             return
         }
         guard email.text!.contains("@") && email.text!.contains(".") else {
             let alert = ErrorAlert(title: "Invalid Email", message: "Please enter a valid email address", preferredStyle: .alert)
-            present(alert, animated: true, completion: nil)
+            rootVC.present(alert, animated: true, completion: nil)
             return
         }
         guard password.text != nil && password.text != "" else {
             let alert = ErrorAlert(title: "Password Required", message: "You must complete all fields to submit", preferredStyle: .alert)
-            present(alert, animated: true, completion: nil)
+            rootVC.present(alert, animated: true, completion: nil)
             return
         }
         guard password.text == passwordConfirm.text else {
             let alert = ErrorAlert(title: "Password Confirmation Incorrect", message: "Your passwords do not match", preferredStyle: .alert)
-            present(alert, animated: true, completion: nil)
+            rootVC.present(alert, animated: true, completion: nil)
             return
         }
         guard selectProfilePic.image(for: .normal) != UIImage(named: "UploadProfilePic") else {
             let alert = ErrorAlert(title: "Profile Picture Required", message: "Please select a profile picture", preferredStyle: .alert)
-            present(alert, animated: true, completion: nil)
+            rootVC.present(alert, animated: true, completion: nil)
             return
         }
         
@@ -188,7 +205,6 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
         viewController.view.addSubview(label)
     }
     
-    
     func hideDefaultEditOverlay(view: UIView) {
         for subview in view.subviews {
             if let cropOverlay = NSClassFromString("PLCropOverlayCropView") {
@@ -203,20 +219,33 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        textField.animateViewMoving(up: true, moveValue: 75, view: self.view)
-    }
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        textField.animateViewMoving(up: false, moveValue: 75, view: self.view)
+        view.animateViewMoving(textField: textField, view: view)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.animateViewMoving(textField: nil, view: view)
         self.view.endEditing(true)
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        self.view.endEditing(true)
+        switch textField {
+        case firstName:
+            lastName.becomeFirstResponder()
+        case lastName:
+            email.becomeFirstResponder()
+        case email:
+            password.becomeFirstResponder()
+        case password:
+            passwordConfirm.becomeFirstResponder()
+        case passwordConfirm:
+            submitPressed(self)
+        default: break
+        }
         return true
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return false
     }
     
 }

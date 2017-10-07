@@ -66,7 +66,6 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
             super.viewDidAppear(animated)
             
             if #available(iOS 10.0, *) {
-                // For iOS 10 display notification (sent via APNS)
                 let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
                 UNUserNotificationCenter.current().requestAuthorization(
                     options: authOptions,

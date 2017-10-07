@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <device id="retina4_0" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -23,14 +23,15 @@
                         <subviews>
                             <imageView clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Launch" translatesAutoresizingMaskIntoConstraints="NO" id="9Eg-Q5-mVX">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <variation key="heightClass=compact" image="LaunchLandscape"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="9Eg-Q5-mVX" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="0S2-lp-rnD"/>
-                            <constraint firstAttribute="bottom" secondItem="9Eg-Q5-mVX" secondAttribute="bottom" id="8kN-ri-XfI"/>
-                            <constraint firstItem="9Eg-Q5-mVX" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="hR4-I7-UaM"/>
-                            <constraint firstAttribute="trailing" secondItem="9Eg-Q5-mVX" secondAttribute="trailing" id="jkK-fD-Q14"/>
+                            <constraint firstItem="xb3-aO-Qok" firstAttribute="top" secondItem="9Eg-Q5-mVX" secondAttribute="bottom" id="8CQ-1k-1aw"/>
+                            <constraint firstItem="9Eg-Q5-mVX" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="GNY-EF-Y5X"/>
+                            <constraint firstAttribute="trailing" secondItem="9Eg-Q5-mVX" secondAttribute="trailing" id="dCQ-YK-e3H"/>
+                            <constraint firstItem="9Eg-Q5-mVX" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="s9V-6D-JGF"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -41,5 +42,6 @@
     </scenes>
     <resources>
         <image name="Launch" width="320" height="568"/>
+        <image name="LaunchLandscape" width="568" height="320"/>
     </resources>
 </document>

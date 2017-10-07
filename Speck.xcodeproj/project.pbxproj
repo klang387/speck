@@ -16,7 +16,6 @@
 		0A27CBAE1F3390FB00F8AA60 /* SendSnapVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A27CBAD1F3390FB00F8AA60 /* SendSnapVC.swift */; };
 		0A27CBB01F3392A800F8AA60 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A27CBAF1F3392A800F8AA60 /* UserCell.swift */; };
 		0A27CBB21F33B22000F8AA60 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A27CBB11F33B22000F8AA60 /* User.swift */; };
-		0A27CBB51F33BABD00F8AA60 /* TextFieldExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A27CBB41F33BABD00F8AA60 /* TextFieldExt.swift */; };
 		0A482AEA1F4D0602005205E1 /* SnapViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A482AE91F4D0602005205E1 /* SnapViewer.swift */; };
 		0A4CF7691F45F6DE001A1B65 /* SignUpVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4CF7681F45F6DE001A1B65 /* SignUpVC.swift */; };
 		0A4E4A411F20E6E10039EF05 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4E4A401F20E6E10039EF05 /* AppDelegate.swift */; };
@@ -49,7 +48,6 @@
 		0A27CBAD1F3390FB00F8AA60 /* SendSnapVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SendSnapVC.swift; sourceTree = "<group>"; };
 		0A27CBAF1F3392A800F8AA60 /* UserCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
 		0A27CBB11F33B22000F8AA60 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
-		0A27CBB41F33BABD00F8AA60 /* TextFieldExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFieldExt.swift; sourceTree = "<group>"; };
 		0A482AE91F4D0602005205E1 /* SnapViewer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapViewer.swift; sourceTree = "<group>"; };
 		0A4CF7681F45F6DE001A1B65 /* SignUpVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpVC.swift; sourceTree = "<group>"; };
 		0A4E4A3D1F20E6E10039EF05 /* Speck.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Speck.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -102,7 +100,6 @@
 		0A27CBB31F33BAAA00F8AA60 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				0A27CBB41F33BABD00F8AA60 /* TextFieldExt.swift */,
 				0AF05BBF1F47411000507371 /* UIImageViewExt.swift */,
 				0AF05E891F607F5F00CF927F /* UIViewExt.swift */,
 			);
@@ -337,7 +334,6 @@
 				0AF05E8A1F607F5F00CF927F /* UIViewExt.swift in Sources */,
 				0A13BD9A1F4E17780002D934 /* FriendsVC.swift in Sources */,
 				0A27CBAC1F337E5B00F8AA60 /* DataService.swift in Sources */,
-				0A27CBB51F33BABD00F8AA60 /* TextFieldExt.swift in Sources */,
 				0ADA56E41F79838E00FDC980 /* LoadingView.swift in Sources */,
 				0A27CBAE1F3390FB00F8AA60 /* SendSnapVC.swift in Sources */,
 				0A4E4A431F20E6E10039EF05 /* CameraVC.swift in Sources */,

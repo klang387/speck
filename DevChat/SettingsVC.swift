@@ -359,11 +359,11 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        textField.animateViewMoving(up: true, moveValue: 75, view: self.view)
+        view.animateViewMoving(textField: textField, view: view)
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        textField.animateViewMoving(up: false, moveValue: 75, view: self.view)
+        view.animateViewMoving(textField: nil, view: view)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

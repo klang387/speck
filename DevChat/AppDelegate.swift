@@ -16,9 +16,9 @@ import UserNotifications
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    var orientationLock = UIInterfaceOrientationMask.all
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
         
         FirebaseApp.configure()
         AppEventsLogger.activate(application)
@@ -34,6 +34,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             } catch {}
         }
         
+        let color = UIView().UIColorFromHex(rgbValue: 0xDEED78)
+        window?.backgroundColor = color
+        
         return true
     }
     
@@ -41,7 +44,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return SDKApplicationDelegate.shared.application(app, open: url, options: options)
     }
     
-    var orientationLock = UIInterfaceOrientationMask.all
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         return self.orientationLock
     }

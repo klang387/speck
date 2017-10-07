@@ -17,15 +17,31 @@ class LoginVC: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var passwordField: UITextField!
     @IBOutlet weak var backgroundImage: UIImageView!
     
+    var textFields: [UITextField]!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         emailField.delegate = self
         passwordField.delegate = self
+        textFields = [emailField, passwordField]
         
         emailField.attributedPlaceholder = NSAttributedString(string: "Enter email", attributes: [NSAttributedStringKey.foregroundColor: UIColor.white])
         passwordField.attributedPlaceholder = NSAttributedString(string: "Enter password", attributes: [NSAttributedStringKey.foregroundColor: UIColor.white])
         
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing(_:))))
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        
+        coordinator.animate(alongsideTransition: nil, completion: { _ in
+            for field in self.textFields {
+                if field.isFirstResponder {
+                    self.view.animateViewMoving(textField: field, view: self.view)
+                    return
+                }
+            }
+        })
     }
     
     override func viewWillLayoutSubviews() {
@@ -80,8 +96,9 @@ class LoginVC: UIViewController, UITextFieldDelegate {
             })
             
         } else {
+            guard let rootVC = UIApplication.shared.windows.last?.rootViewController else {return}
             let alert = ErrorAlert(title: "Username and Password Required", message: "You must enter both a username and a password", preferredStyle: .alert)
-            present(alert, animated: true, completion: nil)
+            rootVC.present(alert, animated: true, completion: nil)
         }
     }
     
@@ -90,19 +107,22 @@ class LoginVC: UIViewController, UITextFieldDelegate {
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        textField.animateViewMoving(up: true, moveValue: 150, view: self.view)
-    }
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        textField.animateViewMoving(up: false, moveValue: 150, view: self.view)
+        view.animateViewMoving(textField: textField, view: view)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.animateViewMoving(textField: nil, view: view)
         self.view.endEditing(true)
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        self.view.endEditing(true)
+        switch textField{
+        case emailField:
+            passwordField.becomeFirstResponder()
+        case passwordField:
+            loginPressed(self)
+        default: break
+        }
         return true
     }
     
