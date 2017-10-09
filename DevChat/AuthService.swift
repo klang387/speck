@@ -111,8 +111,6 @@ class AuthService {
                                                     if let email = user?.email {
                                                         DataService.instance.saveUserToDatabase(uid: user!.uid, firstName: firstName, lastName: lastName, profPicUrl: profPicUrl, email: email)
                                                         completion(nil)
-                                                    } else {
-                                                        // REQUEST EMAIL FROM USER - FB UNABLE TO PROVIDE
                                                     }
                                                 }
                                             }

@@ -96,7 +96,7 @@ class SnapViewer: UIViewController, UITextFieldDelegate {
         timestampLbl?.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         timestampLbl?.topAnchor.constraint(equalTo: view.topAnchor, constant: 20).isActive = true
         timestampLbl?.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        timestampLbl?.widthAnchor.constraint(equalToConstant: 170).isActive = true
+        timestampLbl?.widthAnchor.constraint(equalToConstant: 190).isActive = true
     }
     
     func addCaption(editingEnabled: Bool) {

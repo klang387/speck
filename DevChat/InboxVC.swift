@@ -14,21 +14,38 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: CustomSearchBar!
+    @IBOutlet weak var emptyInboxLabel: UILabel!
     
     var snapsReceived = [[String:Any]]()
     var filteredSnaps = [[String:Any]]()
     var inboxObserver: UInt!
     var loading = false
+    var guideVC: GuideVC?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if UserDefaults.standard.integer(forKey: "firstInboxVC") != 1 {
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            guideVC = storyboard.instantiateViewController(withIdentifier: "GuideVC") as? GuideVC
+            addChildViewController(guideVC!)
+            guideVC?.view.frame = view.frame
+            guideVC?.titleLabel.text = "Self-Cleaning"
+            guideVC?.bodyLabel.text = """
+            Speck auto-deletes viewed and cached media to keep the app small and free up valuable storage space on your device.
+            
+            When opening new content in your inbox, it can be viewed as long as you like, but once closed, will be lost to the ages!
+            """
+            view.addSubview(guideVC!.view)
+            guideVC?.dismissBtn.addTarget(self, action: #selector(removeGuide), for: .touchUpInside)
+            UserDefaults.standard.set(1, forKey: "firstInboxVC")
+        }
         
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UserCell.self as AnyClass, forCellReuseIdentifier: "UserCell")
         
         searchBar.delegate = self
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -41,28 +58,35 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
                 self.filteredSnaps.removeAll()
                 let sortedArray = snapshot.children.allObjects as! [DataSnapshot]
                 let arrayCount = sortedArray.count
-                var count = 0
-                for snap in sortedArray.reversed() {
-                    if var snapDict = snap.value as? [String:Any] {
-                        snapDict["senderUid"] = snap.key as String
-                        DataService.instance.profilesRef.child(snap.key).observeSingleEvent(of: .value, with: { (snapshot) in
-                            count += 1
-                            if let profile = snapshot.value as? [String:String] {
-                                snapDict["name"] = profile["name"]
-                                snapDict["profPicUrl"] = profile["profPicUrl"]
-                                if let _ = snapDict["snaps"] as? [String:Any] {
-                                    self.snapsReceived.insert(snapDict, at: 0)
-                                    self.filteredSnaps.insert(snapDict, at: 0)
-                                } else {
-                                    self.snapsReceived.append(snapDict)
-                                    self.filteredSnaps.append(snapDict)
+                if arrayCount == 0 {
+                    self.emptyInboxLabel.isHidden = false
+                    self.tableView.isHidden = true
+                } else {
+                    self.emptyInboxLabel.isHidden = true
+                    self.tableView.isHidden = false
+                    var count = 0
+                    for snap in sortedArray.reversed() {
+                        if var snapDict = snap.value as? [String:Any] {
+                            snapDict["senderUid"] = snap.key as String
+                            DataService.instance.profilesRef.child(snap.key).observeSingleEvent(of: .value, with: { (snapshot) in
+                                count += 1
+                                if let profile = snapshot.value as? [String:String] {
+                                    snapDict["name"] = profile["name"]
+                                    snapDict["profPicUrl"] = profile["profPicUrl"]
+                                    if let _ = snapDict["snaps"] as? [String:Any] {
+                                        self.snapsReceived.insert(snapDict, at: 0)
+                                        self.filteredSnaps.insert(snapDict, at: 0)
+                                    } else {
+                                        self.snapsReceived.append(snapDict)
+                                        self.filteredSnaps.append(snapDict)
+                                    }
+                                    if count == arrayCount {
+                                        self.loading = false
+                                        self.tableView.reloadData()
+                                    }
                                 }
-                                if count == arrayCount {
-                                    self.loading = false
-                                    self.tableView.reloadData()
-                                }
-                            }
-                        })
+                            })
+                        }
                     }
                 }
             }
@@ -71,7 +95,6 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        
         DataService.instance.receivedSnapsRef.removeObserver(withHandle: inboxObserver)
     }
     
@@ -79,6 +102,12 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
         searchBar.endEditing(true)
         AppDelegate.AppUtility.lockOrientation(.portrait)
         self.dismiss(animated: true, completion: nil)
+    }
+    
+    @objc func removeGuide(sender:UIButton) {
+        guideVC?.view.removeFromSuperview()
+        guideVC?.removeFromParentViewController()
+        guideVC = nil
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

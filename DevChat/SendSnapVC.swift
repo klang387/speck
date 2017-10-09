@@ -14,6 +14,8 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: CustomSearchBar!
+    @IBOutlet weak var noFriendsLabel1: UILabel!
+    @IBOutlet weak var noFriendsLabel2: UILabel!
     
     var users = [User]()
     var filteredUsers = [User]()
@@ -39,9 +41,18 @@ class SendSnapVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         
         friendsObserver = DataService.instance.friendsRef.observe(.value, with: { (snapshot) in
             DataService.instance.loadUsersFromSnapshot(snapshot: snapshot, completion: { userArray in
-                self.users = userArray
-                self.filteredUsers = self.users
-                self.tableView.reloadData()
+                if userArray.count == 0 {
+                    self.noFriendsLabel1.isHidden = false
+                    self.noFriendsLabel2.isHidden = false
+                    self.tableView.isHidden = true
+                } else {
+                    self.noFriendsLabel1.isHidden = true
+                    self.noFriendsLabel2.isHidden = true
+                    self.tableView.isHidden = false
+                    self.users = userArray
+                    self.filteredUsers = self.users
+                    self.tableView.reloadData()
+                }
             })
         })
     }

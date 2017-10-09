@@ -36,10 +36,12 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     var allUsersFilterCount: UInt = 0
     var tempCounter: UInt = 0
     var searching = false
+    var spinner: UIActivityIndicatorView?
+    var delegate: FriendsDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
+        
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UserCell.self as AnyClass, forCellReuseIdentifier: "UserCell")
@@ -111,7 +113,6 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         DataService.instance.friendsRef.removeObserver(withHandle: friendsObserver)
         DataService.instance.friendRequestsRef.removeObserver(withHandle: friendRequestsObserver)
         DataService.instance.outgoingRequestsRef.removeObserver(withHandle: outgoingRequestsObserver)
-        
     }
     
     func loading() -> Bool {
@@ -329,24 +330,16 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
                         view.removeFromSuperview()
                     }
                 }
-                let spinner = UIActivityIndicatorView(activityIndicatorStyle: .gray)
-                cell.addSubview(spinner)
-                spinner.center.x = cell.bounds.midX
-                spinner.center.y = cell.bounds.midY
-                spinner.startAnimating()
-                
-                if searchBar.text?.range(of: "@") == nil {
-                    DataService.instance.searchDatabaseForUser(searchTerm: searchBar.text!, completion: { users in
-                        spinner.removeFromSuperview()
-                        self.filteredAllUsers = users
-                        self.tableView.reloadData()
-                    })
-                } else {
-                    DataService.instance.searchUsersByEmail(searchTerm: searchBar.text!, handler: { users in
-                        spinner.removeFromSuperview()
-                        self.filteredAllUsers = users
-                        self.tableView.reloadData()
-                    })
+                spinner = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+                cell.addSubview(spinner!)
+                spinner?.center.x = cell.bounds.midX
+                spinner?.center.y = cell.bounds.midY
+                spinner?.startAnimating()
+                searchDatabase()
+                if UserDefaults.standard.integer(forKey: "firstSearch") != 1 {
+                    searchBar.endEditing(true)
+                    delegate?.addSearchGuide()
+                    UserDefaults.standard.set(1, forKey: "firstSearch")
                 }
             } else {
                 numberOfUsersToLoad += 5
@@ -354,7 +347,24 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             }
             tableView.deselectRow(at: indexPath, animated: true)
         }
-        
+    }
+    
+    func searchDatabase() {
+        if searchBar.text?.range(of: "@") == nil {
+            DataService.instance.searchDatabaseForUser(searchTerm: searchBar.text!, completion: { users in
+                self.spinner?.removeFromSuperview()
+                self.spinner = nil
+                self.filteredAllUsers = users
+                self.tableView.reloadData()
+            })
+        } else {
+            DataService.instance.searchUsersByEmail(searchTerm: searchBar.text!, handler: { users in
+                self.spinner?.removeFromSuperview()
+                self.spinner = nil
+                self.filteredAllUsers = users
+                self.tableView.reloadData()
+            })
+        }
     }
     
     @objc func toggleSectionVisibility(sender: UIButton) {
@@ -431,4 +441,8 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         tableView.reloadData()
     }
     
+}
+
+protocol FriendsDelegate {
+    func addSearchGuide()
 }

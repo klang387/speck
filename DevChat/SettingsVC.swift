@@ -10,7 +10,7 @@ import UIKit
 import FirebaseStorage
 import FirebaseAuth
 
-class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, ChangePasswordDelegate, ChangeNameDelegate {
+class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, ChangePasswordDelegate, ChangeNameDelegate, FriendsDelegate {
 
     @IBOutlet weak var profilePic: UIImageView!
     @IBOutlet weak var buttonsView: UIView!
@@ -22,18 +22,19 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     @IBOutlet weak var buttonsLeadingLandscape: NSLayoutConstraint!
     @IBOutlet weak var buttonsTrailingLandscape: NSLayoutConstraint!
     
+    var changeNameVC: ChangeNameVC?
+    var changePasswordVC: ChangePasswordVC?
+    var friendsVC: FriendsVC?
+    var guideVC: GuideVC?
     var image: UIImage?
     var imagePicker: UIImagePickerController!
     var editLayer: CAShapeLayer!
     var label: UILabel!
-    var changeNameVC: ChangeNameVC?
-    var changePasswordVC: ChangePasswordVC?
     var currentView: String!
     var newViewStartFrame: CGRect!
     var friendsObserver: UInt!
     var requestCount: Int!
     var currentUser: String!
-    var friendsVC: FriendsVC?
     var tapGesture: UITapGestureRecognizer!
     var constraintLeading: NSLayoutConstraint?
     var constraintTrailing: NSLayoutConstraint?
@@ -41,6 +42,7 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         currentUser = AuthService.instance.currentUser
         
         profilePic.image = image
@@ -125,20 +127,18 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     }
     
     @IBAction func friendsPressed(_ sender: Any) {
+        self.currentView = "friends"
         tapGesture.isEnabled = false
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         friendsVC = storyboard.instantiateViewController(withIdentifier: "FriendsVC") as? FriendsVC
         addChildViewController(friendsVC!)
         friendsVC?.view.frame = newViewStartFrame
         view.insertSubview(friendsVC!.view, belowSubview: topBar)
+        friendsVC?.delegate = self
         view.layoutIfNeeded()
         UIView.animate(withDuration: 0.3, animations: {
             self.friendsVC?.view.frame = self.view.frame
             self.view.layoutIfNeeded()
-        }, completion: { (finished) in
-            if finished {
-                self.currentView = "friends"
-            }
         })
     }
 
@@ -356,6 +356,21 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
             self.friendsVC = nil
         }
         tapGesture.isEnabled = true
+    }
+    
+    func addSearchGuide() {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        guideVC = storyboard.instantiateViewController(withIdentifier: "GuideVC") as? GuideVC
+        addChildViewController(guideVC!)
+        guideVC?.view.frame = view.frame
+        view.addSubview(guideVC!.view)
+        guideVC?.dismissBtn.addTarget(self, action: #selector(removeGuide), for: .touchUpInside)
+    }
+    
+    @objc func removeGuide() {
+        guideVC?.view.removeFromSuperview()
+        guideVC?.removeFromParentViewController()
+        guideVC = nil
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {

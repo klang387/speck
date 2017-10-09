@@ -27,6 +27,7 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     var buttonsArray: [UIButton]!
     var originalRotation: CATransform3D?
     var orientation: UIInterfaceOrientationMask?
+    var welcomeArray: [UIView]!
     
     @IBOutlet weak var captureBtn: SwiftyCamButton!
     @IBOutlet weak var switchCameraBtn: UIButton!
@@ -37,11 +38,29 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     @IBOutlet weak var inboxBtn: UIButton!
     @IBOutlet weak var friendsBadge: UILabel!
     
+    @IBOutlet weak var welcomeGuideBgView: UIView!
+    @IBOutlet weak var welcomeDismissBtn: UIButton!
+    @IBOutlet weak var guideCapture: UIImageView!
+    @IBOutlet weak var guideSettings: UIImageView!
+    @IBOutlet weak var guideInbox: UIImageView!
+    @IBOutlet weak var guideSwitchCamera: UIImageView!
+    @IBOutlet weak var guideFlash: UIImageView!
+    @IBOutlet weak var welcomeLabel: UILabel!
+    @IBOutlet weak var continueLabel: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
         orientation = checkOrientation()
+        
+        welcomeArray = [welcomeGuideBgView, welcomeDismissBtn, guideCapture, guideSettings, guideInbox, guideSwitchCamera, guideFlash, welcomeLabel, continueLabel]
+        if UserDefaults.standard.integer(forKey: "firstCameraVC") == 1 {
+            for item in welcomeArray {
+                item.removeFromSuperview()
+            }
+        }
+        
         buttonsArray = [switchCameraBtn, flashBtn, inboxBtn]
         shouldUseDeviceOrientation = true
         allowAutoRotate = true
@@ -147,6 +166,13 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
             DataService.instance.usersRef.child(currentUser).child("friendRequests").removeObserver(withHandle: friendsObserver)
             NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
         }
+    }
+    
+    @IBAction func welcomeDismissBtnPressed(_ sender: Any) {
+        for item in welcomeArray {
+            item.removeFromSuperview()
+        }
+        UserDefaults.standard.set(1, forKey: "firstCameraVC")
     }
     
     @IBAction func switchCameraBtnPressed(_ sender: Any) {
