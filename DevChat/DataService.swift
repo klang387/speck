@@ -102,25 +102,38 @@ class DataService {
     }
     
     func searchDatabaseForUser(searchTerm: String, completion: @escaping ([User]) -> Void) {
+        var userArray: [User] = []
         let url = URL(string: "https://us-central1-devchat-9ca73.cloudfunctions.net/findUser?name=" + searchTerm)
         let task = URLSession.shared.dataTask(with: url!) {data, response, error in
-            guard error == nil else { return }
-            guard let data = data else { return }
+            guard error == nil else {
+                completion(userArray)
+                return
+            }
+            guard let data = data else {
+                completion(userArray)
+                return
+            }
             let json = try! JSONSerialization.jsonObject(with: data, options: [])
-            let uidArray = json as! [String]
-            var userArray: [User] = []
-            for uid in uidArray {
-                self.profilesRef.child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-                    if let profile = snapshot.value as? [String:String] {
-                        if let name = profile["name"], let profPicUrl = profile["profPicUrl"] {
-                            let user = User(uid: uid, name: name, profPicUrl: profPicUrl)
-                            userArray.append(user)
-                            if userArray.count == uidArray.count {
-                                completion(userArray)
+            if let uidArray = json as? [String] {
+                guard !uidArray.isEmpty else {
+                    completion(userArray)
+                    return
+                }
+                for uid in uidArray {
+                    self.profilesRef.child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                        if let profile = snapshot.value as? [String:String] {
+                            if let name = profile["name"], let profPicUrl = profile["profPicUrl"] {
+                                let user = User(uid: uid, name: name, profPicUrl: profPicUrl)
+                                userArray.append(user)
+                                if userArray.count == uidArray.count {
+                                    completion(userArray)
+                                }
                             }
                         }
-                    }
-                })
+                    })
+                }
+            } else {
+                completion(userArray)
             }
         }
         task.resume()

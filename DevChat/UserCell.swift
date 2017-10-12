@@ -69,15 +69,15 @@ class UserCell: UITableViewCell {
             animating = true
             cellSelected = !cellSelected
             if cellSelected {
-                button1 = UIButton(frame: CGRect(x: frame.width, y: 0, width: frame.height, height: frame.height))
-                button1?.backgroundColor = UIColorFromHex(rgbValue: 0xEAEAEA)
+                button1 = UIButton(frame: CGRect(x: frame.width, y: (frame.height - bgView.frame.height) / 2, width: bgView.frame.height, height: bgView.frame.height))
+                button1?.backgroundColor = UIColorFromHex(rgbValue: 0xFBFBFB)
                 addSubview(button1!)
                 switch tableSection {
                 case 0:
                     button1?.setImage(UIImage(named: "Delete"), for: .normal)
                     button1?.addTarget(self, action: #selector(deleteRequest), for: .touchUpInside)
-                    button2 = UIButton(frame: CGRect(x: frame.width + frame.height + 2, y: 0, width: frame.height, height: frame.height))
-                    button2?.backgroundColor = UIColorFromHex(rgbValue: 0xEAEAEA)
+                    button2 = UIButton(frame: CGRect(x: frame.width + frame.height + 2, y: (frame.height - bgView.frame.height) / 2, width: bgView.frame.height, height: bgView.frame.height))
+                    button2?.backgroundColor = UIColorFromHex(rgbValue: 0xFBFBFB)
                     button2?.setImage(UIImage(named: "Accept"), for: .normal)
                     button2?.addTarget(self, action: #selector(acceptRequest), for: .touchUpInside)
                     addSubview(button2!)

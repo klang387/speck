@@ -27,8 +27,6 @@ class LoginVC: UIViewController, UITextFieldDelegate {
         
         emailField.attributedPlaceholder = NSAttributedString(string: "Enter email", attributes: [NSAttributedStringKey.foregroundColor: UIColor.white])
         passwordField.attributedPlaceholder = NSAttributedString(string: "Enter password", attributes: [NSAttributedStringKey.foregroundColor: UIColor.white])
-        
-        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing(_:))))
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -37,7 +35,7 @@ class LoginVC: UIViewController, UITextFieldDelegate {
         coordinator.animate(alongsideTransition: nil, completion: { _ in
             for field in self.textFields {
                 if field.isFirstResponder {
-                    self.view.animateViewMoving(textField: field, view: self.view)
+                    self.view.animateViewMoving(textField: field, constraint: nil)
                     return
                 }
             }
@@ -57,6 +55,7 @@ class LoginVC: UIViewController, UITextFieldDelegate {
     @IBAction func forgotPasswordPressed(_ sender: Any) {
         let passwordReset = UIAlertController(title: "Forgot Your Password?", message: "No problem.  Enter your email and we'll help you reset it.", preferredStyle: .alert)
         passwordReset.addTextField()
+        passwordReset.textFields![0].keyboardType = .emailAddress
         let submitAction = UIAlertAction(title: "Submit", style: .default) { [unowned passwordReset] _ in
             if let email = passwordReset.textFields![0].text {
                 Auth.auth().sendPasswordReset(withEmail: email, completion: nil)
@@ -82,19 +81,17 @@ class LoginVC: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func loginPressed(_ sender: Any) {
+        view.animateViewMoving(textField: nil, constraint: nil)
+        self.view.endEditing(true)
         if let email = emailField.text, let pass = passwordField.text, (email.characters.count > 0 && pass.characters.count > 0) {
-            
-            AuthService.instance.emailSignIn(email: email, password: pass, completion: { (user, error) in
-                if error != nil {
-                    let alert = UIAlertController(title: "Error Authenticating", message: error, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+            AuthService.instance.emailSignIn(email: email, password: pass, completion: { (user, errorAlert) in
+                if let alert = errorAlert {
                     self.present(alert, animated: true, completion: nil)
                     return
                 }
                 AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
                 self.dismiss(animated: true, completion: nil)
             })
-            
         } else {
             guard let rootVC = UIApplication.shared.windows.last?.rootViewController else {return}
             let alert = ErrorAlert(title: "Username and Password Required", message: "You must enter both a username and a password", preferredStyle: .alert)
@@ -107,11 +104,11 @@ class LoginVC: UIViewController, UITextFieldDelegate {
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        view.animateViewMoving(textField: textField, view: view)
+        view.animateViewMoving(textField: textField, constraint: nil)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        view.animateViewMoving(textField: nil, view: view)
+        view.animateViewMoving(textField: nil, constraint: nil)
         self.view.endEditing(true)
     }
     

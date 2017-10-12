@@ -26,28 +26,40 @@ class ChangePasswordVC: UIViewController {
     }
 
     @IBAction func savePressed(_ sender: Any) {
-        if let oldPassword = oldPassword.text, let newPassword = newPassword.text, let repeatNewPassword = repeatNewPassword.text {
-            if oldPassword.characters.count > 0 &&
-                newPassword.characters.count > 0 &&
-                repeatNewPassword == newPassword {
-                guard let email = Auth.auth().currentUser?.email else {return}
-                let credential = EmailAuthProvider.credential(withEmail: email, password: oldPassword)
-                Auth.auth().currentUser?.reauthenticate(with: credential, completion: { (error) in
-                    if error != nil {
-                        let alert = ErrorAlert(title: "Uh Oh", message: "Incorrect old password.  Please try again.", preferredStyle: .alert)
-                        self.present(alert, animated: true, completion: nil)
-                    } else {
-                        Auth.auth().currentUser?.updatePassword(to: self.newPassword.text!, completion: { (error) in
-                            if error != nil {
-                                let alert = ErrorAlert(title: "Uh Oh", message: "Couldn't change password.  Please check your internet connection and try again!", preferredStyle: .alert)
-                                self.present(alert, animated: true, completion: nil)
-                            } else {
-                                self.delegate?.changePasswordDismiss()
-                            }
-                        })
-                    }
-                })
+        for field in [oldPassword, newPassword, repeatNewPassword] {
+            if field!.isFirstResponder {
+                field?.resignFirstResponder()
+                delegate?.changePasswordSavePressed()
             }
+        }
+        if let oldPassword = oldPassword.text, let newPassword = newPassword.text, let repeatNewPassword = repeatNewPassword.text {
+            guard !oldPassword.isEmpty && !newPassword.isEmpty else {
+                let alert = ErrorAlert(title: "Uh Oh", message: "All fields are required.", preferredStyle: .alert)
+                present(alert, animated: true, completion: nil)
+                return
+            }
+            guard newPassword == repeatNewPassword else {
+                let alert = ErrorAlert(title: "Uh Oh", message: "Passwords don't match.", preferredStyle: .alert)
+                present(alert, animated: true, completion: nil)
+                return
+            }
+            guard let email = Auth.auth().currentUser?.email else {return}
+            let credential = EmailAuthProvider.credential(withEmail: email, password: oldPassword)
+            Auth.auth().currentUser?.reauthenticate(with: credential, completion: { error in
+                if error != nil {
+                    let alert = ErrorAlert(title: "Uh Oh", message: error?.localizedDescription, preferredStyle: .alert)
+                    self.present(alert, animated: true, completion: nil)
+                } else {
+                    Auth.auth().currentUser?.updatePassword(to: self.newPassword.text!, completion: { (error) in
+                        if error != nil {
+                            let alert = ErrorAlert(title: "Uh Oh", message: "Couldn't change password.  Please check your internet connection and try again!", preferredStyle: .alert)
+                            self.present(alert, animated: true, completion: nil)
+                        } else {
+                            self.delegate?.changePasswordDismiss()
+                        }
+                    })
+                }
+            })
         }
     }
     
@@ -55,4 +67,5 @@ class ChangePasswordVC: UIViewController {
 
 protocol ChangePasswordDelegate {
     func changePasswordDismiss()
+    func changePasswordSavePressed()
 }

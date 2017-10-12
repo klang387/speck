@@ -124,6 +124,30 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         return false
     }
     
+    func allUsersFilter(array: [User]) -> [User] {
+        self.tempCounter = 0
+        let filteredArray = array.filter { (user) -> Bool in
+            for friend in self.friendsArray {
+                if user.uid == friend.uid {
+                    self.tempCounter += 1
+                    return false
+                }
+            }
+            for request in self.friendRequestsArray {
+                if user.uid == request.uid {
+                    self.tempCounter += 1
+                    return false
+                }
+            }
+            if user.uid == AuthService.instance.currentUser {
+                self.tempCounter += 1
+                return false
+            }
+            return true
+        }
+        return filteredArray
+    }
+    
     func loadMoreUsers() {
         self.observersLoading[2] = true
         DataService.instance.profilesRef.queryLimited(toFirst: numberOfUsersToLoad).observeSingleEvent(of: .value, with: { (snapshot) in
@@ -132,33 +156,16 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             } else {
                 self.allUsersHaveLoaded = false
             }
-            self.tempCounter = 0
-            let tempArray = DataService.instance.loadAllUsers(snapshot: snapshot).filter({ (user) -> Bool in
-                for friend in self.friendsArray {
-                    if user.uid == friend.uid {
-                        self.tempCounter += 1
-                        return false
-                    }
-                }
-                for request in self.friendRequestsArray {
-                    if user.uid == request.uid {
-                        self.tempCounter += 1
-                        return false
-                    }
-                }
-                if user.uid == AuthService.instance.currentUser {
-                    self.tempCounter += 1
-                    return false
-                }
-                return true
-            })
+            let tempArray = DataService.instance.loadAllUsers(snapshot: snapshot)
+            let filteredArray = self.allUsersFilter(array: tempArray)
+            
             if self.tempCounter > self.allUsersFilterCount {
                 self.numberOfUsersToLoad += self.tempCounter - self.allUsersFilterCount
                 self.allUsersFilterCount = self.tempCounter
                 self.loadMoreUsers()
                 return
             }
-            self.allUsersArray = tempArray
+            self.allUsersArray = filteredArray
             self.filteredAllUsers = self.searchBar.text == nil || self.searchBar.text == "" ? self.allUsersArray : self.allUsersArray.filter({ (user) -> Bool in
                 return user.name.range(of: self.searchBar.text!, options: .caseInsensitive, range: nil, locale: nil) != nil
             })
@@ -352,16 +359,20 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     func searchDatabase() {
         if searchBar.text?.range(of: "@") == nil {
             DataService.instance.searchDatabaseForUser(searchTerm: searchBar.text!, completion: { users in
-                self.spinner?.removeFromSuperview()
-                self.spinner = nil
-                self.filteredAllUsers = users
-                self.tableView.reloadData()
+                DispatchQueue.main.async { [unowned self] in
+                    let filteredUsers = self.allUsersFilter(array: users)
+                    self.spinner?.removeFromSuperview()
+                    self.spinner = nil
+                    self.filteredAllUsers = filteredUsers
+                    self.tableView.reloadData()
+                }
             })
         } else {
             DataService.instance.searchUsersByEmail(searchTerm: searchBar.text!, handler: { users in
+                let filteredUsers = self.allUsersFilter(array: users)
                 self.spinner?.removeFromSuperview()
                 self.spinner = nil
-                self.filteredAllUsers = users
+                self.filteredAllUsers = filteredUsers
                 self.tableView.reloadData()
             })
         }

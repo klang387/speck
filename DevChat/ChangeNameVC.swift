@@ -23,16 +23,21 @@ class ChangeNameVC: UIViewController {
     }
 
     @IBAction func savePressed(_ sender: Any) {
+        newUsername.resignFirstResponder()
+        delegate?.changeNameSavePressed()
         if let username = newUsername.text, let currentUser = Auth.auth().currentUser?.uid {
-            if username.characters.count > 0 {
-                guard !username.contains("@") else {
-                    let alert = ErrorAlert(title: "Uh Oh", message: "Name cannot contain '@'.", preferredStyle: .alert)
-                    present(alert, animated: true, completion: nil)
-                    return
-                }
-                DataService.instance.profilesRef.child(currentUser).updateChildValues(["name":username])
-                delegate?.changeNameDismiss()
+            guard username.characters.count > 0 else {
+                let alert = ErrorAlert(title: "Uh Oh", message: "Name is empty.", preferredStyle: .alert)
+                present(alert, animated: true, completion: nil)
+                return
             }
+            guard !username.contains("@") else {
+                let alert = ErrorAlert(title: "Uh Oh", message: "Name cannot contain '@'.", preferredStyle: .alert)
+                present(alert, animated: true, completion: nil)
+                return
+            }
+            DataService.instance.profilesRef.child(currentUser).updateChildValues(["name":username])
+            delegate?.changeNameDismiss()
         }
     }
 
@@ -40,4 +45,5 @@ class ChangeNameVC: UIViewController {
 
 protocol ChangeNameDelegate {
     func changeNameDismiss()
+    func changeNameSavePressed()
 }

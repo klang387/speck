@@ -18,17 +18,22 @@ extension UIView {
         return UIColor(red:red, green:green, blue:blue, alpha:CGFloat(alpha))
     }
     
-    func animateViewMoving(textField:UITextField?, view: UIView) {
+    func animateViewMoving(textField:UITextField?, constraint: NSLayoutConstraint?) {
         if textField != nil {
-            guard let textFieldPosition = textField?.superview?.convert(textField!.frame, to: view).midY else {return}
-            let targetY = view.frame.height > view.frame.width ? view.frame.height / 2.5 : view.frame.height / 4
+            constraint?.isActive = false
+            guard let textFieldPosition = textField?.superview?.convert(textField!.frame, to: self).midY else {return}
+            let targetY = frame.height > frame.width ? frame.height / 2.5 : frame.height / 4
             let targetPosition = -(textFieldPosition - targetY)
-            UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseOut, animations: {
-                view.frame = CGRect(x: 0, y: targetPosition, width: view.frame.width, height: view.frame.height)
-            })
+            if targetPosition < 0 {
+                UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseOut, animations: {
+                    self.frame = CGRect(x: 0, y: targetPosition, width: self.frame.width, height: self.frame.height)
+                })
+            }
         } else {
             UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseOut, animations: {
-                view.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
+                self.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height)
+            }, completion: { finished in
+                constraint?.isActive = true
             })
         }
     }

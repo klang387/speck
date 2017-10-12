@@ -2,7 +2,7 @@
 //  CustomImagePicker.swift
 //  Speck
 //
-//  Created by Kevin Langelier on 9/22/17.
+//  Created by Kevin Langelier on 10/11/17.
 //  Copyright © 2017 Kevin Langelier. All rights reserved.
 //
 
@@ -10,20 +10,36 @@ import UIKit
 
 class CustomImagePicker: UIImagePickerController {
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override var childViewControllerForStatusBarHidden: UIViewController? {
+        return nil
     }
+    
+    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation{
+        return .slide
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return statusBarHidden
+    }
+    
+    var statusBarHidden: Bool = false {
+        didSet {
+            UIView.animate(withDuration: 0.2) {
+                self.setNeedsStatusBarAppearanceUpdate()
+            }
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
+        statusBarHidden = true
     }
     
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .allButUpsideDown
-    }
-    
-    override var shouldAutorotate: Bool {
-        return true
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        statusBarHidden = false
     }
 
 }

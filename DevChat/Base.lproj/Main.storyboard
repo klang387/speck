@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina4_0" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -10,6 +10,7 @@
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -28,10 +29,6 @@
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="CameraVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
-                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -197,10 +194,13 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iNu-An-9Ee">
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iNu-An-9Ee">
                                 <rect key="frame" x="31" y="42" width="16" height="16"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.97254901959999995" green="0.0" blue="0.0" alpha="0.69999999999999996" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="16" id="FNF-gO-EXb"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="16" id="cwd-43-4eh"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="12"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
@@ -217,61 +217,65 @@
                             <constraint firstItem="DRZ-cc-skc" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="0vv-5U-b39"/>
                             <constraint firstItem="1bv-Vd-iX8" firstAttribute="leading" secondItem="DRZ-cc-skc" secondAttribute="trailingMargin" constant="-60" id="1Ex-SD-yYX"/>
                             <constraint firstAttribute="trailing" secondItem="N8g-xs-2MV" secondAttribute="trailing" id="1O3-vs-3H4"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="wQH-m6-v7P" secondAttribute="bottom" id="3Ci-rA-laa"/>
-                            <constraint firstItem="Qza-at-maU" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="465-6s-75T"/>
+                            <constraint firstItem="bMe-tV-See" firstAttribute="bottom" secondItem="wQH-m6-v7P" secondAttribute="bottom" id="3Ci-rA-laa"/>
+                            <constraint firstItem="Qza-at-maU" firstAttribute="leading" secondItem="bMe-tV-See" secondAttribute="leading" id="465-6s-75T"/>
                             <constraint firstItem="AoW-Ah-8hr" firstAttribute="top" secondItem="vHh-Ff-kgi" secondAttribute="bottom" constant="-6" id="4XC-Bd-gYe"/>
                             <constraint firstAttribute="trailing" secondItem="vHh-Ff-kgi" secondAttribute="trailing" id="4qE-2D-6Tu"/>
                             <constraint firstItem="BIt-xM-pd7" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="6Lb-Mv-jVE"/>
                             <constraint firstItem="wQH-m6-v7P" firstAttribute="top" secondItem="JWv-uR-QzW" secondAttribute="bottom" constant="7" id="CF8-IE-bCt"/>
                             <constraint firstItem="1bv-Vd-iX8" firstAttribute="top" secondItem="DRZ-cc-skc" secondAttribute="bottom" constant="-17" id="D8i-ct-G0h"/>
                             <constraint firstAttribute="bottom" secondItem="Xia-Oz-UOE" secondAttribute="bottom" id="E9m-N9-OXM"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="I3b-5i-Bpj" secondAttribute="bottom" id="ElD-oU-rkH"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="PUB-5w-Tnn" secondAttribute="bottom" constant="30" id="FaP-aX-3D2"/>
+                            <constraint firstItem="bMe-tV-See" firstAttribute="bottom" secondItem="I3b-5i-Bpj" secondAttribute="bottom" id="ElD-oU-rkH"/>
+                            <constraint firstItem="I3b-5i-Bpj" firstAttribute="bottom" secondItem="PUB-5w-Tnn" secondAttribute="bottom" constant="30" id="FaP-aX-3D2"/>
                             <constraint firstItem="wbK-jN-HSt" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="Gbb-ob-0C4"/>
                             <constraint firstAttribute="trailing" secondItem="Xia-Oz-UOE" secondAttribute="trailing" id="L1b-qa-i4C"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="8xy-IG-f4O" secondAttribute="bottom" id="NXO-bs-Rq2"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="0kR-iV-nqK" secondAttribute="bottom" id="PYS-qR-N6z"/>
+                            <constraint firstItem="bMe-tV-See" firstAttribute="bottom" secondItem="8xy-IG-f4O" secondAttribute="bottom" id="NXO-bs-Rq2"/>
+                            <constraint firstItem="bMe-tV-See" firstAttribute="bottom" secondItem="0kR-iV-nqK" secondAttribute="bottom" id="PYS-qR-N6z"/>
                             <constraint firstItem="vHh-Ff-kgi" firstAttribute="top" secondItem="wbK-jN-HSt" secondAttribute="bottom" id="PfZ-Eh-lvS"/>
                             <constraint firstItem="0kR-iV-nqK" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Pgh-A2-gOo"/>
-                            <constraint firstItem="wQH-m6-v7P" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Q0Q-g5-KK6"/>
-                            <constraint firstItem="Kb6-FV-wEb" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="QUx-8P-VLK"/>
+                            <constraint firstItem="wQH-m6-v7P" firstAttribute="centerX" secondItem="bMe-tV-See" secondAttribute="centerX" id="Q0Q-g5-KK6"/>
+                            <constraint firstItem="Kb6-FV-wEb" firstAttribute="leading" secondItem="bMe-tV-See" secondAttribute="leading" id="QUx-8P-VLK"/>
                             <constraint firstItem="1Sm-4H-Nv2" firstAttribute="leading" secondItem="0kR-iV-nqK" secondAttribute="leadingMargin" constant="28" id="UIQ-6d-wAu"/>
                             <constraint firstAttribute="trailing" secondItem="wbK-jN-HSt" secondAttribute="trailing" id="Ueb-fo-mPe"/>
-                            <constraint firstAttribute="trailing" secondItem="Kb6-FV-wEb" secondAttribute="trailing" id="Z1D-Tg-0a3"/>
+                            <constraint firstItem="bMe-tV-See" firstAttribute="trailing" secondItem="Kb6-FV-wEb" secondAttribute="trailing" id="Z1D-Tg-0a3"/>
                             <constraint firstItem="oAX-j3-OdA" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="13" id="b3J-zn-rMY"/>
                             <constraint firstAttribute="trailing" secondItem="B1j-xv-X8t" secondAttribute="trailing" id="b69-A7-P27"/>
                             <constraint firstAttribute="trailing" secondItem="BIt-xM-pd7" secondAttribute="trailing" id="bJa-oI-bnt"/>
                             <constraint firstItem="B1j-xv-X8t" firstAttribute="trailingMargin" secondItem="Su8-Gi-IpO" secondAttribute="trailing" constant="18" id="bZc-gf-Iqr"/>
                             <constraint firstItem="vHh-Ff-kgi" firstAttribute="leadingMargin" secondItem="AoW-Ah-8hr" secondAttribute="trailing" constant="-20" id="buq-qR-AXX"/>
+                            <constraint firstItem="iNu-An-9Ee" firstAttribute="top" secondItem="oAX-j3-OdA" secondAttribute="bottom" constant="-12" id="c9S-PN-KrX"/>
                             <constraint firstItem="BIt-xM-pd7" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="ceW-Pe-Nxm"/>
                             <constraint firstItem="0kR-iV-nqK" firstAttribute="bottom" secondItem="1Sm-4H-Nv2" secondAttribute="bottom" constant="56" id="dCy-Ta-zbJ"/>
                             <constraint firstItem="PUB-5w-Tnn" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="13" id="ec6-vb-wkj"/>
-                            <constraint firstItem="JWv-uR-QzW" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="eqF-HV-N1s"/>
-                            <constraint firstItem="y3c-jy-aDJ" firstAttribute="bottom" secondItem="wbK-jN-HSt" secondAttribute="bottom" constant="-3" id="fAP-00-F5H">
+                            <constraint firstItem="JWv-uR-QzW" firstAttribute="centerX" secondItem="bMe-tV-See" secondAttribute="centerX" id="eqF-HV-N1s"/>
+                            <constraint firstItem="bMe-tV-See" firstAttribute="top" secondItem="wbK-jN-HSt" secondAttribute="bottom" constant="-3" id="fAP-00-F5H">
                                 <variation key="heightClass=compact" constant="-23"/>
                             </constraint>
-                            <constraint firstItem="wbK-jN-HSt" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="faW-Wc-DYr"/>
+                            <constraint firstItem="wbK-jN-HSt" firstAttribute="leading" secondItem="bMe-tV-See" secondAttribute="leading" id="faW-Wc-DYr"/>
                             <constraint firstItem="QZO-BK-4Gf" firstAttribute="top" secondItem="wbK-jN-HSt" secondAttribute="bottom" constant="1" id="gqk-GL-0Zg"/>
                             <constraint firstItem="N8g-xs-2MV" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="hFF-YH-cta"/>
                             <constraint firstItem="Xia-Oz-UOE" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="huk-iM-oS3"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="4eK-xB-UgP" secondAttribute="bottom" id="hwL-GT-GeL"/>
+                            <constraint firstItem="bMe-tV-See" firstAttribute="bottom" secondItem="4eK-xB-UgP" secondAttribute="bottom" id="hwL-GT-GeL"/>
                             <constraint firstAttribute="bottom" secondItem="N8g-xs-2MV" secondAttribute="bottom" id="iCn-xy-YOy"/>
                             <constraint firstItem="N8g-xs-2MV" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="jOm-X1-jft"/>
                             <constraint firstItem="Qza-at-maU" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="-20" id="kNm-Lq-VW3"/>
+                            <constraint firstItem="iNu-An-9Ee" firstAttribute="leading" secondItem="oAX-j3-OdA" secondAttribute="leading" constant="18" id="mLb-br-vo6"/>
                             <constraint firstItem="DRZ-cc-skc" firstAttribute="top" secondItem="wbK-jN-HSt" secondAttribute="bottom" id="nkm-8D-aJW"/>
                             <constraint firstItem="B1j-xv-X8t" firstAttribute="top" secondItem="Su8-Gi-IpO" secondAttribute="bottom" constant="-32" id="nyN-6f-E3f"/>
                             <constraint firstAttribute="trailing" secondItem="4eK-xB-UgP" secondAttribute="trailing" id="okD-MG-XIi"/>
-                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="PUB-5w-Tnn" secondAttribute="trailingMargin" id="sk0-Zx-vcN"/>
-                            <constraint firstAttribute="trailing" secondItem="Qza-at-maU" secondAttribute="trailing" id="stU-Jr-JZS"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="iNu-An-9Ee" secondAttribute="trailing" constant="20" symbolic="YES" id="qdB-e9-Aai"/>
+                            <constraint firstItem="bMe-tV-See" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="PUB-5w-Tnn" secondAttribute="trailingMargin" id="sk0-Zx-vcN"/>
+                            <constraint firstItem="bMe-tV-See" firstAttribute="trailing" secondItem="Qza-at-maU" secondAttribute="trailing" id="stU-Jr-JZS"/>
                             <constraint firstItem="Kb6-FV-wEb" firstAttribute="top" secondItem="Qza-at-maU" secondAttribute="bottom" id="tff-LC-Mch"/>
                             <constraint firstAttribute="trailing" secondItem="QZO-BK-4Gf" secondAttribute="trailing" constant="7" id="vaC-ww-Efj"/>
                             <constraint firstAttribute="bottom" secondItem="BIt-xM-pd7" secondAttribute="bottom" id="vla-kc-a2D"/>
-                            <constraint firstItem="Xia-Oz-UOE" firstAttribute="top" secondItem="wfy-db-euE" secondAttribute="top" id="vxZ-Iz-I3X"/>
-                            <constraint firstItem="8xy-IG-f4O" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="wBM-9h-H6g"/>
+                            <constraint firstItem="Xia-Oz-UOE" firstAttribute="top" secondItem="bMe-tV-See" secondAttribute="bottom" id="vxZ-Iz-I3X"/>
+                            <constraint firstItem="8xy-IG-f4O" firstAttribute="centerX" secondItem="bMe-tV-See" secondAttribute="centerX" id="wBM-9h-H6g"/>
                             <constraint firstItem="I3b-5i-Bpj" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="wIo-q2-aqS"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="B1j-xv-X8t" secondAttribute="bottom" id="x1U-3V-nRV"/>
+                            <constraint firstItem="bMe-tV-See" firstAttribute="bottom" secondItem="B1j-xv-X8t" secondAttribute="bottom" id="x1U-3V-nRV"/>
                             <constraint firstItem="oAX-j3-OdA" firstAttribute="top" secondItem="wbK-jN-HSt" secondAttribute="bottom" constant="1" id="ySd-Hm-lCv"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="bMe-tV-See"/>
                     </view>
                     <connections>
                         <outlet property="captureBtn" destination="8xy-IG-f4O" id="6ss-jg-Lty"/>
@@ -305,10 +309,6 @@
         <scene sceneID="icA-eV-561">
             <objects>
                 <viewController id="AYo-Rp-cQ0" customClass="LoginVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="Irs-oi-t1S"/>
-                        <viewControllerLayoutGuide type="bottom" id="oxO-dX-aba"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="lQW-7N-y0k">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -321,8 +321,8 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7zn-E6-hAM">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="vuh-nY-8AV">
-                                        <rect key="frame" x="0.0" y="257" width="320" height="174"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="vuh-nY-8AV">
+                                        <rect key="frame" x="0.0" y="266" width="320" height="156"/>
                                         <subviews>
                                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Enter email" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Vqr-vF-9dO">
                                                 <rect key="frame" x="0.0" y="0.0" width="320" height="40"/>
@@ -335,17 +335,17 @@
                                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="emailAddress" returnKeyType="next"/>
                                             </textField>
                                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Enter password" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="rOT-UG-79y">
-                                                <rect key="frame" x="0.0" y="50" width="320" height="40"/>
+                                                <rect key="frame" x="0.0" y="44" width="320" height="40"/>
                                                 <color key="backgroundColor" red="0.2901960784" green="0.32156862749999998" blue="0.34509803919999998" alpha="0.78000000000000003" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="40" id="UHd-tN-ajz"/>
                                                 </constraints>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="17"/>
-                                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="emailAddress" returnKeyType="go" secureTextEntry="YES"/>
+                                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="go" secureTextEntry="YES"/>
                                             </textField>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FcV-5g-6EE">
-                                                <rect key="frame" x="0.0" y="100" width="320" height="40"/>
+                                                <rect key="frame" x="0.0" y="88" width="320" height="40"/>
                                                 <color key="backgroundColor" red="0.2901960784" green="0.32156862749999998" blue="0.34509803919999998" alpha="0.78000000000000003" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="40" id="BLO-E6-WTV"/>
@@ -359,7 +359,7 @@
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="liY-Ep-u9G">
-                                                <rect key="frame" x="0.0" y="150" width="320" height="24"/>
+                                                <rect key="frame" x="0.0" y="132" width="320" height="24"/>
                                                 <color key="backgroundColor" red="0.29019607843137252" green="0.32156862745098036" blue="0.34509803921568627" alpha="0.78000000000000003" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="24" id="a4B-Xz-71f"/>
@@ -384,7 +384,6 @@
                                                 </connections>
                                             </button>
                                         </subviews>
-                                        <variation key="heightClass=compact" spacing="4"/>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="Wjh-AA-nbH">
                                         <rect key="frame" x="0.0" y="490" width="320" height="58"/>
@@ -405,6 +404,9 @@
                                                         <exclude reference="G3B-Kb-jZf"/>
                                                     </mask>
                                                 </variation>
+                                                <variation key="heightClass=compact">
+                                                    <color key="backgroundColor" red="0.29803921568627451" green="0.44705882352941173" blue="0.85098039215686272" alpha="0.44574058219178081" colorSpace="custom" customColorSpace="sRGB"/>
+                                                </variation>
                                                 <variation key="heightClass=compact-widthClass=compact">
                                                     <mask key="constraints">
                                                         <include reference="G3B-Kb-jZf"/>
@@ -423,7 +425,7 @@
                                                 </constraints>
                                                 <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="13"/>
                                                 <state key="normal" title="Create Account">
-                                                    <color key="titleColor" red="0.47896564009999998" green="0.70071405170000001" blue="0.90655112270000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="titleColor" red="0.29803921568627451" green="0.44705882352941173" blue="0.85098039215686272" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </state>
                                                 <variation key="default">
                                                     <mask key="constraints">
@@ -535,20 +537,21 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="81A-WZ-PHV" firstAttribute="top" secondItem="lQW-7N-y0k" secondAttribute="top" id="LSz-ou-snP"/>
-                            <constraint firstAttribute="trailing" secondItem="7zn-E6-hAM" secondAttribute="trailing" id="O2i-YR-ldh"/>
-                            <constraint firstItem="7zn-E6-hAM" firstAttribute="leading" secondItem="lQW-7N-y0k" secondAttribute="leading" id="Uji-bL-WSx"/>
+                            <constraint firstItem="vwp-aG-gFe" firstAttribute="trailing" secondItem="7zn-E6-hAM" secondAttribute="trailing" id="O2i-YR-ldh"/>
+                            <constraint firstItem="7zn-E6-hAM" firstAttribute="leading" secondItem="vwp-aG-gFe" secondAttribute="leading" id="Uji-bL-WSx"/>
                             <constraint firstAttribute="trailing" secondItem="81A-WZ-PHV" secondAttribute="trailing" id="Zdq-Ua-VXf"/>
-                            <constraint firstItem="oxO-dX-aba" firstAttribute="top" secondItem="7zn-E6-hAM" secondAttribute="bottom" id="aLc-JZ-fef"/>
+                            <constraint firstItem="vwp-aG-gFe" firstAttribute="bottom" secondItem="7zn-E6-hAM" secondAttribute="bottom" id="aLc-JZ-fef"/>
                             <constraint firstItem="7zn-E6-hAM" firstAttribute="top" secondItem="lQW-7N-y0k" secondAttribute="top" id="c0N-ET-c9F"/>
-                            <constraint firstItem="oxO-dX-aba" firstAttribute="top" secondItem="7zn-E6-hAM" secondAttribute="bottom" id="hs0-4s-Rra"/>
+                            <constraint firstItem="vwp-aG-gFe" firstAttribute="bottom" secondItem="7zn-E6-hAM" secondAttribute="bottom" id="hs0-4s-Rra"/>
                             <constraint firstItem="81A-WZ-PHV" firstAttribute="leading" secondItem="lQW-7N-y0k" secondAttribute="leading" id="o1X-gA-exB"/>
                             <constraint firstAttribute="bottom" secondItem="81A-WZ-PHV" secondAttribute="bottom" id="sQ4-mb-PWQ"/>
                             <constraint firstItem="vuh-nY-8AV" firstAttribute="width" secondItem="lQW-7N-y0k" secondAttribute="width" id="wCQ-n4-0bW"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="vwp-aG-gFe"/>
                         <variation key="default">
                             <mask key="constraints">
-                                <exclude reference="wCQ-n4-0bW"/>
                                 <exclude reference="hs0-4s-Rra"/>
+                                <exclude reference="wCQ-n4-0bW"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=compact-widthClass=compact">
@@ -574,39 +577,35 @@
             </objects>
             <point key="canvasLocation" x="855" y="34.859154929577464"/>
         </scene>
-        <!--SignUpVC-->
+        <!--Sign UpVC-->
         <scene sceneID="eXl-h3-e0s">
             <objects>
-                <viewController id="8wo-J8-AUm" userLabel="SignUpVC" customClass="SignUpVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="oL2-Ky-Ukx"/>
-                        <viewControllerLayoutGuide type="bottom" id="DH4-OH-goI"/>
-                    </layoutGuides>
+                <viewController id="8wo-J8-AUm" customClass="SignUpVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="dgv-ji-3B0">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" alpha="0.25" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="TabGrey" translatesAutoresizingMaskIntoConstraints="NO" id="Jne-tD-atD">
-                                <rect key="frame" x="0.0" y="23" width="75" height="46"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="BarGrey" translatesAutoresizingMaskIntoConstraints="NO" id="AJV-R5-eAe">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="23"/>
+                            </imageView>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="TabGrey" translatesAutoresizingMaskIntoConstraints="NO" id="Jne-tD-atD">
+                                <rect key="frame" x="-1" y="23" width="75" height="46"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="46" id="7cu-7h-xZU"/>
                                     <constraint firstAttribute="width" constant="75" id="HTs-JS-M78"/>
                                 </constraints>
                             </imageView>
-                            <imageView userInteractionEnabled="NO" alpha="0.25" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="BarGrey" translatesAutoresizingMaskIntoConstraints="NO" id="AJV-R5-eAe">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="23"/>
-                            </imageView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="24" translatesAutoresizingMaskIntoConstraints="NO" id="0eZ-K3-mWv">
-                                <rect key="frame" x="16" y="53" width="288" height="459"/>
+                                <rect key="frame" x="0.0" y="63.5" width="320" height="441"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Logo" translatesAutoresizingMaskIntoConstraints="NO" id="s0d-EY-xHa">
-                                        <rect key="frame" x="0.0" y="0.0" width="288" height="142"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="142"/>
                                     </imageView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="zsU-Dr-KIK">
-                                        <rect key="frame" x="0.0" y="166" width="288" height="293"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="bottom" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="zsU-Dr-KIK">
+                                        <rect key="frame" x="0.0" y="166" width="320" height="275"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="7" translatesAutoresizingMaskIntoConstraints="NO" id="ayQ-9y-hdU">
-                                                <rect key="frame" x="10" y="0.0" width="268" height="94"/>
+                                                <rect key="frame" x="7" y="0.0" width="313" height="94"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="AMe-bi-xbn">
                                                         <rect key="frame" x="0.0" y="0.0" width="94" height="94"/>
@@ -620,24 +619,19 @@
                                                             <action selector="selectProfilePicPressed:" destination="8wo-J8-AUm" eventType="touchUpInside" id="Bd8-z2-1KE"/>
                                                         </connections>
                                                     </button>
-                                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalCentering" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="n1w-bB-GWb">
-                                                        <rect key="frame" x="101" y="2" width="167" height="90"/>
+                                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalCentering" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="n1w-bB-GWb">
+                                                        <rect key="frame" x="101" y="5" width="212" height="84"/>
                                                         <subviews>
                                                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="First Name" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="FW5-mz-CIU">
-                                                                <rect key="frame" x="0.0" y="0.0" width="167" height="40"/>
-                                                                <color key="backgroundColor" red="0.29019607843137252" green="0.32156862745098036" blue="0.34509803921568627" alpha="0.55000000000000004" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="212" height="40"/>
+                                                                <color key="backgroundColor" red="0.29019607843137252" green="0.32156862745098036" blue="0.34509803921568627" alpha="0.78000000000000003" colorSpace="custom" customColorSpace="sRGB"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="40" id="968-iK-F4L"/>
                                                                     <constraint firstAttribute="height" relation="lessThanOrEqual" constant="40" id="fb7-Jz-Yw4"/>
                                                                 </constraints>
                                                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                                 <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="17"/>
-                                                                <textInputTraits key="textInputTraits" returnKeyType="next"/>
-                                                                <userDefinedRuntimeAttributes>
-                                                                    <userDefinedRuntimeAttribute type="color" keyPath="bgColor">
-                                                                        <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                                    </userDefinedRuntimeAttribute>
-                                                                </userDefinedRuntimeAttributes>
+                                                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="next"/>
                                                                 <variation key="default">
                                                                     <mask key="constraints">
                                                                         <exclude reference="fb7-Jz-Yw4"/>
@@ -651,16 +645,11 @@
                                                                 </variation>
                                                             </textField>
                                                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Last Name" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Erx-Ip-aFT">
-                                                                <rect key="frame" x="0.0" y="50" width="167" height="40"/>
-                                                                <color key="backgroundColor" red="0.2901960784" green="0.32156862749999998" blue="0.34509803919999998" alpha="0.55000000000000004" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                <rect key="frame" x="0.0" y="44" width="212" height="40"/>
+                                                                <color key="backgroundColor" red="0.29019607843137252" green="0.32156862745098036" blue="0.34509803921568627" alpha="0.78000000000000003" colorSpace="custom" customColorSpace="sRGB"/>
                                                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                                 <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="17"/>
-                                                                <textInputTraits key="textInputTraits" returnKeyType="next"/>
-                                                                <userDefinedRuntimeAttributes>
-                                                                    <userDefinedRuntimeAttribute type="color" keyPath="bgColor">
-                                                                        <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                                    </userDefinedRuntimeAttribute>
-                                                                </userDefinedRuntimeAttributes>
+                                                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="next"/>
                                                             </textField>
                                                         </subviews>
                                                         <constraints>
@@ -669,48 +658,33 @@
                                                     </stackView>
                                                 </subviews>
                                             </stackView>
-                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="3ZX-w3-xXy">
-                                                <rect key="frame" x="0.0" y="104" width="288" height="189"/>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="3ZX-w3-xXy">
+                                                <rect key="frame" x="0.0" y="104" width="320" height="171"/>
                                                 <subviews>
                                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="E-Mail" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="5ex-5S-oo4">
-                                                        <rect key="frame" x="0.0" y="0.0" width="288" height="40"/>
-                                                        <color key="backgroundColor" red="0.2901960784" green="0.32156862749999998" blue="0.34509803919999998" alpha="0.55000000000000004" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="320" height="40"/>
+                                                        <color key="backgroundColor" red="0.2901960784" green="0.32156862749999998" blue="0.34509803919999998" alpha="0.78000000000000003" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                         <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="17"/>
-                                                        <textInputTraits key="textInputTraits" returnKeyType="next"/>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="color" keyPath="bgColor">
-                                                                <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                        </userDefinedRuntimeAttributes>
+                                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="emailAddress" returnKeyType="next"/>
                                                     </textField>
                                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Password" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="84O-wq-fo6">
-                                                        <rect key="frame" x="0.0" y="50" width="288" height="39.5"/>
-                                                        <color key="backgroundColor" red="0.2901960784" green="0.32156862749999998" blue="0.34509803919999998" alpha="0.55000000000000004" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <rect key="frame" x="0.0" y="44" width="320" height="39.5"/>
+                                                        <color key="backgroundColor" red="0.2901960784" green="0.32156862749999998" blue="0.34509803919999998" alpha="0.78000000000000003" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                         <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="17"/>
-                                                        <textInputTraits key="textInputTraits" returnKeyType="next" secureTextEntry="YES"/>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="color" keyPath="bgColor">
-                                                                <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                        </userDefinedRuntimeAttributes>
+                                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="next" secureTextEntry="YES"/>
                                                     </textField>
                                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Re-Enter Password" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="yIN-Ah-Mac">
-                                                        <rect key="frame" x="0.0" y="99.5" width="288" height="39.5"/>
-                                                        <color key="backgroundColor" red="0.2901960784" green="0.32156862749999998" blue="0.34509803919999998" alpha="0.55000000000000004" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <rect key="frame" x="0.0" y="87.5" width="320" height="39.5"/>
+                                                        <color key="backgroundColor" red="0.2901960784" green="0.32156862749999998" blue="0.34509803919999998" alpha="0.78000000000000003" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                         <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="17"/>
-                                                        <textInputTraits key="textInputTraits" returnKeyType="go" secureTextEntry="YES"/>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="color" keyPath="bgColor">
-                                                                <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                        </userDefinedRuntimeAttributes>
+                                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="go" secureTextEntry="YES"/>
                                                     </textField>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JQJ-wm-Uic">
-                                                        <rect key="frame" x="0.0" y="149" width="288" height="40"/>
-                                                        <color key="backgroundColor" red="0.2901960784" green="0.32156862749999998" blue="0.34509803919999998" alpha="0.55000000000000004" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <rect key="frame" x="0.0" y="131" width="320" height="40"/>
+                                                        <color key="backgroundColor" red="0.58185404539108276" green="0.76994889974594116" blue="0.84712064266204834" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <state key="normal" title="Submit">
                                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
@@ -724,12 +698,12 @@
                                         <constraints>
                                             <constraint firstItem="JQJ-wm-Uic" firstAttribute="height" secondItem="FW5-mz-CIU" secondAttribute="height" id="XJc-8g-gbx"/>
                                             <constraint firstItem="3ZX-w3-xXy" firstAttribute="leading" secondItem="zsU-Dr-KIK" secondAttribute="leading" id="Xme-4u-eiu"/>
-                                            <constraint firstItem="ayQ-9y-hdU" firstAttribute="leading" secondItem="zsU-Dr-KIK" secondAttribute="leading" constant="10" id="Zcf-WJ-6Fe"/>
                                             <constraint firstAttribute="trailing" secondItem="3ZX-w3-xXy" secondAttribute="trailing" id="cs3-P0-Y4T"/>
+                                            <constraint firstAttribute="trailing" secondItem="ayQ-9y-hdU" secondAttribute="trailing" id="gk6-Lx-hhl"/>
+                                            <constraint firstItem="ayQ-9y-hdU" firstAttribute="leading" secondItem="zsU-Dr-KIK" secondAttribute="leading" constant="7" id="hVr-1S-FAK"/>
                                             <constraint firstItem="84O-wq-fo6" firstAttribute="height" secondItem="FW5-mz-CIU" secondAttribute="height" id="mHI-wW-R6m"/>
                                             <constraint firstItem="yIN-Ah-Mac" firstAttribute="height" secondItem="FW5-mz-CIU" secondAttribute="height" id="mwB-YM-NSj"/>
                                             <constraint firstItem="5ex-5S-oo4" firstAttribute="height" secondItem="FW5-mz-CIU" secondAttribute="height" id="sl6-Xn-bYJ"/>
-                                            <constraint firstAttribute="trailing" secondItem="ayQ-9y-hdU" secondAttribute="trailing" constant="10" id="v7i-uz-uWm"/>
                                         </constraints>
                                     </stackView>
                                 </subviews>
@@ -750,37 +724,30 @@
                         </subviews>
                         <color key="backgroundColor" red="0.87058823529411766" green="0.92941176470588238" blue="0.47058823529411764" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="Jne-tD-atD" firstAttribute="leading" secondItem="dgv-ji-3B0" secondAttribute="leading" id="385-FW-ooL"/>
-                            <constraint firstItem="DH4-OH-goI" firstAttribute="top" secondItem="0eZ-K3-mWv" secondAttribute="bottom" constant="30" id="9VB-co-g8P"/>
+                            <constraint firstItem="Jne-tD-atD" firstAttribute="leading" secondItem="dgv-ji-3B0" secondAttribute="leading" constant="-1" id="385-FW-ooL"/>
                             <constraint firstAttribute="trailing" secondItem="AJV-R5-eAe" secondAttribute="trailing" id="BjR-Uv-E0J"/>
-                            <constraint firstItem="Jne-tD-atD" firstAttribute="top" secondItem="AJV-R5-eAe" secondAttribute="bottom" id="Jy6-BE-dIb"/>
-                            <constraint firstItem="AJV-R5-eAe" firstAttribute="leading" secondItem="dgv-ji-3B0" secondAttribute="leading" id="Q0B-AW-4LX"/>
-                            <constraint firstItem="AJV-R5-eAe" firstAttribute="top" secondItem="dgv-ji-3B0" secondAttribute="top" id="Wb6-2U-89a"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="0eZ-K3-mWv" secondAttribute="trailing" id="fCZ-vd-Cy2">
-                                <variation key="heightClass=compact" constant="0.0"/>
+                            <constraint firstItem="0eZ-K3-mWv" firstAttribute="centerY" secondItem="dgv-ji-3B0" secondAttribute="centerY" id="Cov-2l-5Mc">
+                                <variation key="heightClass=regular-widthClass=regular" constant="-50"/>
                             </constraint>
+                            <constraint firstItem="Jne-tD-atD" firstAttribute="top" secondItem="AJV-R5-eAe" secondAttribute="bottom" constant="-0.5" id="Jy6-BE-dIb"/>
+                            <constraint firstItem="AJV-R5-eAe" firstAttribute="leading" secondItem="dgv-ji-3B0" secondAttribute="leading" id="Q0B-AW-4LX"/>
+                            <constraint firstAttribute="top" secondItem="AJV-R5-eAe" secondAttribute="top" id="QP4-VA-Ljr"/>
+                            <constraint firstItem="l4d-pc-75p" firstAttribute="trailing" secondItem="0eZ-K3-mWv" secondAttribute="trailing" id="fCZ-vd-Cy2"/>
                             <constraint firstItem="xmv-Gb-4TW" firstAttribute="leading" secondItem="dgv-ji-3B0" secondAttribute="leading" id="ict-qi-RgW"/>
                             <constraint firstItem="s0d-EY-xHa" firstAttribute="width" secondItem="dgv-ji-3B0" secondAttribute="width" multiplier="0.5" id="jEn-6k-wg6"/>
-                            <constraint firstItem="oL2-Ky-Ukx" firstAttribute="bottom" secondItem="AJV-R5-eAe" secondAttribute="bottom" constant="-3" id="oEt-B6-ttk">
+                            <constraint firstItem="l4d-pc-75p" firstAttribute="top" secondItem="AJV-R5-eAe" secondAttribute="bottom" constant="-3" id="oEt-B6-ttk">
                                 <variation key="heightClass=compact" constant="-23"/>
-                            </constraint>
-                            <constraint firstItem="0eZ-K3-mWv" firstAttribute="top" secondItem="AJV-R5-eAe" secondAttribute="bottom" constant="30" id="qhl-WE-JWk">
-                                <variation key="heightClass=regular-widthClass=regular" constant="60"/>
                             </constraint>
                             <constraint firstItem="s0d-EY-xHa" firstAttribute="height" secondItem="dgv-ji-3B0" secondAttribute="height" multiplier="0.5" id="sWE-0x-mwg"/>
                             <constraint firstItem="s0d-EY-xHa" firstAttribute="height" secondItem="dgv-ji-3B0" secondAttribute="height" multiplier="0.25" id="srY-vS-BAj"/>
-                            <constraint firstItem="xmv-Gb-4TW" firstAttribute="top" secondItem="oL2-Ky-Ukx" secondAttribute="bottom" id="sy2-lc-49H">
-                                <variation key="heightClass=compact" constant="20"/>
-                            </constraint>
-                            <constraint firstItem="0eZ-K3-mWv" firstAttribute="leading" secondItem="dgv-ji-3B0" secondAttribute="leadingMargin" id="xjN-Hi-d0z">
-                                <variation key="heightClass=compact" constant="0.0"/>
-                            </constraint>
+                            <constraint firstItem="xmv-Gb-4TW" firstAttribute="top" secondItem="Jne-tD-atD" secondAttribute="top" constant="-3" id="sy2-lc-49H"/>
+                            <constraint firstItem="0eZ-K3-mWv" firstAttribute="leading" secondItem="l4d-pc-75p" secondAttribute="leading" id="xjN-Hi-d0z"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="l4d-pc-75p"/>
                         <variation key="default">
                             <mask key="constraints">
                                 <exclude reference="jEn-6k-wg6"/>
                                 <exclude reference="sWE-0x-mwg"/>
-                                <exclude reference="9VB-co-g8P"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=compact">
@@ -788,7 +755,6 @@
                                 <exclude reference="jEn-6k-wg6"/>
                                 <include reference="sWE-0x-mwg"/>
                                 <exclude reference="srY-vS-BAj"/>
-                                <include reference="9VB-co-g8P"/>
                             </mask>
                         </variation>
                     </view>
@@ -799,6 +765,7 @@
                         <outlet property="password" destination="84O-wq-fo6" id="DDa-4b-g9F"/>
                         <outlet property="passwordConfirm" destination="yIN-Ah-Mac" id="adZ-rg-UmB"/>
                         <outlet property="selectProfilePic" destination="AMe-bi-xbn" id="2Kc-NX-XvL"/>
+                        <outlet property="topBarBottomConstraint" destination="oEt-B6-ttk" id="G5Z-9S-2lD"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pW7-2U-ZzL" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -809,10 +776,6 @@
         <scene sceneID="WCs-Hg-dmO">
             <objects>
                 <viewController storyboardIdentifier="FriendsVC" id="xTd-WS-Uet" customClass="FriendsVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="Nhd-8g-ZXS"/>
-                        <viewControllerLayoutGuide type="bottom" id="u7V-rU-fGK"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="sn9-mn-PWT">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -830,7 +793,7 @@
                                 <textInputTraits key="textInputTraits" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
                             </searchBar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="70" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="yEk-h4-g6C">
-                                <rect key="frame" x="-4" y="68" width="328" height="500"/>
+                                <rect key="frame" x="0.0" y="68" width="320" height="500"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <color key="separatorColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
@@ -838,18 +801,19 @@
                         </subviews>
                         <color key="backgroundColor" red="0.91764705882352937" green="0.91764705882352937" blue="0.91764705882352937" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="27i-Fl-uHy" firstAttribute="leading" secondItem="sn9-mn-PWT" secondAttribute="leading" constant="66" id="2yZ-fX-Xay"/>
-                            <constraint firstItem="u7V-rU-fGK" firstAttribute="top" secondItem="yEk-h4-g6C" secondAttribute="bottom" id="59T-Q4-qdp"/>
-                            <constraint firstItem="G2K-QN-JHg" firstAttribute="centerX" secondItem="sn9-mn-PWT" secondAttribute="centerX" id="9CL-EF-Hwb"/>
-                            <constraint firstItem="yEk-h4-g6C" firstAttribute="leading" secondItem="sn9-mn-PWT" secondAttribute="leadingMargin" constant="-20" id="NLq-T4-3WH"/>
+                            <constraint firstItem="27i-Fl-uHy" firstAttribute="leading" secondItem="kix-Kh-Ki4" secondAttribute="leading" constant="66" id="2yZ-fX-Xay"/>
+                            <constraint firstAttribute="bottom" secondItem="yEk-h4-g6C" secondAttribute="bottom" id="59T-Q4-qdp"/>
+                            <constraint firstItem="G2K-QN-JHg" firstAttribute="centerX" secondItem="kix-Kh-Ki4" secondAttribute="centerX" id="9CL-EF-Hwb"/>
+                            <constraint firstItem="yEk-h4-g6C" firstAttribute="leading" secondItem="kix-Kh-Ki4" secondAttribute="leading" id="NLq-T4-3WH"/>
                             <constraint firstItem="G2K-QN-JHg" firstAttribute="centerY" secondItem="sn9-mn-PWT" secondAttribute="centerY" id="Q6H-zr-v39"/>
                             <constraint firstAttribute="trailingMargin" secondItem="27i-Fl-uHy" secondAttribute="trailing" constant="-20" id="c7q-mK-QIQ"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="yEk-h4-g6C" secondAttribute="trailing" constant="-20" id="f1D-Fg-pkV"/>
-                            <constraint firstItem="27i-Fl-uHy" firstAttribute="top" secondItem="Nhd-8g-ZXS" secondAttribute="bottom" constant="4" id="lOY-Mu-eup">
+                            <constraint firstItem="kix-Kh-Ki4" firstAttribute="trailing" secondItem="yEk-h4-g6C" secondAttribute="trailing" id="f1D-Fg-pkV"/>
+                            <constraint firstItem="27i-Fl-uHy" firstAttribute="top" secondItem="kix-Kh-Ki4" secondAttribute="top" constant="4" id="lOY-Mu-eup">
                                 <variation key="heightClass=compact" constant="24"/>
                             </constraint>
                             <constraint firstItem="yEk-h4-g6C" firstAttribute="top" secondItem="27i-Fl-uHy" secondAttribute="bottom" id="uCt-Ny-5wy"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="kix-Kh-Ki4"/>
                     </view>
                     <connections>
                         <outlet property="activitySpinner" destination="G2K-QN-JHg" id="JFq-Na-LF0"/>
@@ -874,10 +838,6 @@
         <scene sceneID="IBR-qo-4dy">
             <objects>
                 <viewController storyboardIdentifier="GuideVC" id="gwt-Lv-VG4" customClass="GuideVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="dsP-ou-vZT"/>
-                        <viewControllerLayoutGuide type="bottom" id="WIy-zy-cH8"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Wfd-PR-ac3">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -896,7 +856,7 @@ If you are unable to find the person you're looking for, searching by their e-ma
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tap To Continue" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Ex-dG-TkT">
-                                <rect key="frame" x="16" y="389" width="288" height="19.5"/>
+                                <rect key="frame" x="16" y="389" width="288" height="20"/>
                                 <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="14"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
@@ -921,7 +881,7 @@ If you are unable to find the person you're looking for, searching by their e-ma
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.90000000000000002" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="NtF-QD-6Zo" firstAttribute="centerX" secondItem="Wfd-PR-ac3" secondAttribute="centerX" id="6qh-74-sXR"/>
+                            <constraint firstItem="NtF-QD-6Zo" firstAttribute="centerX" secondItem="bmR-7Y-6sC" secondAttribute="centerX" id="6qh-74-sXR"/>
                             <constraint firstItem="A6n-5H-r0m" firstAttribute="trailing" secondItem="Wfd-PR-ac3" secondAttribute="trailingMargin" id="AD1-XA-X2Y"/>
                             <constraint firstItem="9Ex-dG-TkT" firstAttribute="leading" secondItem="Wfd-PR-ac3" secondAttribute="leadingMargin" id="Fjp-m3-w8u"/>
                             <constraint firstItem="Irv-mQ-CEZ" firstAttribute="leading" secondItem="Wfd-PR-ac3" secondAttribute="leading" id="ICW-lB-GlM"/>
@@ -934,6 +894,7 @@ If you are unable to find the person you're looking for, searching by their e-ma
                             <constraint firstAttribute="trailing" secondItem="Irv-mQ-CEZ" secondAttribute="trailing" id="vvv-0U-Bo2"/>
                             <constraint firstItem="9Ex-dG-TkT" firstAttribute="trailing" secondItem="Wfd-PR-ac3" secondAttribute="trailingMargin" id="wCG-0c-1JJ"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="bmR-7Y-6sC"/>
                     </view>
                     <connections>
                         <outlet property="bodyLabel" destination="NtF-QD-6Zo" id="nB1-mR-t6Q"/>
@@ -949,10 +910,6 @@ If you are unable to find the person you're looking for, searching by their e-ma
         <scene sceneID="UlS-z4-5Q0">
             <objects>
                 <viewController storyboardIdentifier="ChangeNameVC" id="DGU-ld-Byb" customClass="ChangeNameVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="Ock-v2-mjM"/>
-                        <viewControllerLayoutGuide type="bottom" id="P4r-lT-ZVy"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Ska-zC-mR1">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="270"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -978,12 +935,12 @@ If you are unable to find the person you're looking for, searching by their e-ma
                                 </constraints>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="17"/>
-                                <textInputTraits key="textInputTraits" returnKeyType="done"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="go"/>
                             </textField>
                         </subviews>
                         <color key="backgroundColor" red="0.58039215690000001" green="0.76862745099999996" blue="0.84705882349999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="P4r-lT-ZVy" firstAttribute="top" secondItem="euI-LT-0Dl" secondAttribute="bottom" id="4rp-49-d5F"/>
+                            <constraint firstAttribute="bottom" secondItem="euI-LT-0Dl" secondAttribute="bottom" id="4rp-49-d5F"/>
                             <constraint firstAttribute="trailing" secondItem="euI-LT-0Dl" secondAttribute="trailing" id="8Hy-xy-aDR"/>
                             <constraint firstItem="H5U-Ie-DMo" firstAttribute="centerY" secondItem="Ska-zC-mR1" secondAttribute="centerY" id="bnu-ar-5zj">
                                 <variation key="heightClass=compact" constant="-20"/>
@@ -993,6 +950,7 @@ If you are unable to find the person you're looking for, searching by their e-ma
                             <constraint firstItem="H5U-Ie-DMo" firstAttribute="top" secondItem="Ska-zC-mR1" secondAttribute="top" id="nbM-Ji-ud9"/>
                             <constraint firstItem="euI-LT-0Dl" firstAttribute="leading" secondItem="Ska-zC-mR1" secondAttribute="leading" id="vCH-74-jsg"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="QnV-hh-UhJ"/>
                         <variation key="default">
                             <mask key="constraints">
                                 <exclude reference="bnu-ar-5zj"/>
@@ -1013,16 +971,12 @@ If you are unable to find the person you're looking for, searching by their e-ma
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tx9-8f-hD1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="38" y="-1100"/>
+            <point key="canvasLocation" x="37" y="-1221"/>
         </scene>
         <!--SettingsVC-->
         <scene sceneID="dEw-S2-OOK">
             <objects>
                 <viewController id="Cbu-dt-dES" customClass="SettingsVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="SeH-Jx-TIn"/>
-                        <viewControllerLayoutGuide type="bottom" id="vC8-bM-Vcq"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="RNa-1g-x7h">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1124,7 +1078,7 @@ If you are unable to find the person you're looking for, searching by their e-ma
                                         </subviews>
                                     </stackView>
                                     <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kgy-Dc-g4q">
-                                        <rect key="frame" x="188" y="129" width="24" height="24"/>
+                                        <rect key="frame" x="188.5" y="129" width="24" height="24"/>
                                         <color key="backgroundColor" red="0.97254901960784312" green="0.0" blue="0.0" alpha="0.69999999999999996" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="24" id="YbQ-5P-SKB"/>
@@ -1167,7 +1121,7 @@ If you are unable to find the person you're looking for, searching by their e-ma
                                 </constraints>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Iar-7f-woT">
-                                <rect key="frame" x="0.0" y="20" width="50" height="50"/>
+                                <rect key="frame" x="0.0" y="19" width="50" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="KQj-fI-wmi"/>
                                     <constraint firstAttribute="width" constant="50" id="rLT-1f-tmr"/>
@@ -1187,18 +1141,16 @@ If you are unable to find the person you're looking for, searching by their e-ma
                             <constraint firstAttribute="trailing" secondItem="hHu-tA-aLk" secondAttribute="trailing" id="5sM-5a-4b3"/>
                             <constraint firstItem="Vke-3E-WYP" firstAttribute="leading" secondItem="RNa-1g-x7h" secondAttribute="leadingMargin" constant="20" id="69m-f8-ufr"/>
                             <constraint firstItem="6Bm-2g-oUi" firstAttribute="leading" secondItem="RNa-1g-x7h" secondAttribute="leading" constant="-1" id="9nD-wC-tPd"/>
-                            <constraint firstItem="Iar-7f-woT" firstAttribute="top" secondItem="SeH-Jx-TIn" secondAttribute="bottom" id="A4K-le-lnn">
-                                <variation key="heightClass=compact" constant="20"/>
-                            </constraint>
+                            <constraint firstItem="Iar-7f-woT" firstAttribute="top" secondItem="6Bm-2g-oUi" secondAttribute="top" constant="-3" id="A4K-le-lnn"/>
                             <constraint firstItem="A79-h2-fdW" firstAttribute="top" secondItem="hHu-tA-aLk" secondAttribute="bottom" constant="40" id="Dyr-ap-dul"/>
-                            <constraint firstItem="A79-h2-fdW" firstAttribute="leading" secondItem="RNa-1g-x7h" secondAttribute="leading" id="EsD-cv-Jo4"/>
+                            <constraint firstItem="A79-h2-fdW" firstAttribute="leading" secondItem="aLV-6K-RKK" secondAttribute="leading" id="EsD-cv-Jo4"/>
                             <constraint firstItem="Vke-3E-WYP" firstAttribute="height" secondItem="RNa-1g-x7h" secondAttribute="height" multiplier="0.2" constant="80" id="Hhc-dg-lBd">
                                 <variation key="heightClass=compact-widthClass=regular" constant="70"/>
                             </constraint>
                             <constraint firstItem="Vke-3E-WYP" firstAttribute="centerY" secondItem="RNa-1g-x7h" secondAttribute="centerY" id="JzZ-hM-gJW"/>
                             <constraint firstItem="A79-h2-fdW" firstAttribute="leading" secondItem="Vke-3E-WYP" secondAttribute="trailing" constant="40" id="Ppc-Ig-Ben"/>
-                            <constraint firstItem="Vke-3E-WYP" firstAttribute="centerX" secondItem="RNa-1g-x7h" secondAttribute="centerX" id="QLQ-80-QWe"/>
-                            <constraint firstItem="vC8-bM-Vcq" firstAttribute="top" secondItem="A79-h2-fdW" secondAttribute="bottom" constant="150" id="Saj-Cs-SJs">
+                            <constraint firstItem="Vke-3E-WYP" firstAttribute="centerX" secondItem="aLV-6K-RKK" secondAttribute="centerX" id="QLQ-80-QWe"/>
+                            <constraint firstItem="aLV-6K-RKK" firstAttribute="bottom" secondItem="A79-h2-fdW" secondAttribute="bottom" constant="150" id="Saj-Cs-SJs">
                                 <variation key="heightClass=regular-widthClass=regular" constant="100"/>
                             </constraint>
                             <constraint firstItem="hHu-tA-aLk" firstAttribute="leading" secondItem="RNa-1g-x7h" secondAttribute="leading" id="TGb-8M-fUX"/>
@@ -1206,30 +1158,34 @@ If you are unable to find the person you're looking for, searching by their e-ma
                                 <variation key="heightClass=compact-widthClass=compact" constant="20"/>
                                 <variation key="heightClass=regular-widthClass=regular" constant="100"/>
                             </constraint>
-                            <constraint firstAttribute="trailing" secondItem="A79-h2-fdW" secondAttribute="trailing" id="ee5-za-gE0"/>
-                            <constraint firstItem="vC8-bM-Vcq" firstAttribute="top" secondItem="A79-h2-fdW" secondAttribute="bottom" constant="60" id="efg-ja-HGL"/>
-                            <constraint firstItem="SeH-Jx-TIn" firstAttribute="bottom" secondItem="hHu-tA-aLk" secondAttribute="bottom" constant="-3" id="hLB-Tz-4Bi">
+                            <constraint firstItem="aLV-6K-RKK" firstAttribute="trailing" secondItem="A79-h2-fdW" secondAttribute="trailing" id="ee5-za-gE0"/>
+                            <constraint firstItem="aLV-6K-RKK" firstAttribute="bottom" secondItem="A79-h2-fdW" secondAttribute="bottom" constant="60" id="efg-ja-HGL"/>
+                            <constraint firstItem="aLV-6K-RKK" firstAttribute="top" secondItem="hHu-tA-aLk" secondAttribute="bottom" constant="-3" id="hLB-Tz-4Bi">
                                 <variation key="heightClass=compact" constant="-23"/>
                             </constraint>
                             <constraint firstItem="6Bm-2g-oUi" firstAttribute="top" secondItem="hHu-tA-aLk" secondAttribute="bottom" constant="-1" id="khe-cZ-bXj"/>
                             <constraint firstItem="Iar-7f-woT" firstAttribute="leading" secondItem="RNa-1g-x7h" secondAttribute="leading" id="pCg-Ko-ZL9"/>
-                            <constraint firstAttribute="trailing" secondItem="A79-h2-fdW" secondAttribute="trailing" id="sDL-Op-qfa"/>
-                            <constraint firstItem="vC8-bM-Vcq" firstAttribute="top" secondItem="A79-h2-fdW" secondAttribute="bottom" constant="40" id="wc4-0C-LdZ"/>
+                            <constraint firstItem="aLV-6K-RKK" firstAttribute="trailing" secondItem="A79-h2-fdW" secondAttribute="trailing" id="sDL-Op-qfa"/>
+                            <constraint firstItem="aLV-6K-RKK" firstAttribute="bottom" secondItem="A79-h2-fdW" secondAttribute="bottom" constant="40" id="wc4-0C-LdZ"/>
                             <constraint firstItem="hHu-tA-aLk" firstAttribute="top" secondItem="RNa-1g-x7h" secondAttribute="top" id="zbe-Dg-RR5"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="aLV-6K-RKK"/>
                         <variation key="default">
                             <mask key="constraints">
+                                <exclude reference="Saj-Cs-SJs"/>
+                                <exclude reference="efg-ja-HGL"/>
+                                <exclude reference="sDL-Op-qfa"/>
+                                <exclude reference="wc4-0C-LdZ"/>
                                 <exclude reference="JzZ-hM-gJW"/>
                                 <exclude reference="Dyr-ap-dul"/>
                                 <exclude reference="Ppc-Ig-Ben"/>
-                                <exclude reference="sDL-Op-qfa"/>
-                                <exclude reference="Saj-Cs-SJs"/>
-                                <exclude reference="efg-ja-HGL"/>
-                                <exclude reference="wc4-0C-LdZ"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=compact">
                             <mask key="constraints">
+                                <exclude reference="ee5-za-gE0"/>
+                                <include reference="sDL-Op-qfa"/>
+                                <include reference="wc4-0C-LdZ"/>
                                 <include reference="JzZ-hM-gJW"/>
                                 <exclude reference="QLQ-80-QWe"/>
                                 <exclude reference="cxL-FY-NXa"/>
@@ -1237,21 +1193,18 @@ If you are unable to find the person you're looking for, searching by their e-ma
                                 <include reference="Dyr-ap-dul"/>
                                 <exclude reference="EsD-cv-Jo4"/>
                                 <include reference="Ppc-Ig-Ben"/>
-                                <exclude reference="ee5-za-gE0"/>
-                                <include reference="sDL-Op-qfa"/>
-                                <include reference="wc4-0C-LdZ"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
                             <mask key="constraints">
-                                <exclude reference="69m-f8-ufr"/>
                                 <include reference="efg-ja-HGL"/>
+                                <exclude reference="69m-f8-ufr"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=regular">
                             <mask key="constraints">
-                                <exclude reference="69m-f8-ufr"/>
                                 <include reference="Saj-Cs-SJs"/>
+                                <exclude reference="69m-f8-ufr"/>
                             </mask>
                         </variation>
                     </view>
@@ -1265,6 +1218,7 @@ If you are unable to find the person you're looking for, searching by their e-ma
                         <outlet property="friendsBadge" destination="kgy-Dc-g4q" id="HTH-4l-DOQ"/>
                         <outlet property="profilePic" destination="Vke-3E-WYP" id="l8Z-4g-dVp"/>
                         <outlet property="topBar" destination="hHu-tA-aLk" id="9GB-Me-mVA"/>
+                        <outlet property="topBarBottomConstraint" destination="hLB-Tz-4Bi" id="b54-vM-2T6"/>
                         <segue destination="xTd-WS-Uet" kind="presentation" identifier="toFriendsVC" id="JN8-Zy-SbA"/>
                     </connections>
                 </viewController>
@@ -1276,16 +1230,12 @@ If you are unable to find the person you're looking for, searching by their e-ma
         <scene sceneID="9uG-qG-bEL">
             <objects>
                 <viewController id="ju6-W3-mZ3" userLabel="ReviewSnapVC" customClass="ReviewSnapVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="cvs-eM-im1"/>
-                        <viewControllerLayoutGuide type="bottom" id="LFR-5e-aej"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="rLY-V7-Abd">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mHd-Ry-I4r">
-                                <rect key="frame" x="244" y="49" width="60" height="60"/>
+                                <rect key="frame" x="240" y="49" width="60" height="60"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="eJC-lz-xu1"/>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="60" id="zBk-vm-MxD"/>
@@ -1355,11 +1305,11 @@ If you are unable to find the person you're looking for, searching by their e-ma
                             <constraint firstItem="bXN-JA-XbL" firstAttribute="top" secondItem="rLY-V7-Abd" secondAttribute="top" id="0cs-ov-dIM"/>
                             <constraint firstItem="INH-4L-EPz" firstAttribute="leading" secondItem="rLY-V7-Abd" secondAttribute="leading" id="1kf-aw-S7K"/>
                             <constraint firstItem="BQO-j3-J8O" firstAttribute="leading" secondItem="rLY-V7-Abd" secondAttribute="leading" constant="-1" id="6Cm-MR-Klf"/>
-                            <constraint firstItem="zBS-w0-hSz" firstAttribute="top" secondItem="LFR-5e-aej" secondAttribute="top" constant="-23" id="CNG-Jy-Mgh"/>
+                            <constraint firstItem="zBS-w0-hSz" firstAttribute="top" secondItem="wdk-X9-cGX" secondAttribute="bottom" constant="-23" id="CNG-Jy-Mgh"/>
                             <constraint firstItem="BQO-j3-J8O" firstAttribute="top" secondItem="bXN-JA-XbL" secondAttribute="bottom" constant="-0.5" id="F8z-ue-Omd"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="mHd-Ry-I4r" secondAttribute="trailing" id="KcE-So-Rq3"/>
+                            <constraint firstItem="wdk-X9-cGX" firstAttribute="trailing" secondItem="mHd-Ry-I4r" secondAttribute="trailing" constant="20" id="KcE-So-Rq3"/>
                             <constraint firstAttribute="trailing" secondItem="bXN-JA-XbL" secondAttribute="trailing" id="QO1-3s-0HZ"/>
-                            <constraint firstItem="INH-4L-EPz" firstAttribute="top" secondItem="cvs-eM-im1" secondAttribute="bottom" id="Zge-gW-N4A">
+                            <constraint firstItem="INH-4L-EPz" firstAttribute="top" secondItem="wdk-X9-cGX" secondAttribute="top" id="Zge-gW-N4A">
                                 <variation key="heightClass=compact" constant="20"/>
                             </constraint>
                             <constraint firstItem="zBS-w0-hSz" firstAttribute="top" secondItem="gEx-eu-r9W" secondAttribute="bottom" id="aJa-MY-57Y"/>
@@ -1367,15 +1317,18 @@ If you are unable to find the person you're looking for, searching by their e-ma
                             <constraint firstItem="zBS-w0-hSz" firstAttribute="leading" secondItem="rLY-V7-Abd" secondAttribute="leading" id="kkZ-9J-ODt"/>
                             <constraint firstAttribute="bottom" secondItem="zBS-w0-hSz" secondAttribute="bottom" id="pV2-7c-VlG"/>
                             <constraint firstAttribute="trailing" secondItem="2Os-1c-D3C" secondAttribute="trailing" id="phA-Dl-Fwp"/>
-                            <constraint firstItem="LFR-5e-aej" firstAttribute="top" secondItem="2Os-1c-D3C" secondAttribute="bottom" id="qXL-Bt-jqm"/>
+                            <constraint firstItem="wdk-X9-cGX" firstAttribute="bottom" secondItem="2Os-1c-D3C" secondAttribute="bottom" id="qXL-Bt-jqm"/>
                             <constraint firstAttribute="trailing" secondItem="zBS-w0-hSz" secondAttribute="trailing" id="sxj-zG-fUq"/>
-                            <constraint firstItem="cvs-eM-im1" firstAttribute="bottom" secondItem="bXN-JA-XbL" secondAttribute="bottom" constant="-3" id="uij-J2-CjF">
+                            <constraint firstItem="wdk-X9-cGX" firstAttribute="top" secondItem="bXN-JA-XbL" secondAttribute="bottom" constant="-3" id="uij-J2-CjF">
                                 <variation key="heightClass=compact" constant="-23"/>
                             </constraint>
-                            <constraint firstItem="mHd-Ry-I4r" firstAttribute="top" secondItem="bXN-JA-XbL" secondAttribute="bottom" constant="26" id="vjo-fm-4DK"/>
+                            <constraint firstItem="mHd-Ry-I4r" firstAttribute="top" secondItem="bXN-JA-XbL" secondAttribute="bottom" constant="26" id="vjo-fm-4DK">
+                                <variation key="heightClass=compact" constant="8"/>
+                            </constraint>
                             <constraint firstItem="bXN-JA-XbL" firstAttribute="leading" secondItem="rLY-V7-Abd" secondAttribute="leading" id="wSa-fb-9gB"/>
                             <constraint firstItem="mHd-Ry-I4r" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="rLY-V7-Abd" secondAttribute="leadingMargin" id="ztQ-d2-VAp"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="wdk-X9-cGX"/>
                         <connections>
                             <outletCollection property="gestureRecognizers" destination="41j-Pq-8XZ" appends="YES" id="2AI-JR-AQU"/>
                         </connections>
@@ -1405,10 +1358,6 @@ If you are unable to find the person you're looking for, searching by their e-ma
         <scene sceneID="SIX-xy-bvk">
             <objects>
                 <viewController storyboardIdentifier="SendSnapVC" id="jev-eN-UJH" userLabel="SendSnapVC" customClass="SendSnapVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="f3t-SJ-j8r"/>
-                        <viewControllerLayoutGuide type="bottom" id="LHm-Eg-dmT"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="atg-e0-cvc">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1430,7 +1379,7 @@ If you are unable to find the person you're looking for, searching by their e-ma
                                 <nil key="highlightedColor"/>
                             </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsMultipleSelection="YES" rowHeight="70" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="5aB-6L-xeD">
-                                <rect key="frame" x="-4" y="68" width="328" height="500"/>
+                                <rect key="frame" x="0.0" y="68" width="320" height="500"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <color key="separatorColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
@@ -1447,19 +1396,20 @@ If you are unable to find the person you're looking for, searching by their e-ma
                         <color key="backgroundColor" red="0.91764705882352937" green="0.91764705882352937" blue="0.91764705882352937" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="sa0-7i-lTp" secondAttribute="trailing" constant="-20" id="0ww-TM-Xdy"/>
-                            <constraint firstItem="Q3q-zh-gvk" firstAttribute="centerX" secondItem="atg-e0-cvc" secondAttribute="centerX" id="92B-9h-dEa"/>
-                            <constraint firstItem="Pfz-TA-9nD" firstAttribute="centerX" secondItem="atg-e0-cvc" secondAttribute="centerX" id="9dq-lO-PaL"/>
+                            <constraint firstItem="Q3q-zh-gvk" firstAttribute="centerX" secondItem="s3J-F6-N47" secondAttribute="centerX" id="92B-9h-dEa"/>
+                            <constraint firstItem="Pfz-TA-9nD" firstAttribute="centerX" secondItem="s3J-F6-N47" secondAttribute="centerX" id="9dq-lO-PaL"/>
                             <constraint firstItem="Pfz-TA-9nD" firstAttribute="centerY" secondItem="atg-e0-cvc" secondAttribute="centerY" constant="-50" id="Ujo-vO-ObH"/>
                             <constraint firstItem="5aB-6L-xeD" firstAttribute="top" secondItem="sa0-7i-lTp" secondAttribute="bottom" id="Xhy-jm-Wxq"/>
                             <constraint firstAttribute="bottom" secondItem="5aB-6L-xeD" secondAttribute="bottom" id="a1e-dm-uoE"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="5aB-6L-xeD" secondAttribute="trailing" constant="-20" id="au6-CF-jOd"/>
-                            <constraint firstItem="sa0-7i-lTp" firstAttribute="leading" secondItem="atg-e0-cvc" secondAttribute="leading" constant="66" id="cwC-oK-g9t"/>
-                            <constraint firstItem="5aB-6L-xeD" firstAttribute="leading" secondItem="atg-e0-cvc" secondAttribute="leadingMargin" constant="-20" id="jr4-mP-kXA"/>
-                            <constraint firstItem="sa0-7i-lTp" firstAttribute="top" secondItem="f3t-SJ-j8r" secondAttribute="bottom" constant="4" id="mcs-IY-Vno">
+                            <constraint firstItem="s3J-F6-N47" firstAttribute="trailing" secondItem="5aB-6L-xeD" secondAttribute="trailing" id="au6-CF-jOd"/>
+                            <constraint firstItem="sa0-7i-lTp" firstAttribute="leading" secondItem="s3J-F6-N47" secondAttribute="leading" constant="66" id="cwC-oK-g9t"/>
+                            <constraint firstItem="5aB-6L-xeD" firstAttribute="leading" secondItem="s3J-F6-N47" secondAttribute="leading" id="jr4-mP-kXA"/>
+                            <constraint firstItem="sa0-7i-lTp" firstAttribute="top" secondItem="s3J-F6-N47" secondAttribute="top" constant="4" id="mcs-IY-Vno">
                                 <variation key="heightClass=compact" constant="24"/>
                             </constraint>
                             <constraint firstItem="Q3q-zh-gvk" firstAttribute="top" secondItem="Pfz-TA-9nD" secondAttribute="bottom" constant="14" id="qpT-n6-xKs"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="s3J-F6-N47"/>
                     </view>
                     <connections>
                         <outlet property="noFriendsLabel1" destination="Pfz-TA-9nD" id="1Qr-tr-CLO"/>
@@ -1476,10 +1426,6 @@ If you are unable to find the person you're looking for, searching by their e-ma
         <scene sceneID="Qlb-ha-yNc">
             <objects>
                 <viewController id="ctK-C7-7lg" customClass="InboxVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="gU4-B9-ej8"/>
-                        <viewControllerLayoutGuide type="bottom" id="uT1-0y-FjA"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="FnV-PM-zY4">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1495,11 +1441,19 @@ If you are unable to find the person you're looking for, searching by their e-ma
                                 <nil key="highlightedColor"/>
                             </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="70" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="n1r-Fb-Taz">
-                                <rect key="frame" x="-4" y="69" width="328" height="499"/>
+                                <rect key="frame" x="0.0" y="69" width="320" height="499"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <color key="separatorColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                             </tableView>
+                            <searchBar contentMode="redraw" searchBarStyle="prominent" placeholder="Search" translatesAutoresizingMaskIntoConstraints="NO" id="Q4P-MN-ybe" customClass="CustomSearchBar" customModule="Speck" customModuleProvider="target">
+                                <rect key="frame" x="66" y="25" width="258" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="kHV-qh-fyU"/>
+                                </constraints>
+                                <color key="barTintColor" red="0.91764705882352937" green="0.91764705882352937" blue="0.91764705882352937" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <textInputTraits key="textInputTraits" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
+                            </searchBar>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="BarGrey" translatesAutoresizingMaskIntoConstraints="NO" id="SI7-ij-wcL">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="23"/>
                             </imageView>
@@ -1510,14 +1464,6 @@ If you are unable to find the person you're looking for, searching by their e-ma
                                     <constraint firstAttribute="width" constant="75" id="RAm-w3-f3X"/>
                                 </constraints>
                             </imageView>
-                            <searchBar contentMode="redraw" searchBarStyle="prominent" placeholder="Search" translatesAutoresizingMaskIntoConstraints="NO" id="Q4P-MN-ybe" customClass="CustomSearchBar" customModule="Speck" customModuleProvider="target">
-                                <rect key="frame" x="82" y="25" width="242" height="44"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="44" id="kHV-qh-fyU"/>
-                                </constraints>
-                                <color key="barTintColor" red="0.91764705882352937" green="0.91764705882352937" blue="0.91764705882352937" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <textInputTraits key="textInputTraits" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
-                            </searchBar>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e4P-ru-pD4">
                                 <rect key="frame" x="0.0" y="20" width="50" height="50"/>
                                 <constraints>
@@ -1536,25 +1482,26 @@ If you are unable to find the person you're looking for, searching by their e-ma
                             <constraint firstItem="Q4P-MN-ybe" firstAttribute="top" secondItem="SI7-ij-wcL" secondAttribute="bottom" constant="2" id="0TU-j9-b5M"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Q4P-MN-ybe" secondAttribute="trailing" constant="-20" id="7aW-lZ-RV0"/>
                             <constraint firstItem="V3L-Qx-Qaj" firstAttribute="centerY" secondItem="FnV-PM-zY4" secondAttribute="centerY" id="Ebh-wg-37W"/>
-                            <constraint firstItem="gU4-B9-ej8" firstAttribute="bottom" secondItem="SI7-ij-wcL" secondAttribute="bottom" constant="-3" id="M6T-FL-fp5">
+                            <constraint firstItem="fcw-ma-EwS" firstAttribute="top" secondItem="SI7-ij-wcL" secondAttribute="bottom" constant="-3" id="M6T-FL-fp5">
                                 <variation key="heightClass=compact" constant="-23"/>
                             </constraint>
                             <constraint firstAttribute="trailing" secondItem="SI7-ij-wcL" secondAttribute="trailing" id="XV6-a8-kO1"/>
-                            <constraint firstItem="n1r-Fb-Taz" firstAttribute="leading" secondItem="FnV-PM-zY4" secondAttribute="leadingMargin" constant="-20" id="ZFt-ro-6ay"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="n1r-Fb-Taz" secondAttribute="trailing" constant="-20" id="aUF-j2-KGC"/>
+                            <constraint firstItem="n1r-Fb-Taz" firstAttribute="leading" secondItem="fcw-ma-EwS" secondAttribute="leading" id="ZFt-ro-6ay"/>
+                            <constraint firstItem="fcw-ma-EwS" firstAttribute="trailing" secondItem="n1r-Fb-Taz" secondAttribute="trailing" id="aUF-j2-KGC"/>
                             <constraint firstItem="rO7-Qy-aro" firstAttribute="top" secondItem="SI7-ij-wcL" secondAttribute="bottom" constant="-0.5" id="cYX-mH-PNX"/>
-                            <constraint firstItem="e4P-ru-pD4" firstAttribute="top" secondItem="gU4-B9-ej8" secondAttribute="bottom" id="d3k-du-diD">
+                            <constraint firstItem="e4P-ru-pD4" firstAttribute="top" secondItem="fcw-ma-EwS" secondAttribute="top" id="d3k-du-diD">
                                 <variation key="heightClass=compact" constant="20"/>
                             </constraint>
-                            <constraint firstItem="n1r-Fb-Taz" firstAttribute="top" secondItem="rO7-Qy-aro" secondAttribute="bottom" id="f1a-DF-Omd"/>
+                            <constraint firstItem="n1r-Fb-Taz" firstAttribute="top" secondItem="Q4P-MN-ybe" secondAttribute="bottom" id="f1a-DF-Omd"/>
                             <constraint firstItem="e4P-ru-pD4" firstAttribute="leading" secondItem="FnV-PM-zY4" secondAttribute="leading" id="kZX-Cq-tHI"/>
                             <constraint firstItem="SI7-ij-wcL" firstAttribute="leading" secondItem="FnV-PM-zY4" secondAttribute="leading" id="l3t-l0-yCW"/>
-                            <constraint firstItem="V3L-Qx-Qaj" firstAttribute="centerX" secondItem="FnV-PM-zY4" secondAttribute="centerX" id="qcK-qG-QlO"/>
+                            <constraint firstItem="V3L-Qx-Qaj" firstAttribute="centerX" secondItem="fcw-ma-EwS" secondAttribute="centerX" id="qcK-qG-QlO"/>
                             <constraint firstItem="SI7-ij-wcL" firstAttribute="top" secondItem="FnV-PM-zY4" secondAttribute="top" id="rnj-g0-PLS"/>
-                            <constraint firstItem="Q4P-MN-ybe" firstAttribute="leading" secondItem="FnV-PM-zY4" secondAttribute="leadingMargin" constant="66" id="xyL-bF-5gY"/>
+                            <constraint firstItem="Q4P-MN-ybe" firstAttribute="leading" secondItem="fcw-ma-EwS" secondAttribute="leading" constant="66" id="xyL-bF-5gY"/>
                             <constraint firstAttribute="bottom" secondItem="n1r-Fb-Taz" secondAttribute="bottom" id="y2y-vg-0Tm"/>
                             <constraint firstItem="Q4P-MN-ybe" firstAttribute="top" secondItem="SI7-ij-wcL" secondAttribute="bottom" constant="2" id="zn3-xM-Beq"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="fcw-ma-EwS"/>
                         <variation key="default">
                             <mask key="constraints">
                                 <exclude reference="zn3-xM-Beq"/>
@@ -1581,10 +1528,6 @@ If you are unable to find the person you're looking for, searching by their e-ma
         <scene sceneID="M4e-sI-4Rd">
             <objects>
                 <viewController id="AJ6-6C-0NX" customClass="ViewSnapsVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="u0f-b3-3Ph"/>
-                        <viewControllerLayoutGuide type="bottom" id="taL-Wc-lOU"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="DFu-X6-rvq">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1593,7 +1536,7 @@ If you are unable to find the person you're looking for, searching by their e-ma
                                 <rect key="frame" x="150" y="274" width="20" height="20"/>
                             </activityIndicatorView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cZL-Yo-ZDi">
-                                <rect key="frame" x="4" y="40" width="34" height="34"/>
+                                <rect key="frame" x="8" y="40" width="34" height="34"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="34" id="Qhp-rO-dfy"/>
                                     <constraint firstAttribute="width" constant="34" id="bxU-gl-4bx"/>
@@ -1606,7 +1549,7 @@ If you are unable to find the person you're looking for, searching by their e-ma
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rLA-H4-05K">
-                                <rect key="frame" x="-4" y="259" width="50" height="50"/>
+                                <rect key="frame" x="0.0" y="259" width="50" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="icf-uM-Oqu"/>
                                     <constraint firstAttribute="height" constant="50" id="thv-jP-nCi"/>
@@ -1619,7 +1562,7 @@ If you are unable to find the person you're looking for, searching by their e-ma
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="m9c-a2-d89">
-                                <rect key="frame" x="274" y="259" width="50" height="50"/>
+                                <rect key="frame" x="270" y="259" width="50" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="RMC-qf-RGz"/>
                                     <constraint firstAttribute="height" constant="50" id="mdJ-vG-LKX"/>
@@ -1635,15 +1578,16 @@ If you are unable to find the person you're looking for, searching by their e-ma
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <gestureRecognizers/>
                         <constraints>
-                            <constraint firstAttribute="trailingMargin" secondItem="m9c-a2-d89" secondAttribute="trailing" constant="-20" id="8jC-Nb-ler"/>
+                            <constraint firstItem="7yQ-hx-Fj2" firstAttribute="trailing" secondItem="m9c-a2-d89" secondAttribute="trailing" id="8jC-Nb-ler"/>
                             <constraint firstItem="m9c-a2-d89" firstAttribute="centerY" secondItem="DFu-X6-rvq" secondAttribute="centerY" id="Dh2-3r-gNx"/>
                             <constraint firstItem="rLA-H4-05K" firstAttribute="centerY" secondItem="DFu-X6-rvq" secondAttribute="centerY" id="EHK-Ua-l94"/>
                             <constraint firstItem="cZL-Yo-ZDi" firstAttribute="centerX" secondItem="rLA-H4-05K" secondAttribute="centerX" id="HqW-u3-5Yf"/>
                             <constraint firstItem="G2K-WX-uvu" firstAttribute="centerY" secondItem="DFu-X6-rvq" secondAttribute="centerY" id="Y5O-ho-3AQ"/>
-                            <constraint firstItem="cZL-Yo-ZDi" firstAttribute="top" secondItem="u0f-b3-3Ph" secondAttribute="bottom" constant="20" id="kZd-cd-0zi"/>
-                            <constraint firstItem="G2K-WX-uvu" firstAttribute="centerX" secondItem="DFu-X6-rvq" secondAttribute="centerX" id="x1c-TR-b03"/>
-                            <constraint firstItem="rLA-H4-05K" firstAttribute="leading" secondItem="DFu-X6-rvq" secondAttribute="leadingMargin" constant="-20" id="x2M-aY-Te1"/>
+                            <constraint firstItem="cZL-Yo-ZDi" firstAttribute="top" secondItem="7yQ-hx-Fj2" secondAttribute="top" constant="20" id="kZd-cd-0zi"/>
+                            <constraint firstItem="G2K-WX-uvu" firstAttribute="centerX" secondItem="7yQ-hx-Fj2" secondAttribute="centerX" id="x1c-TR-b03"/>
+                            <constraint firstItem="rLA-H4-05K" firstAttribute="leading" secondItem="7yQ-hx-Fj2" secondAttribute="leading" id="x2M-aY-Te1"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="7yQ-hx-Fj2"/>
                         <connections>
                             <outletCollection property="gestureRecognizers" destination="YTU-bI-5li" appends="YES" id="fzp-xr-lUr"/>
                         </connections>
@@ -1668,10 +1612,6 @@ If you are unable to find the person you're looking for, searching by their e-ma
         <scene sceneID="2um-QN-C7M">
             <objects>
                 <viewController storyboardIdentifier="ChangePasswordVC" id="x7R-fy-eF3" customClass="ChangePasswordVC" customModule="Speck" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="zBP-Hn-6nO"/>
-                        <viewControllerLayoutGuide type="bottom" id="IvR-Pw-Iwt"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="UV3-u2-6zc">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="270"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1700,7 +1640,7 @@ If you are unable to find the person you're looking for, searching by their e-ma
                                         </constraints>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="17"/>
-                                        <textInputTraits key="textInputTraits" returnKeyType="next"/>
+                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="next" secureTextEntry="YES"/>
                                     </textField>
                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="New Password" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="k1c-fy-cfd">
                                         <rect key="frame" x="0.0" y="44" width="320" height="40"/>
@@ -1710,7 +1650,7 @@ If you are unable to find the person you're looking for, searching by their e-ma
                                         </constraints>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="17"/>
-                                        <textInputTraits key="textInputTraits" returnKeyType="next"/>
+                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="next" secureTextEntry="YES"/>
                                     </textField>
                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Repeat New Password" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="sfY-Ul-mb5">
                                         <rect key="frame" x="0.0" y="88" width="320" height="40"/>
@@ -1720,7 +1660,7 @@ If you are unable to find the person you're looking for, searching by their e-ma
                                         </constraints>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="17"/>
-                                        <textInputTraits key="textInputTraits" returnKeyType="go"/>
+                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="go" secureTextEntry="YES"/>
                                     </textField>
                                 </subviews>
                                 <constraints>
@@ -1731,12 +1671,13 @@ If you are unable to find the person you're looking for, searching by their e-ma
                         <color key="backgroundColor" red="0.58039215690000001" green="0.76862745099999996" blue="0.84705882349999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="YJc-se-ZhW" firstAttribute="top" secondItem="UV3-u2-6zc" secondAttribute="top" id="4Nt-8Y-iaj"/>
-                            <constraint firstItem="IvR-Pw-Iwt" firstAttribute="top" secondItem="fxy-tG-V62" secondAttribute="bottom" id="AZR-2n-NI1"/>
+                            <constraint firstAttribute="bottom" secondItem="fxy-tG-V62" secondAttribute="bottom" id="AZR-2n-NI1"/>
                             <constraint firstItem="YJc-se-ZhW" firstAttribute="leading" secondItem="UV3-u2-6zc" secondAttribute="leading" id="Ha7-Eh-jt1"/>
                             <constraint firstItem="fxy-tG-V62" firstAttribute="leading" secondItem="UV3-u2-6zc" secondAttribute="leading" id="U8s-6l-V90"/>
                             <constraint firstAttribute="trailing" secondItem="fxy-tG-V62" secondAttribute="trailing" id="kYi-4d-YyX"/>
                             <constraint firstAttribute="trailing" secondItem="YJc-se-ZhW" secondAttribute="trailing" id="nUJ-EI-1zX"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="ntN-T8-mqi"/>
                     </view>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="270"/>

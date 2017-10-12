@@ -100,6 +100,7 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
             
             if dataType == "video" {
                 sendSnapVC!.tempVidUrl = tempVidUrl
+                snapViewer.viewDidDisappear(false)
             } else if dataType == "photo" {
                 sendSnapVC!.tempPhotoData = tempPhotoData
             }
@@ -195,6 +196,9 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
             break
         }
         AppDelegate.AppUtility.lockOrientation(orientation!, andRotateTo: value)
+        if dataType == "video" {
+            snapViewer.viewDidAppear(false)
+        }
         bottomBar.image = UIImage(named: "BarGreen")
         bottomBarTab.image = UIImage(named: "TabGreen")
         sendBtn.setImage(UIImage(named: "SendBtnDark"), for: .normal)

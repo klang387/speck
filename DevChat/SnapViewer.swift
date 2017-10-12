@@ -35,6 +35,8 @@ class SnapViewer: UIViewController, UITextFieldDelegate {
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
         if playerItem != nil {
             if #available(iOS 10.0, *) {
                 avQueuePlayer?.play()
@@ -49,6 +51,8 @@ class SnapViewer: UIViewController, UITextFieldDelegate {
     }
     
     override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
         if playerItem != nil {
             if #available(iOS 10.0, *) {
                 avQueuePlayer?.pause()

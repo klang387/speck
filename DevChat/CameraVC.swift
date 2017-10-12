@@ -301,9 +301,5 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         }
     }
     
-    override var prefersStatusBarHidden: Bool {
-        return false
-    }
-
 }
 

@@ -186,8 +186,4 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
         tableView.reloadData()
     }
     
-    override var prefersStatusBarHidden: Bool {
-        return false
-    }
-
 }

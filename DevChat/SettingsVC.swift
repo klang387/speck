@@ -21,13 +21,14 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     @IBOutlet weak var buttonsTrailing: NSLayoutConstraint!
     @IBOutlet weak var buttonsLeadingLandscape: NSLayoutConstraint!
     @IBOutlet weak var buttonsTrailingLandscape: NSLayoutConstraint!
+    @IBOutlet weak var topBarBottomConstraint: NSLayoutConstraint!
     
     var changeNameVC: ChangeNameVC?
     var changePasswordVC: ChangePasswordVC?
     var friendsVC: FriendsVC?
     var guideVC: GuideVC?
     var image: UIImage?
-    var imagePicker: UIImagePickerController!
+    var imagePicker: CustomImagePicker!
     var editLayer: CAShapeLayer!
     var label: UILabel!
     var currentView: String!
@@ -35,34 +36,28 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     var friendsObserver: UInt!
     var requestCount: Int!
     var currentUser: String!
-    var tapGesture: UITapGestureRecognizer!
     var constraintLeading: NSLayoutConstraint?
     var constraintTrailing: NSLayoutConstraint?
     var constraintLeadingLandscape: NSLayoutConstraint?
+    var textFields: [UITextField]!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         currentUser = AuthService.instance.currentUser
-        
+        textFields = []
         profilePic.image = image
         profilePic.layer.masksToBounds = true
-        
         friendsBadge.layer.cornerRadius = friendsBadge.layer.frame.width / 2
         friendsBadge.layer.masksToBounds = true
         friendsBadge.text = String(requestCount)
         if requestCount > 0 {
             friendsBadge.isHidden = false
         }
-        
-        imagePicker = UIImagePickerController()
+        imagePicker = CustomImagePicker()
         imagePicker.allowsEditing = true
         imagePicker.sourceType = .photoLibrary
         imagePicker.delegate = self
-        
-        tapGesture = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing(_:)))
-        self.view.addGestureRecognizer(tapGesture)
-        
         currentView = "settings"
     }
     
@@ -105,6 +100,7 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         view.addSubview(changeNameVC!.view!)
         changeNameVC?.delegate = self
         changeNameVC?.newUsername.delegate = self
+        textFields = [changeNameVC!.newUsername]
         animateButtonsIn(controller: changeNameVC!)
     }
     
@@ -119,6 +115,7 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
             changePasswordVC?.oldPassword.delegate = self
             changePasswordVC?.newPassword.delegate = self
             changePasswordVC?.repeatNewPassword.delegate = self
+            textFields = [changePasswordVC!.oldPassword, changePasswordVC!.newPassword, changePasswordVC!.repeatNewPassword]
             animateButtonsIn(controller: changePasswordVC!)
         } else {
             let alert = ErrorAlert(title: "Facebook Login", message: "Looks like you're logged in via Facebook, and there's no password to change.", preferredStyle: .alert)
@@ -128,7 +125,6 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     
     @IBAction func friendsPressed(_ sender: Any) {
         self.currentView = "friends"
-        tapGesture.isEnabled = false
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         friendsVC = storyboard.instantiateViewController(withIdentifier: "FriendsVC") as? FriendsVC
         addChildViewController(friendsVC!)
@@ -184,6 +180,19 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         }
     }
     
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        
+        coordinator.animate(alongsideTransition: nil, completion: { _ in
+            for field in self.textFields {
+                if field.isFirstResponder {
+                    self.view.animateViewMoving(textField: field, constraint: self.topBarBottomConstraint)
+                    return
+                }
+            }
+        })
+    }
+    
     func animateButtonsIn(controller: UIViewController) {
         controller.view.translatesAutoresizingMaskIntoConstraints = false
         controller.view.topAnchor.constraint(equalTo: self.buttonsView.topAnchor, constant: 0).isActive = true
@@ -217,6 +226,9 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     }
     
     func animateButtonsOut(controller: UIViewController) {
+        currentView = "settings"
+        view.endEditing(true)
+        textFields = []
         view.layoutIfNeeded()
         UIView.animate(withDuration: 0.2, animations: {
             self.constraintLeading?.constant = self.view.frame.width
@@ -248,9 +260,8 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     }
     
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
-        if let imageVC = NSClassFromString("PUUIImageViewController")
-        {
-            if viewController.isKind(of: imageVC) {
+        if let imageVC = NSClassFromString("PUUIImageViewController") {
+            if viewController.isKind(of: imageVC) || viewController.navigationItem.title == "Choose Photo" {
                 addRoundedEditLayer(to: viewController, forCamera: false)
             }
         }
@@ -297,12 +308,14 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         hideDefaultEditOverlay(view: viewController.view)
         
         let bottomBarHeight: CGFloat = 72.0
-        let position = (forCamera) ? viewController.view.center.y - viewController.view.center.x - bottomBarHeight/2 : viewController.view.center.y - viewController.view.center.x
-        
         let viewWidth = viewController.view.frame.width
-        let viewHeight = viewController.view.frame.height
+        let viewHeight = viewController.view.frame.height - viewController.topLayoutGuide.length - viewController.bottomLayoutGuide.length
+        var position = viewController.topLayoutGuide.length + viewHeight / 2 - viewWidth / 2
+        if viewController.topLayoutGuide.length > 0 {
+            position -= 4
+        }
         
-        let emptyShapePath = UIBezierPath(ovalIn: CGRect(x: 0, y: position, width: viewWidth, height: viewWidth))
+        let emptyShapePath = UIBezierPath(ovalIn: CGRect(x: 2, y: position + 2, width: viewWidth - 4, height: viewWidth - 4))
         emptyShapePath.usesEvenOddFillRule = true
         
         let filledShapePath = UIBezierPath(roundedRect: CGRect(x: 0, y: 0, width: viewWidth, height: viewHeight - bottomBarHeight), cornerRadius: 0)
@@ -316,7 +329,7 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         editLayer.opacity = 0.8
         viewController.view.layer.addSublayer(editLayer)
         
-        label = UILabel(frame: CGRect(x: 0, y: 10, width: viewWidth, height: 50))
+        label = UILabel(frame: CGRect(x: 0, y: 30, width: viewWidth, height: 50))
         label.text = "Move and Scale"
         label.textAlignment = .center
         label.textColor = UIColor.white
@@ -340,8 +353,16 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         animateButtonsOut(controller: changePasswordVC!)
     }
     
+    func changePasswordSavePressed() {
+        view.animateViewMoving(textField: nil, constraint: self.topBarBottomConstraint)
+    }
+    
     func changeNameDismiss() {
         animateButtonsOut(controller: changeNameVC!)
+    }
+    
+    func changeNameSavePressed() {
+        view.animateViewMoving(textField: nil, constraint: self.topBarBottomConstraint)
     }
     
     func friendsDismiss() {
@@ -355,7 +376,6 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
             self.friendsVC?.removeFromParentViewController()
             self.friendsVC = nil
         }
-        tapGesture.isEnabled = true
     }
     
     func addSearchGuide() {
@@ -374,25 +394,33 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        view.animateViewMoving(textField: textField, view: view)
-    }
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        view.animateViewMoving(textField: nil, view: view)
+        view.animateViewMoving(textField: textField, constraint: topBarBottomConstraint)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.animateViewMoving(textField: nil, constraint: self.topBarBottomConstraint)
         self.view.endEditing(true)
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        self.view.endEditing(true)
+        if changeNameVC != nil {
+            changeNameVC?.savePressed(self)
+            view.animateViewMoving(textField: nil, constraint: self.topBarBottomConstraint)
+            view.endEditing(true)
+        } else if changePasswordVC != nil {
+            switch textField {
+            case changePasswordVC!.oldPassword:
+                changePasswordVC?.newPassword.becomeFirstResponder()
+            case changePasswordVC!.newPassword:
+                changePasswordVC?.repeatNewPassword.becomeFirstResponder()
+            case changePasswordVC!.repeatNewPassword:
+                changePasswordVC?.savePressed(self)
+                view.animateViewMoving(textField: nil, constraint: self.topBarBottomConstraint)
+                view.endEditing(true)
+            default: break
+            }
+        }
         return true
     }
-    
-    override var prefersStatusBarHidden: Bool {
-        return false
-    }
-
     
 }

@@ -12,7 +12,7 @@ import FirebaseMessaging
 import FacebookCore
 import FacebookLogin
 
-typealias Completion = (_ data: AnyObject?, _ error: String?) -> Void
+typealias Completion = (_ data: AnyObject?, _ error: ErrorAlert?) -> Void
 
 class AuthService {
     private static let _instance = AuthService()
@@ -29,31 +29,11 @@ class AuthService {
         return Messaging.messaging().fcmToken!
     }
     
-    func handleFirebaseError(error: NSError, completion: Completion?) {
-        if let errorCode = AuthErrorCode(rawValue: error._code) {
-            switch (errorCode) {
-            case .invalidEmail:
-                completion?(nil, "Invalid email address")
-                break
-            case .wrongPassword:
-                completion?(nil, "Invalid password")
-                break
-            case .emailAlreadyInUse:
-                completion?(nil, "Could not create account.  Email already in use.")
-                break
-            case .userNotFound:
-                completion?(nil, "User does not exist")
-                break
-            default:
-                completion?(nil, "There was a problem authenticating.  Try again.")
-            }
-        }
-    }
-    
     func emailSignIn(email: String, password: String, completion: Completion?) {
         Auth.auth().signIn(withEmail: email, password: password, completion: { (user, error) in
             if error != nil {
-                self.handleFirebaseError(error: error! as NSError, completion: completion)
+                let errorAlert = ErrorAlert(title: "Uh Oh", message: error!.localizedDescription, preferredStyle: .alert)
+                completion?(nil, errorAlert)
             } else {
                 DataService.instance.addToken()
                 completion?(user, nil)
@@ -64,10 +44,11 @@ class AuthService {
     func createUser(email: String, password: String, completion: Completion?) {
         Auth.auth().createUser(withEmail: email, password: password, completion: { (user, error) in
             if error != nil {
-                self.handleFirebaseError(error: error! as NSError, completion: completion)
+                let errorAlert = ErrorAlert(title: "Uh Oh", message: error!.localizedDescription, preferredStyle: .alert)
+                completion?(nil, errorAlert)
             } else {
                 self.emailSignIn(email: email, password: password, completion: { (user, error) in
-                    completion?(user,error)
+                    completion?(user, error)
                 })
             }
         })
