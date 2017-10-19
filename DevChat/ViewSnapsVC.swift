@@ -14,6 +14,7 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
     @IBOutlet weak var closeBtn: UIButton!
     @IBOutlet weak var nextBtn: UIButton!
     @IBOutlet weak var previousBtn: UIButton!
+    @IBOutlet weak var flagBtn: UIButton!
     @IBOutlet var tapRecognizer: UITapGestureRecognizer!
 
     let pageVC = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
@@ -101,6 +102,7 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
                 self.closeBtn.alpha = self.btnAlphaTarget
                 self.nextBtn.alpha = self.btnAlphaTarget
                 self.previousBtn.alpha = self.btnAlphaTarget
+                self.flagBtn.alpha = self.btnAlphaTarget
                 self.currentVC?.captionField?.alpha = self.btnAlphaTarget
                 self.currentVC?.timestampLbl?.alpha = self.btnAlphaTarget
                 
@@ -132,6 +134,41 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
         guard let previousViewController = pageVC.dataSource?.pageViewController(pageVC, viewControllerBefore: currentViewController) else { return }
         pageVC.setViewControllers([previousViewController], direction: .reverse, animated: true) { (finished) in
             
+        }
+    }
+    
+    @IBAction func flagBtnPressed(_ sender: Any) {
+        guard let viewer = self.pageVC.viewControllers?.first as? SnapViewer else { return }
+        if viewer.flagged == true {
+            let alert = ErrorAlert(title: "Thank You", message: "Looks like you've already flagged this message", preferredStyle: .alert)
+            present(alert, animated: true, completion: nil)
+        } else {
+            let alert = UIAlertController(title: "Flag Content", message: "Would you like to flag this content for review as inappropriate?", preferredStyle: .alert)
+            let cancel = UIAlertAction(title: "No", style: .cancel, handler: nil)
+            let confirm = UIAlertAction(title: "Yes", style: .default, handler: { _ in
+                self.flagSnap()
+            })
+            alert.addAction(cancel)
+            alert.addAction(confirm)
+            present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func flagSnap() {
+        let alert = ErrorAlert(title: "Flagged", message: "Thank you for letting us know about the objectionable content.  It will be reviewed and appropriate action taken.  In the meantime, if you wish to stop receiving messages from the offending user, be sure to remove them from your friends list.", preferredStyle: .alert)
+        present(alert, animated: true, completion: nil)
+        guard let viewer = self.pageVC.viewControllers?.first as? SnapViewer else { return }
+        guard let currentIndex = viewer.index else { return }
+        viewer.flagged = true
+        var flaggedSnap = snapsArray[currentIndex]
+        flaggedSnap["senderUid"] = senderUid
+        DataService.instance.mainRef.child("flaggedContent").updateChildValues(flaggedSnap)
+        guard let storageName = flaggedSnap["storageName"] as? String else { return }
+        DataService.instance.mainRef.child("viewCounts").child(storageName).observeSingleEvent(of: .value) { (snapshot) in
+            if var viewCount = snapshot.value as? Int {
+                viewCount += 1
+                DataService.instance.mainRef.child("viewCounts").updateChildValues([storageName:viewCount])
+            }
         }
     }
     

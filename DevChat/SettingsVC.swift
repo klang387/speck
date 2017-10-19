@@ -159,11 +159,13 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     @IBAction func signOutPressed(_ sender: Any) {
         do {
             DataService.instance.removeToken()
+            DataService.instance.removeLocalProfilePic()
             try Auth.auth().signOut()
-            weak var cameraVC = self.presentingViewController
+            weak var cameraVC = self.presentingViewController as? CameraVC
             AppDelegate.AppUtility.lockOrientation(.allButUpsideDown)
             UserDefaults.standard.removeObject(forKey: "facebookLogin")
             self.dismiss(animated: true) {
+                cameraVC?.settingsBtn.setImage(nil, for: .normal)
                 cameraVC?.performSegue(withIdentifier: "toLoginVC", sender: nil)
             }
         } catch {

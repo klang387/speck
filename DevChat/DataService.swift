@@ -243,9 +243,7 @@ class DataService {
     
     func saveLocalProfilePic(imageData: Data) {
         let fileURL = documentsUrl.appendingPathComponent("profilePic")
-        if FileManager.default.fileExists(atPath: fileURL.absoluteString) {
-            try? FileManager.default.removeItem(at: fileURL)
-        }
+        try? FileManager.default.removeItem(at: fileURL)
         try? imageData.write(to: fileURL, options: .atomic)
     }
     
@@ -261,9 +259,7 @@ class DataService {
     
     func removeLocalProfilePic() {
         let fileURL = documentsUrl.appendingPathComponent("profilePic")
-        if FileManager.default.fileExists(atPath: fileURL.absoluteString) {
-            try? FileManager.default.removeItem(at: fileURL)
-        }
+        try? FileManager.default.removeItem(at: fileURL)
     }
     
     

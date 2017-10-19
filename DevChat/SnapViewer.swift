@@ -23,6 +23,7 @@ class SnapViewer: UIViewController, UITextFieldDelegate {
     var panRecognizer: UIPanGestureRecognizer?
     var captionPosY: CGFloat?
     var timestampLbl: UILabel?
+    var flagged = false
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()

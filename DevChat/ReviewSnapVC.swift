@@ -55,7 +55,7 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
         } else if dataType == "photo" {
             snapViewer.addPhoto()
             snapViewer.imageView?.image = tempPhoto
-            tempPhotoData = UIImageJPEGRepresentation(tempPhoto!, 0.2)
+            tempPhotoData = UIImageJPEGRepresentation(tempPhoto!, 0.5)
         }
     }
     
