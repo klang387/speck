@@ -59,7 +59,7 @@ class AuthService {
         var firstName = String()
         var lastName = String()
         var profPicUrl = String()
-        loginManager.logIn([.publicProfile, .email]) { (loginResult) in
+        loginManager.logIn(readPermissions: [.publicProfile, .email], viewController: nil) { (loginResult) in
             switch loginResult {
             case .failed:
                 let alert = ErrorAlert(title: "Uh Oh", message: "Unable to login.  Please check your internet connection and try again!", preferredStyle: .alert)
@@ -67,13 +67,13 @@ class AuthService {
             case .cancelled: break
             case .success(_, _, let accessToken):
                 let credential = FacebookAuthProvider.credential(withAccessToken: accessToken.authenticationToken)
-                Auth.auth().signIn(with: credential, completion: { (user, error) in
+                Auth.auth().signInAndRetrieveData(with: credential, completion: { (result, error) in
                     if error != nil {
                         let alert = ErrorAlert(title: "Uh Oh", message: "Unable to login.  Please check your internet connection and try again!", preferredStyle: .alert)
                         completion(alert)
-                    } else {
+                    } else if let user = result?.user {
                         DataService.instance.addToken()
-                        DataService.instance.profilesRef.child(user!.uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                        DataService.instance.profilesRef.child(user.uid).observeSingleEvent(of: .value, with: { (snapshot) in
                             if snapshot.hasChildren()  {
                                 completion(nil)
                             } else {
@@ -89,8 +89,8 @@ class AuthService {
                                             if let data = picture["data"] as? [String:Any] {
                                                 if let picUrl = data["url"] as? String {
                                                     profPicUrl = picUrl
-                                                    if let email = user?.email {
-                                                        DataService.instance.saveUserToDatabase(uid: user!.uid, firstName: firstName, lastName: lastName, profPicUrl: profPicUrl, email: email)
+                                                    if let email = user.email {
+                                                        DataService.instance.saveUserToDatabase(uid: user.uid, firstName: firstName, lastName: lastName, profPicUrl: profPicUrl, email: email)
                                                         completion(nil)
                                                     }
                                                 }

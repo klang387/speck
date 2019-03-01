@@ -69,7 +69,7 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         cameraDelegate = self
         captureBtn.delegate = self
         maximumVideoDuration = 10.0
-        flashEnabled = false
+        flashMode = .off
         flashBtn.imageView?.contentMode = .scaleAspectFit
         settingsBtn.layer.cornerRadius = settingsBtn.frame.width / 2
         settingsBtn.layer.masksToBounds = true
@@ -97,7 +97,7 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
             
             let currentUser = AuthService.instance.currentUser
             
-            NotificationCenter.default.addObserver(self, selector: #selector(deviceRotated), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(deviceRotated), name: UIDevice.orientationDidChangeNotification, object: nil)
                         
             friendsObserver = DataService.instance.usersRef.child(currentUser).child("friendRequests").observe(.value, with: { (snapshot) in
                 if let friendRequests = snapshot.value as? [String:Any] {
@@ -164,7 +164,7 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
             let currentUser = AuthService.instance.currentUser
             DataService.instance.usersRef.child(currentUser).child("snapsReceived").removeObserver(withHandle: inboxObserver)
             DataService.instance.usersRef.child(currentUser).child("friendRequests").removeObserver(withHandle: friendsObserver)
-            NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
+            NotificationCenter.default.removeObserver(self, name: UIDevice.orientationDidChangeNotification, object: nil)
         }
     }
     
@@ -190,11 +190,11 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     }
     
     @IBAction func flashPressed(_ sender: Any) {
-        if flashEnabled {
-            flashEnabled = false
+        if flashMode == .on {
+            flashMode = .off
             flashBtn.setImage(UIImage(named: "FlashOff"), for: .normal)
         } else {
-            flashEnabled = true
+            flashMode = .on
             flashBtn.setImage(UIImage(named: "FlashOn"), for: .normal)
         }
     }
@@ -216,8 +216,8 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         }
         
         if segue.identifier == "toSettingsVC" {
-            if let settingsVC = segue.destination as? SettingsVC, let image = profilePic {
-                settingsVC.image = image
+            if let settingsVC = segue.destination as? SettingsVC {
+                settingsVC.image = profilePic
                 settingsVC.requestCount = friendRequestsCount
             }
         }

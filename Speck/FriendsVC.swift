@@ -337,7 +337,7 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
                         view.removeFromSuperview()
                     }
                 }
-                spinner = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+                spinner = UIActivityIndicatorView(style: .gray)
                 cell.addSubview(spinner!)
                 spinner?.center.x = cell.bounds.midX
                 spinner?.center.y = cell.bounds.midY

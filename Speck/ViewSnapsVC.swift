@@ -31,7 +31,7 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        addChildViewController(pageVC)
+        addChild(pageVC)
         view.insertSubview(pageVC.view, belowSubview: closeBtn)
         pageVC.dataSource = self
         pageVC.delegate = self

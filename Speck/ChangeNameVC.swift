@@ -19,14 +19,14 @@ class ChangeNameVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        newUsername.attributedPlaceholder = NSAttributedString(string: "Enter New Username", attributes: [NSAttributedStringKey.foregroundColor: UIColor.white])
+        newUsername.attributedPlaceholder = NSAttributedString(string: "Enter New Username", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
     }
 
     @IBAction func savePressed(_ sender: Any) {
         newUsername.resignFirstResponder()
         delegate?.changeNameSavePressed()
         if let username = newUsername.text, let currentUser = Auth.auth().currentUser?.uid {
-            guard username.characters.count > 0 else {
+            guard username.count > 0 else {
                 let alert = ErrorAlert(title: "Uh Oh", message: "Name is empty.", preferredStyle: .alert)
                 present(alert, animated: true, completion: nil)
                 return

@@ -44,7 +44,7 @@ class SnapViewer: UIViewController, UITextFieldDelegate {
             } else {
                 avPlayer?.play()
                 NotificationCenter.default.addObserver(forName: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil, queue: nil) { notification in
-                    self.avPlayer?.seek(to: kCMTimeZero)
+                    self.avPlayer?.seek(to: CMTime.zero)
                     self.avPlayer?.play()
                 }
             }

@@ -20,9 +20,9 @@ class ChangePasswordVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        oldPassword.attributedPlaceholder = NSAttributedString(string: "Old Password", attributes: [NSAttributedStringKey.foregroundColor: UIColor.white])
-        newPassword.attributedPlaceholder = NSAttributedString(string: "New Password", attributes: [NSAttributedStringKey.foregroundColor: UIColor.white])
-        repeatNewPassword.attributedPlaceholder = NSAttributedString(string: "Repeat New Password", attributes: [NSAttributedStringKey.foregroundColor: UIColor.white])
+        oldPassword.attributedPlaceholder = NSAttributedString(string: "Old Password", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
+        newPassword.attributedPlaceholder = NSAttributedString(string: "New Password", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
+        repeatNewPassword.attributedPlaceholder = NSAttributedString(string: "Repeat New Password", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
     }
 
     @IBAction func savePressed(_ sender: Any) {
@@ -45,7 +45,7 @@ class ChangePasswordVC: UIViewController {
             }
             guard let email = Auth.auth().currentUser?.email else {return}
             let credential = EmailAuthProvider.credential(withEmail: email, password: oldPassword)
-            Auth.auth().currentUser?.reauthenticate(with: credential, completion: { error in
+            Auth.auth().currentUser?.reauthenticateAndRetrieveData(with: credential, completion: { (result, error) in
                 if error != nil {
                     let alert = ErrorAlert(title: "Uh Oh", message: error?.localizedDescription, preferredStyle: .alert)
                     self.present(alert, animated: true, completion: nil)

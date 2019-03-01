@@ -45,11 +45,11 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
         password.delegate = self
         passwordConfirm.delegate = self
         
-        firstName.attributedPlaceholder = NSAttributedString(string: "First Name", attributes: [NSAttributedStringKey.foregroundColor: UIColor.white])
-        lastName.attributedPlaceholder = NSAttributedString(string: "Last Name", attributes: [NSAttributedStringKey.foregroundColor: UIColor.white])
-        email.attributedPlaceholder = NSAttributedString(string: "Email", attributes: [NSAttributedStringKey.foregroundColor: UIColor.white])
-        password.attributedPlaceholder = NSAttributedString(string: "Password", attributes: [NSAttributedStringKey.foregroundColor: UIColor.white])
-        passwordConfirm.attributedPlaceholder = NSAttributedString(string: "Re-Enter Password", attributes: [NSAttributedStringKey.foregroundColor: UIColor.white])
+        firstName.attributedPlaceholder = NSAttributedString(string: "First Name", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
+        lastName.attributedPlaceholder = NSAttributedString(string: "Last Name", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
+        email.attributedPlaceholder = NSAttributedString(string: "Email", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
+        password.attributedPlaceholder = NSAttributedString(string: "Password", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
+        passwordConfirm.attributedPlaceholder = NSAttributedString(string: "Re-Enter Password", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -125,20 +125,23 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
             if let alert = errorAlert {
                 self.present(alert, animated: true, completion: nil)
             } else {
-                if let imageData = UIImageJPEGRepresentation(self.selectProfilePic.imageView!.image!, 0.2) {
+                if let imageData = self.selectProfilePic.imageView!.image!.jpegData(compressionQuality: 0.2) {
                     let imageName = NSUUID().uuidString
-                    DataService.instance.profPicStorageRef.child(imageName).putData(imageData, metadata: StorageMetadata(), completion: { (metadata, error) in
+                    let ref = DataService.instance.profPicStorageRef.child(imageName)
+                    ref.putData(imageData, metadata: StorageMetadata(), completion: { (metadata, error) in
                         if error != nil {
                             let alert = ErrorAlert(title: "Uh Oh", message: error?.localizedDescription, preferredStyle: .alert)
                             self.present(alert, animated: true, completion: nil)
                         } else {
-                            if let downloadURL = metadata?.downloadURL()?.absoluteString {
-                                if let uid = Auth.auth().currentUser?.uid, let email = Auth.auth().currentUser?.email {
-                                    DataService.instance.saveUserToDatabase(uid: uid, firstName: self.firstName.text!.capitalized, lastName: self.lastName.text!.capitalized, profPicUrl: downloadURL, email: email)
-                                    DataService.instance.usersRef.child(uid).child("profPicStorageRef").setValue(imageName)
-                                    self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
+                            ref.downloadURL(completion: { (url, error) in
+                                if let downloadURL = url?.absoluteString {
+                                    if let uid = Auth.auth().currentUser?.uid, let email = Auth.auth().currentUser?.email {
+                                        DataService.instance.saveUserToDatabase(uid: uid, firstName: self.firstName.text!.capitalized, lastName: self.lastName.text!.capitalized, profPicUrl: downloadURL, email: email)
+                                        DataService.instance.usersRef.child(uid).child("profPicStorageRef").setValue(imageName)
+                                        self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
+                                    }
                                 }
-                            }
+                            })
                         }
                         
                     })
@@ -159,8 +162,8 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
         }
     }
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        if let image = info[UIImagePickerControllerEditedImage] as? UIImage {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let image = info[.editedImage] as? UIImage {
             selectProfilePic.setImage(image, for: .normal)
             selectProfilePic.setBackgroundImage(nil, for: .normal)
         } else {
@@ -196,7 +199,7 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
         
         editLayer = CAShapeLayer()
         editLayer.path = filledShapePath.cgPath
-        editLayer.fillRule = kCAFillRuleEvenOdd
+        editLayer.fillRule = CAShapeLayerFillRule.evenOdd
         editLayer.fillColor = UIColor.black.cgColor
         editLayer.opacity = 0.8
         viewController.view.layer.addSublayer(editLayer)

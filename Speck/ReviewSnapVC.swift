@@ -42,7 +42,7 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
         super.viewDidLoad()
         
         snapViewer = SnapViewer()
-        addChildViewController(snapViewer)
+        addChild(snapViewer)
         view.insertSubview(snapViewer.view, belowSubview: captionBtn)
         
         bottomBarTab.transform = CGAffineTransform(scaleX: -1, y: -1)
@@ -55,7 +55,7 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
         } else if dataType == "photo" {
             snapViewer.addPhoto()
             snapViewer.imageView?.image = tempPhoto
-            tempPhotoData = UIImageJPEGRepresentation(tempPhoto!, 0.5)
+            tempPhotoData = tempPhoto!.jpegData(compressionQuality: 0.5)
         }
     }
     
@@ -105,7 +105,7 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
                 sendSnapVC!.tempPhotoData = tempPhotoData
             }
             
-            addChildViewController(sendSnapVC!)
+            addChild(sendSnapVC!)
             sendSnapVC!.view.frame = newViewStartFrame
             view.insertSubview(sendSnapVC!.view, belowSubview: bottomBar)
             bottomBar.image = UIImage(named: "BarGrey")
@@ -209,7 +209,7 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
         }, completion: { (finished) in
             if finished {
                 self.sendSnapVC?.view.removeFromSuperview()
-                self.sendSnapVC?.removeFromParentViewController()
+                self.sendSnapVC?.removeFromParent()
                 self.sendSnapVC = nil
                 self.currentView = "preview"
                 self.tapRecognizer.isEnabled = true

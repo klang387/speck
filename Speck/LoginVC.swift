@@ -25,8 +25,8 @@ class LoginVC: UIViewController, UITextFieldDelegate {
         passwordField.delegate = self
         textFields = [emailField, passwordField]
         
-        emailField.attributedPlaceholder = NSAttributedString(string: "Enter email", attributes: [NSAttributedStringKey.foregroundColor: UIColor.white])
-        passwordField.attributedPlaceholder = NSAttributedString(string: "Enter password", attributes: [NSAttributedStringKey.foregroundColor: UIColor.white])
+        emailField.attributedPlaceholder = NSAttributedString(string: "Enter email", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
+        passwordField.attributedPlaceholder = NSAttributedString(string: "Enter password", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -83,7 +83,7 @@ class LoginVC: UIViewController, UITextFieldDelegate {
     @IBAction func loginPressed(_ sender: Any) {
         view.animateViewMoving(textField: nil, constraint: nil)
         self.view.endEditing(true)
-        if let email = emailField.text, let pass = passwordField.text, (email.characters.count > 0 && pass.characters.count > 0) {
+        if let email = emailField.text, let pass = passwordField.text, (email.count > 0 && pass.count > 0) {
             AuthService.instance.emailSignIn(email: email, password: pass, completion: { (user, errorAlert) in
                 if let alert = errorAlert {
                     self.present(alert, animated: true, completion: nil)

@@ -171,14 +171,16 @@ class DataService {
                     completion(nil, alert)
                     return
                 } else {
-                    if let downloadURL = meta?.downloadURL()?.absoluteString {
-                        completion(downloadURL, nil)
-                        self.sendSnap(storageName: storageName, databaseUrl: downloadURL, mediaType: "video", caption: caption, recipients: recipients, completion: { errorAlert in
-                            if let alert = errorAlert {
-                                completion(nil, alert)
-                            }
-                        })
-                    }
+                    ref.downloadURL(completion: { (url, error) in
+                        if let downloadURL = url?.absoluteString {
+                            completion(downloadURL, nil)
+                            self.sendSnap(storageName: storageName, databaseUrl: downloadURL, mediaType: "video", caption: caption, recipients: recipients, completion: { errorAlert in
+                                if let alert = errorAlert {
+                                    completion(nil, alert)
+                                }
+                            })
+                        }
+                    })
                 }
             })
             
@@ -189,14 +191,16 @@ class DataService {
                     completion(nil, alert)
                     return
                 } else {
-                    if let downloadURL = meta?.downloadURL()?.absoluteString {
-                        completion(downloadURL, nil)
-                        self.sendSnap(storageName: storageName, databaseUrl: downloadURL, mediaType: "photo", caption: caption, recipients: recipients, completion: { errorAlert in
-                            if let alert = errorAlert {
-                                completion(nil,alert)
-                            }
-                        })
-                    }
+                    ref.downloadURL(completion: { (url, error) in
+                        if let downloadURL = url?.absoluteString {
+                            completion(downloadURL, nil)
+                            self.sendSnap(storageName: storageName, databaseUrl: downloadURL, mediaType: "photo", caption: caption, recipients: recipients, completion: { errorAlert in
+                                if let alert = errorAlert {
+                                    completion(nil,alert)
+                                }
+                            })
+                        }
+                    })
                 }
             })
         }

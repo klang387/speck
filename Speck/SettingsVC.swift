@@ -96,7 +96,7 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         currentView = "name"
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         changeNameVC = (storyboard.instantiateViewController(withIdentifier: "ChangeNameVC") as! ChangeNameVC)
-        addChildViewController(changeNameVC!)
+        addChild(changeNameVC!)
         view.addSubview(changeNameVC!.view!)
         changeNameVC?.delegate = self
         changeNameVC?.newUsername.delegate = self
@@ -109,7 +109,7 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
             currentView = "password"
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             changePasswordVC = (storyboard.instantiateViewController(withIdentifier: "ChangePasswordVC") as! ChangePasswordVC)
-            addChildViewController(changePasswordVC!)
+            addChild(changePasswordVC!)
             view.addSubview(changePasswordVC!.view!)
             changePasswordVC?.delegate = self
             changePasswordVC?.oldPassword.delegate = self
@@ -127,7 +127,7 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         self.currentView = "friends"
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         friendsVC = storyboard.instantiateViewController(withIdentifier: "FriendsVC") as? FriendsVC
-        addChildViewController(friendsVC!)
+        addChild(friendsVC!)
         friendsVC?.view.frame = newViewStartFrame
         view.insertSubview(friendsVC!.view, belowSubview: topBar)
         friendsVC?.delegate = self
@@ -244,10 +244,10 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
             self.constraintLeadingLandscape = nil
             self.constraintTrailing = nil
             self.changeNameVC?.view.removeFromSuperview()
-            self.changeNameVC?.removeFromParentViewController()
+            self.changeNameVC?.removeFromParent()
             self.changeNameVC = nil
             self.changePasswordVC?.view.removeFromSuperview()
-            self.changePasswordVC?.removeFromParentViewController()
+            self.changePasswordVC?.removeFromParent()
             self.changePasswordVC = nil
             UIView.animate(withDuration: 0.2, animations: {
                 self.buttonsLeading.constant = 0
@@ -269,10 +269,10 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         }
     }
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        if let image = info[UIImagePickerControllerEditedImage] as? UIImage {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let image = info[.editedImage] as? UIImage {
             profilePic.image = image
-            if let imageData = UIImageJPEGRepresentation(image, 0.2) {
+            if let imageData = image.jpegData(compressionQuality: 0.2) {
                 let imageName = NSUUID().uuidString
                 DataService.instance.usersRef.child(currentUser).child("profPicStorageRef").observeSingleEvent(of: .value, with: { (snapshot) in
                     DataService.instance.usersRef.child(self.currentUser).child("profPicStorageRef").setValue(imageName)
@@ -280,14 +280,17 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
                         DataService.instance.profPicStorageRef.child(profPicStorageRef).delete()
                     }
                 })
-                DataService.instance.profPicStorageRef.child(imageName).putData(imageData, metadata: StorageMetadata(), completion: { (metadata, error) in
-                    if let downloadURL = metadata?.downloadURL()?.absoluteString {
-                        DataService.instance.profilesRef.child(self.currentUser).updateChildValues(["profPicUrl":downloadURL])
-                        DataService.instance.saveLocalProfilePic(imageData: imageData)
-                    } else {
-                        let alert = ErrorAlert(title: "Uh Oh", message: "Couldn't finish changing profile picture.  Please check your internet connection and try again!", preferredStyle: .alert)
-                        self.present(alert, animated: true, completion: nil)
-                    }
+                let ref = DataService.instance.profPicStorageRef.child(imageName)
+                ref.putData(imageData, metadata: StorageMetadata(), completion: { (metadata, error) in
+                    ref.downloadURL(completion: { (url, error) in
+                        if let downloadURL = url?.absoluteString {
+                            DataService.instance.profilesRef.child(self.currentUser).updateChildValues(["profPicUrl":downloadURL])
+                            DataService.instance.saveLocalProfilePic(imageData: imageData)
+                        } else {
+                            let alert = ErrorAlert(title: "Uh Oh", message: "Couldn't finish changing profile picture.  Please check your internet connection and try again!", preferredStyle: .alert)
+                            self.present(alert, animated: true, completion: nil)
+                        }
+                    })
                 })
             } else {
                 let alert = ErrorAlert(title: "Uh Oh", message: "Couldn't finish changing profile picture.  Please check your internet connection and try again!", preferredStyle: .alert)
@@ -326,7 +329,7 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         
         editLayer = CAShapeLayer()
         editLayer.path = filledShapePath.cgPath
-        editLayer.fillRule = kCAFillRuleEvenOdd
+        editLayer.fillRule = CAShapeLayerFillRule.evenOdd
         editLayer.fillColor = UIColor.black.cgColor
         editLayer.opacity = 0.8
         viewController.view.layer.addSublayer(editLayer)
@@ -375,7 +378,7 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
             self.view.layoutIfNeeded()
         }) { (finished) in
             self.friendsVC?.view.removeFromSuperview()
-            self.friendsVC?.removeFromParentViewController()
+            self.friendsVC?.removeFromParent()
             self.friendsVC = nil
         }
     }
@@ -383,7 +386,7 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     func addSearchGuide() {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         guideVC = storyboard.instantiateViewController(withIdentifier: "GuideVC") as? GuideVC
-        addChildViewController(guideVC!)
+        addChild(guideVC!)
         guideVC?.view.frame = view.frame
         view.addSubview(guideVC!.view)
         guideVC?.dismissBtn.addTarget(self, action: #selector(removeGuide), for: .touchUpInside)
@@ -391,7 +394,7 @@ class SettingsVC: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     
     @objc func removeGuide() {
         guideVC?.view.removeFromSuperview()
-        guideVC?.removeFromParentViewController()
+        guideVC?.removeFromParent()
         guideVC = nil
     }
     

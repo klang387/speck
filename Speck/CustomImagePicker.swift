@@ -10,7 +10,7 @@ import UIKit
 
 class CustomImagePicker: UIImagePickerController {
 
-    override var childViewControllerForStatusBarHidden: UIViewController? {
+    override var childForStatusBarHidden: UIViewController? {
         return nil
     }
     

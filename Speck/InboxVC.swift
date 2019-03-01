@@ -28,7 +28,7 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
         if UserDefaults.standard.integer(forKey: "firstInboxVC") != 1 {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             guideVC = storyboard.instantiateViewController(withIdentifier: "GuideVC") as? GuideVC
-            addChildViewController(guideVC!)
+            addChild(guideVC!)
             guideVC?.view.frame = view.frame
             guideVC?.titleLabel.text = "Self-Cleaning"
             guideVC?.bodyLabel.text = """
@@ -106,7 +106,7 @@ class InboxVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
     
     @objc func removeGuide(sender:UIButton) {
         guideVC?.view.removeFromSuperview()
-        guideVC?.removeFromParentViewController()
+        guideVC?.removeFromParent()
         guideVC = nil
     }
 
