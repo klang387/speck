@@ -32,6 +32,7 @@ class UserCell: UITableViewCell {
         let height: CGFloat = 54
         let width: CGFloat = 54
         profPic = UIImageView(frame: CGRect(x: frame.height / 2 - width / 2, y: frame.midY - height / 2, width: width, height: height))
+        profPic.image = UIImage(named: "profPicPlaceholder")
         profPic.layer.cornerRadius = height / 2
         profPic.layer.masksToBounds = true
         profPic.contentMode = .scaleAspectFill

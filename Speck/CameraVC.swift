@@ -49,6 +49,7 @@ class CameraVC: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     @IBOutlet weak var continueLabel: UILabel!
     
     override func viewDidLoad() {
+        super.videoGravity = .resizeAspectFill
         super.viewDidLoad()
 
         AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)

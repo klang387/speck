@@ -24,6 +24,12 @@ class SnapViewer: UIViewController, UITextFieldDelegate {
     var captionPosY: CGFloat?
     var timestampLbl: UILabel?
     var flagged = false
+    var aspect: Aspect = .fit
+    
+    enum Aspect {
+        case fill
+        case fit
+    }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
@@ -66,14 +72,14 @@ class SnapViewer: UIViewController, UITextFieldDelegate {
     
     func addPhoto() {
         imageView = UIImageView()
-        imageView?.contentMode = .scaleAspectFit
+        imageView?.contentMode = aspect == .fit ? .scaleAspectFit : .scaleAspectFill
         imageView?.frame = view.frame
         view.addSubview(imageView!)
     }
     
     func addVideo() {
         avPlayerLayer = AVPlayerLayer()
-        avPlayerLayer?.videoGravity = AVLayerVideoGravity.resizeAspect
+        avPlayerLayer?.videoGravity = aspect == .fit ? .resizeAspect : .resizeAspectFill
         avPlayerLayer?.frame = view.frame
         view.layer.addSublayer(avPlayerLayer!)
 
@@ -99,7 +105,7 @@ class SnapViewer: UIViewController, UITextFieldDelegate {
         view.addSubview(timestampLbl!)
         timestampLbl?.translatesAutoresizingMaskIntoConstraints = false
         timestampLbl?.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        timestampLbl?.topAnchor.constraint(equalTo: view.topAnchor, constant: 20).isActive = true
+        timestampLbl?.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor).isActive = true
         timestampLbl?.heightAnchor.constraint(equalToConstant: 30).isActive = true
         timestampLbl?.widthAnchor.constraint(equalToConstant: 190).isActive = true
     }

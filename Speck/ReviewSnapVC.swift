@@ -42,6 +42,7 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
         super.viewDidLoad()
         
         snapViewer = SnapViewer()
+        snapViewer.aspect = .fill
         addChild(snapViewer)
         view.insertSubview(snapViewer.view, belowSubview: captionBtn)
         
@@ -125,7 +126,11 @@ class ReviewSnapVC: UIViewController, SendSnapDelegate {
                 guard count > 0 else { return }
                 let loadingView = LoadingView()
                 view.addSubview(loadingView)
-                loadingView.frame = view.frame
+                loadingView.translatesAutoresizingMaskIntoConstraints = false
+                loadingView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+                loadingView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+                loadingView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+                loadingView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
                 loadingView.text(text: "Uploading Media")
                 var caption: [String:Any]?
                 if let text = snapViewer.captionField?.text, let position = captionPosY {

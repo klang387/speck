@@ -58,19 +58,22 @@ class AuthService {
         let loginManager = LoginManager()
         var firstName = String()
         var lastName = String()
+        var email = String()
         var profPicUrl = String()
         loginManager.logIn(readPermissions: [.publicProfile, .email], viewController: nil) { (loginResult) in
-            switch loginResult {
-            case .failed:
+            let presentAlert: (()->Void) = {
                 let alert = ErrorAlert(title: "Uh Oh", message: "Unable to login.  Please check your internet connection and try again!", preferredStyle: .alert)
                 completion(alert)
+            }
+            switch loginResult {
+            case .failed:
+                presentAlert()
             case .cancelled: break
             case .success(_, _, let accessToken):
                 let credential = FacebookAuthProvider.credential(withAccessToken: accessToken.authenticationToken)
                 Auth.auth().signInAndRetrieveData(with: credential, completion: { (result, error) in
                     if error != nil {
-                        let alert = ErrorAlert(title: "Uh Oh", message: "Unable to login.  Please check your internet connection and try again!", preferredStyle: .alert)
-                        completion(alert)
+                        presentAlert()
                     } else if let user = result?.user {
                         DataService.instance.addToken()
                         DataService.instance.profilesRef.child(user.uid).observeSingleEvent(of: .value, with: { (snapshot) in
@@ -81,24 +84,45 @@ class AuthService {
                                 request.start({ (response, result) in
                                     switch result{
                                     case .success(let resultDict):
-                                        if let first = resultDict.dictionaryValue?["first_name"] as? String, let last = resultDict.dictionaryValue?["last_name"] as? String {
-                                            firstName = first
-                                            lastName = last
-                                        }
-                                        if let picture = resultDict.dictionaryValue?["picture"] as? [String:Any] {
-                                            if let data = picture["data"] as? [String:Any] {
-                                                if let picUrl = data["url"] as? String {
-                                                    profPicUrl = picUrl
-                                                    if let email = user.email {
-                                                        DataService.instance.saveUserToDatabase(uid: user.uid, firstName: firstName, lastName: lastName, profPicUrl: profPicUrl, email: email)
-                                                        completion(nil)
+                                        firstName = resultDict.dictionaryValue?["first_name"] as? String ?? ""
+                                        lastName = resultDict.dictionaryValue?["last_name"] as? String ?? ""
+                                        email = user.email ?? ""
+                                        if let picture = resultDict.dictionaryValue?["picture"] as? [String:Any],
+                                            let data = picture["data"] as? [String:Any],
+                                            let picUrl = data["url"] as? String {
+                                            
+                                            URLSession.shared.dataTask(with: URL(string: picUrl)!, completionHandler: { (data, response, error) -> Void in
+                                                if error != nil || data == nil {
+                                                    presentAlert()
+                                                } else {
+                                                    DispatchQueue.main.async {
+                                                        if let imageData = UIImage(data: data!)?.jpegData(compressionQuality: 0.2) {
+                                                            let imageName = NSUUID().uuidString
+                                                            DataService.instance.usersRef.child(user.uid).child("profPicStorageRef").observeSingleEvent(of: .value, with: { (snapshot) in
+                                                                DataService.instance.usersRef.child(user.uid).child("profPicStorageRef").setValue(imageName)
+                                                                if let profPicStorageRef = snapshot.value as? String {
+                                                                    DataService.instance.profPicStorageRef.child(profPicStorageRef).delete()
+                                                                }
+                                                            })
+                                                            let ref = DataService.instance.profPicStorageRef.child(imageName)
+                                                            ref.putData(imageData, metadata: nil, completion: { (metadata, putError) in
+                                                                guard putError == nil else { presentAlert(); return }
+                                                                ref.downloadURL(completion: { (url, urlError) in
+                                                                    guard urlError == nil else { presentAlert(); return }
+                                                                    profPicUrl = url?.absoluteString ?? ""
+                                                                    DataService.instance.saveUserToDatabase(uid: user.uid, firstName: firstName, lastName: lastName, profPicUrl: profPicUrl, email: email)
+                                                                    completion(nil)
+                                                                })
+                                                            })
+                                                        }
                                                     }
                                                 }
-                                            }
+                                            }).resume()
+                                        } else {
+                                            presentAlert()
                                         }
                                     case .failed:
-                                        let alert = ErrorAlert(title: "Uh Oh", message: "Trouble logging in.  Please check your internet connection and try again!", preferredStyle: .alert)
-                                        completion(alert)
+                                        presentAlert()
                                     }
                                 })
                             }

@@ -266,7 +266,7 @@ class FriendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             cell.iconView?.removeFromSuperview()
             cell.iconView = nil
         }
-        cell.profPic.image = nil
+        cell.profPic.image = UIImage(named: "profPicPlaceholder")
         switch indexPath.section {
         case 0:
             let user = filteredFriendRequests[indexPath.row]

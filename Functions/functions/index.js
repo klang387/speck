@@ -3,7 +3,7 @@ const functions = require('firebase-functions');
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp();
 
 
 exports.findUser = functions.https.onRequest((request, response) => {
@@ -26,9 +26,9 @@ exports.findUser = functions.https.onRequest((request, response) => {
   });
 });
 
-exports.friendRequestNotification = functions.database.ref("/users/{recipientUid}/friendRequests/{requesterUid}").onCreate(event => {
-  const recipientUid = event.params.recipientUid;
-  const requesterUid = event.params.requesterUid;
+exports.friendRequestNotification = functions.database.ref("/users/{recipientUid}/friendRequests/{requesterUid}").onCreate((data, context) => {
+  const recipientUid = context.params.recipientUid;
+  const requesterUid = context.params.requesterUid;
 
   console.log("recipientUid = ", recipientUid, " and requesterUid = ", requesterUid)
 
@@ -92,10 +92,10 @@ exports.friendRequestNotification = functions.database.ref("/users/{recipientUid
 });
 
 
-exports.messageNotification = functions.database.ref("/users/{recipientUid}/snapsReceived/{senderUid}/snaps/{snapUid}").onCreate(event => {
-  const recipientUid = event.params.recipientUid;
-  const senderUid = event.params.senderUid;
-  const snapUid = event.params.snapUid;
+exports.messageNotification = functions.database.ref("/users/{recipientUid}/snapsReceived/{senderUid}/snaps/{snapUid}").onCreate((data, context) => {
+  const recipientUid = context.params.recipientUid;
+  const senderUid = context.params.senderUid;
+  const snapUid = context.params.snapUid;
 
   console.log("recipientUid = ", recipientUid, " senderUid = ", senderUid, " snapUid = ", snapUid);
 
