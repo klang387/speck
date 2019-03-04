@@ -34,6 +34,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             } catch {}
         }
         
+        AuthService.instance.eulaApproved = UserDefaults.standard.bool(forKey: "eulaApproved")
+        
         let color = UIView().UIColorFromHex(rgbValue: 0xDEED78)
         window?.backgroundColor = color
         
@@ -72,6 +74,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         ImageCache.instance.purgeCache()
         URLCache.shared.removeAllCachedResponses()
+        UserDefaults.standard.set(AuthService.instance.eulaApproved, forKey: "eulaApproved")
+        if !AuthService.instance.eulaApproved {
+            try? Auth.auth().signOut()
+        }
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {

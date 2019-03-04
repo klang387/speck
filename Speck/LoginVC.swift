@@ -73,9 +73,22 @@ class LoginVC: UIViewController, UITextFieldDelegate {
             if let alert = errorAlert {
                 self.present(alert, animated: true, completion: nil)
             } else {
-                self.dismiss(animated: true, completion: nil)
-                UserDefaults.standard.set(true, forKey: "facebookLogin")
-                AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
+                DataService.instance.checkEULAStatus(completion: { [weak self] approved in
+                    if approved {
+                        self?.dismiss(animated: true, completion: nil)
+                        UserDefaults.standard.set(true, forKey: "facebookLogin")
+                        AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
+                    } else {
+                        EulaAlertVC(agreeCompletion: {
+                            DataService.instance.saveEULAApproval()
+                            self?.dismiss(animated: true, completion: nil)
+                            UserDefaults.standard.set(true, forKey: "facebookLogin")
+                            AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
+                        }, cancelCompletion: {
+                            try? Auth.auth().signOut()
+                        }).show()
+                    }
+                })
             }
         })
     }
@@ -84,18 +97,29 @@ class LoginVC: UIViewController, UITextFieldDelegate {
         view.animateViewMoving(textField: nil, constraint: nil)
         self.view.endEditing(true)
         if let email = emailField.text, let pass = passwordField.text, (email.count > 0 && pass.count > 0) {
-            AuthService.instance.emailSignIn(email: email, password: pass, completion: { (user, errorAlert) in
+            AuthService.instance.emailSignIn(email: email, password: pass, completion: { [weak self] (user, errorAlert) in
                 if let alert = errorAlert {
-                    self.present(alert, animated: true, completion: nil)
+                    self?.present(alert, animated: true, completion: nil)
                     return
                 }
-                AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
-                self.dismiss(animated: true, completion: nil)
+                DataService.instance.checkEULAStatus(completion: { [weak self] approved in
+                    if approved {
+                        AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
+                        self?.dismiss(animated: true, completion: nil)
+                    } else {
+                        EulaAlertVC(agreeCompletion: {
+                            DataService.instance.saveEULAApproval()
+                            AppDelegate.AppUtility.lockOrientation(.portrait, andRotateTo: .portrait)
+                            self?.dismiss(animated: true, completion: nil)
+                        }, cancelCompletion: {
+                            try? Auth.auth().signOut()
+                        }).show()
+                    }
+                })
             })
         } else {
-            guard let rootVC = UIApplication.shared.windows.last?.rootViewController else {return}
             let alert = ErrorAlert(title: "Username and Password Required", message: "You must enter both a username and a password", preferredStyle: .alert)
-            rootVC.present(alert, animated: true, completion: nil)
+            present(alert, animated: true, completion: nil)
         }
     }
     

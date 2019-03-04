@@ -266,5 +266,17 @@ class DataService {
         try? FileManager.default.removeItem(at: fileURL)
     }
     
+    func checkEULAStatus(completion: @escaping (Bool) -> Void) {
+        mainRef.child("eulaAgreements").child(AuthService.instance.currentUser).observeSingleEvent(of: .value, with: { (snapshot) in
+            let approved = snapshot.value as? Bool != nil
+            AuthService.instance.eulaApproved = approved
+            completion(approved)
+        })
+    }
+    
+    func saveEULAApproval() {
+        mainRef.child("eulaAgreements").child(AuthService.instance.currentUser).setValue(true)
+        AuthService.instance.eulaApproved = true
+    }
     
 }

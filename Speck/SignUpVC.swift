@@ -125,7 +125,10 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
             if let alert = errorAlert {
                 self.present(alert, animated: true, completion: nil)
             } else {
-                if let imageData = self.selectProfilePic.imageView!.image!.jpegData(compressionQuality: 0.2) {
+                EulaAlertVC(agreeCompletion: { [unowned self] in
+                    DataService.instance.saveEULAApproval()
+                    
+                    let imageData = self.selectProfilePic.imageView!.image!.jpegData(compressionQuality: 0.2)!
                     let imageName = NSUUID().uuidString
                     let ref = DataService.instance.profPicStorageRef.child(imageName)
                     ref.putData(imageData, metadata: StorageMetadata(), completion: { (metadata, error) in
@@ -143,12 +146,12 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
                                 }
                             })
                         }
-                        
                     })
-                } else {
-                    let alert = ErrorAlert(title: "Uh Oh", message: "Couldn't finish setting up account.  Please check your internet connection and try again!", preferredStyle: .alert)
-                    self.present(alert, animated: true, completion: nil)
-                }
+                }, cancelCompletion: {
+                    Auth.auth().currentUser?.delete(completion: nil)
+                }).show()
+                
+                
             }
         })
         

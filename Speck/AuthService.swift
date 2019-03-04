@@ -29,6 +29,8 @@ class AuthService {
         return Messaging.messaging().fcmToken!
     }
     
+    var eulaApproved = false
+    
     func emailSignIn(email: String, password: String, completion: Completion?) {
         Auth.auth().signIn(withEmail: email, password: password, completion: { (user, error) in
             if error != nil {
