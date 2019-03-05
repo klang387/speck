@@ -162,7 +162,8 @@ class ViewSnapsVC: UIViewController, UIPageViewControllerDataSource, UIPageViewC
         viewer.flagged = true
         var flaggedSnap = snapsArray[currentIndex]
         flaggedSnap["senderUid"] = senderUid
-        DataService.instance.mainRef.child("flaggedContent").updateChildValues(flaggedSnap)
+        flaggedSnap["recipientUid"] = AuthService.instance.currentUser
+        DataService.instance.mainRef.child("flaggedContent").child(flaggedSnap["snapUid"] as? String ?? "unknownSnapUid").updateChildValues(flaggedSnap)
         guard let storageName = flaggedSnap["storageName"] as? String else { return }
         DataService.instance.mainRef.child("viewCounts").child(storageName).observeSingleEvent(of: .value) { (snapshot) in
             if var viewCount = snapshot.value as? Int {
